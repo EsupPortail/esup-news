@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Topic">
+
+	<typeAlias type="org.uhp.portlets.news.domain.Topic" alias="topic" />
+
+	<resultMap id="result" class="topic">
+		<result property="topicId" column="topic_id" />
+		<result property="name" column="name" />
+		<result property="desc" column="description" />
+		<result property="categoryId" column="category_id" />
+		<result property="rssAllowed" column="rss_allowed" />
+		<result property="publicView" column="public_view" />
+		<result property="displayOrder" column="display_order" />
+	</resultMap>
+
+	<resultMap id="resultDetail" class="topic" extends="result">
+		<result property="createdBy" column="created_by" />
+		<result property="creationDate" column="creation_date" />
+		<result property="lastUpdateDate" column="last_update_date" />
+		<result property="langue" column="lang" />
+		<result property="refreshPeriod" column="refresh_period" />
+		<result property="refreshFrequency" column="refresh_frequency" />
+	</resultMap>
+
+	<select id="getTopicById" parameterClass="java.lang.Long"
+		resultMap="resultDetail">
+		select topic_id, name, description, category_id, created_by, creation_date,
+		last_update_date, lang, refresh_period, refresh_frequency,
+		display_order, rss_allowed, public_view from news_topic where topic_id
+		= #value#
+    </select>
+
+	<select id="getTopicListByCategory" resultMap="resultDetail"
+		parameterClass="java.lang.Long">
+		select topic_id, name, description, category_id, created_by, creation_date,
+		last_update_date, lang, refresh_period, refresh_frequency,
+		display_order, rss_allowed, public_view from news_topic where
+		category_id = #value# order by display_order desc 
+    </select>
+
+	<select id="isTopicNameExistInCat" parameterClass="map"
+		resultClass="int">
+		SELECT count(topic_id) FROM news_topic WHERE name=#name# and category_id =
+		#id#
+    </select>
+
+	<insert id="insertTopic" parameterClass="topic">
+		insert into news_topic (topic_id, name, description, lang, created_by,
+		creation_date, refresh_period, refresh_frequency, last_update_date,
+		category_id, display_order, public_view, rss_allowed) values
+		(#topicId#, #name#, #desc#, #langue#, #createdBy#, #creationDate#,
+		#refreshPeriod#, #refreshFrequency#, #lastUpdateDate#, #categoryId#,
+		#displayOrder#, #publicView#, #rssAllowed#)
+    </insert>
+
+	<update id="updateTopic" parameterClass="topic">
+		update news_topic set name=#name#, description=#desc#, lang=#langue#,
+		created_by=#createdBy#, creation_date=#creationDate#,
+		refresh_period=#refreshPeriod#, refresh_frequency=#refreshFrequency#,
+		last_update_date=#lastUpdateDate#, category_id=#categoryId#,
+		display_order=#displayOrder#, public_view=#publicView#,
+		rss_allowed=#rssAllowed# where topic_id=#topicId#
+    </update>
+
+	<select id="getTopicOrderById" parameterClass="java.lang.Long"
+		resultClass="int">
+		select display_order from news_topic where topic_id = #value#
+    </select>
+
+	<update id="updateTopicOrderById" parameterClass="map">
+		update news_topic set display_order=#displayOrder# where topic_id=#topicId#
+	</update>
+
+	<update id="updateTopicOrderByOrder" parameterClass="map">
+		update news_topic set display_order = #displayOrder1# where category_id =
+		#categoryId# and display_order=#displayOrder2#
+    </update>
+
+
+	<update id="updateTopicLastModifiedDate" parameterClass="map">
+		update news_topic set last_update_date=#lastUpdateDate# where
+		topic_id=#topicId#
+    </update>
+
+
+	<select id="getMaxTopicOrderInCategory" parameterClass="java.lang.Long"
+		resultClass="int">
+		select MAX(display_order) from news_topic where category_id=#value#
+    </select>
+
+	<select id="canDeleteTopic" resultClass="int" parameterClass="java.lang.Long">
+		SELECT COUNT(item_id) AS total FROM news_topic_item WHERE topic_id =
+		#value#
+  </select>
+
+	<delete id="deleteTopic" parameterClass="java.lang.Long">
+		delete from news_topic where topic_id=#value#
+   </delete>
+
+	<select id="isSameTopicNameExist" parameterClass="map"
+		resultClass="int">
+		SELECT count(topic_id) FROM news_topic WHERE name=#name# and topic_id !=
+		#id#
+  </select>
+
+	<select id="getAvailableTopicsByUser" parameterClass="map"
+		resultMap="result">
+		SELECT nt.topic_id, nt.name, nt.description, nt.category_id, nt.rss_allowed,
+		nt.public_View, nt.display_order FROM news_topic as nt, news_user_role
+		as nur WHERE nt.topic_id=nur.ctx_id and nur.ctx_type='T' and
+		nt.category_id=#categoryId# and nur.is_group='0' and
+		nur.principal=#principal# order by display_order desc
+  </select>
+
+	<select id="getPendingTopicsForCategory" parameterClass="java.lang.Long"
+		resultMap="result">
+ <![CDATA[
+SELECT distinct nt.topic_id, nt.name, nt.description, nt.category_id,  nt.rss_allowed, nt.public_View, nt.display_order
+FROM news_item ni, news_topic_item nti, news_topic nt, news_category nc
+WHERE nc.cat_id = nt.category_id
+AND nti.topic_id = nt.topic_id
+AND ni.item_id = nti.item_id
+AND ni.status = '0' and nc.cat_id=#categoryId#
+]]>
+	</select>
+</sqlMap>

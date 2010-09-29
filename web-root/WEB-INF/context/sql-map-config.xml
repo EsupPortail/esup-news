@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMapConfig
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+  <settings enhancementEnabled="true"  cacheModelsEnabled="true" 
+  	  maxTransactions="5" maxRequests="32" maxSessions="10"/>  
+  	  
+	<typeHandler javaType="org.esco.portlets.news.domain.FilterType"
+		callback="org.esco.portlets.news.dao.iBatis.extension.FilterTypeHandler" />
+	<typeHandler javaType="org.esco.portlets.news.domain.FilterOperator"
+		callback="org.esco.portlets.news.dao.iBatis.extension.FilterOperatorHandler" />
+	  
+        <sqlMap resource="org/uhp/portlets/news/dao/iBatis/maps/Category.xml" />        
+        <sqlMap resource="org/uhp/portlets/news/dao/iBatis/maps/@db_type@/Item.xml" />
+        <sqlMap resource="org/uhp/portlets/news/dao/iBatis/maps/Topic.xml" />
+        <sqlMap resource="org/uhp/portlets/news/dao/iBatis/maps/UserRole.xml" />  
+        <sqlMap resource="org/uhp/portlets/news/dao/iBatis/maps/Subscriber.xml" />
+        <sqlMap resource="org/uhp/portlets/news/dao/iBatis/maps/Sequence.xml" />
+        <sqlMap resource="org/esco/portlets/news/dao/iBatis/maps/@db_type@/Type.xml" />
+        <sqlMap resource="org/esco/portlets/news/dao/iBatis/maps/@db_type@/Entity.xml" />
+        <sqlMap resource="org/esco/portlets/news/dao/iBatis/maps/@db_type@/Filter.xml" />
+        <sqlMap resource="org/cmis/portlets/news/dao/iBatis/maps/Attachment.xml" />
+        <sqlMap resource="org/cmis/portlets/news/dao/iBatis/maps/AttachmentOptions.xml" />
+        <sqlMap resource="org/cmis/portlets/news/dao/iBatis/maps/CmisServer.xml" />
+</sqlMapConfig>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap>
+	<typeAlias type="org.cmis.portlets.news.domain.CmisServer" alias="server" />
+	
+	<resultMap id="resultServerInfos" class="server">
+		<result property="serverId" column="server_id" />
+		<result property="globalServer" column="is_default_server" />
+		<result property="serverUrl" column="server_url" />
+		<result property="serverLogin" column="server_login" />
+		<result property="serverPwd" column="server_pwd" />
+		<result property="repositoryId" column="repository_id" />
+	</resultMap>
+
+	<select id="getApplicationDefaultServer" resultMap="resultServerInfos" >
+		select server_id, is_default_server, server_url, server_login, server_pwd, repository_id
+		from news_cmis_server 
+		where is_default_server='1'
+    </select>
+
+	<select id="getEntityServer" resultMap="resultServerInfos" parameterClass="java.lang.Long">
+		select serv.server_id, serv.is_default_server, serv.server_url, serv.server_login, serv.server_pwd, serv.repository_id
+		from news_entity_cmis_server ent_serv, news_cmis_server serv  
+		where ent_serv.entity_id=#value# and serv.server_id = ent_serv.server_id
+    </select>
+
+    <insert id="insertServerInfos" parameterClass="server">
+		insert into news_cmis_server (server_id, is_default_server, server_url, server_login, server_pwd, repository_id) 
+		values (#serverId#, #globalServer#, #serverUrl#, #serverLogin#, #serverPwd#, #repositoryId#)
+    </insert>
+
+    <insert id="linkServerToEntity" parameterClass="map">
+		insert into news_entity_cmis_server (server_id, entity_id) 
+		values (#serverId#, #entityId#)
+    </insert>
+
+	<update id="updateServerInfos" parameterClass="server">
+		update news_cmis_server set 
+			is_default_server=#globalServer#, server_url=#serverUrl#,
+			server_login=#serverLogin#, server_pwd=#serverPwd#,
+			repository_id=#repositoryId#
+		where server_id=#serverId#
+     </update>  
+     
+     <delete id="deleteServerLinkToEntity" parameterClass="java.lang.Long">
+     	delete from news_entity_cmis_server 
+     	where entity_id=#value#
+     </delete>  
+     
+     <delete id="deleteServerInfos" parameterClass="java.lang.Long">
+     	delete from news_cmis_server 
+     	where server_id=#value#
+     </delete> 
+</sqlMap>
+

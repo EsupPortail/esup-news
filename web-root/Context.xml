@@ -1,0 +1,12 @@
+<Context path="/[APP.NAME]" docBase="[DEPLOY.HOME]/[APP.NAME]" crossContext="true">
+<Resource name="jdbc/newsDb" auth="Container" type="javax.sql.DataSource"
+    username="[JDBC.USERNAME]" password="[JDBC.PASSWORD]"
+    driverClassName="[JDBC.DRIVER]" url="[JDBC.URL]"
+    maxActive="100" maxIdle="30" maxWait="10000"
+    poolPreparedStatements="true"
+    validationQuery = "select 1"
+    removeAbandoned="true"
+    removeAbandonedTimeout="300"
+    logAbandoned="true"
+    />
+</Context>

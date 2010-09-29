@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Subscriber">
+	<typeAlias type="org.uhp.portlets.news.domain.Subscriber" alias="subscriber" />
+	<resultMap id="result" class="subscriber">
+		<result property="id" column="id" />
+		<result property="ctxId" column="ctx_id" />
+		<result property="ctxType" column="ctx_type" />
+		<result property="principal" column="sub_key" />
+		<result property="isGroup" column="sub_is_group" />
+		<result property="subType" column="sub_type" />
+	</resultMap>
+	<select id="getSubscribersByCtxIdSubType" resultMap="result" parameterClass="map"> select id, ctx_id, ctx_type,
+		sub_key, sub_is_group, sub_type from news_subscribers where ctx_id=#ctxId# AND ctx_type=#ctxType# AND
+		sub_type=#subType# AND sub_is_group='0' order by sub_key</select>
+	<select id="getSubscriberGroupsByCtxIdSubType" resultMap="result" parameterClass="map"> select id, ctx_id,
+		ctx_type, sub_key, sub_is_group, sub_type from news_subscribers where ctx_id=#ctxId# AND ctx_type=#ctxType# AND
+		sub_type=#subType# AND sub_is_group='1' order by sub_key</select>
+	<select id="getAllSubscribersByCtxIdSubType" resultMap="result" parameterClass="map"> select id, ctx_id,
+		ctx_type, sub_key, sub_is_group, sub_type from news_subscribers where ctx_id=#ctxId# AND ctx_type=#ctxType# AND
+		sub_type=#subType# order by sub_is_group, sub_key</select>
+	<select id="getSubscribersByCtxId" resultMap="result" parameterClass="map"> select id, ctx_id, ctx_type,
+		sub_key, sub_is_group, sub_type from news_subscribers where ctx_id=#ctxId# AND ctx_type=#ctxType# AND sub_is_group='0'
+		order by sub_key</select>
+	<select id="getSubscriberGroupsByCtxId" resultMap="result" parameterClass="map"> select id, ctx_id, ctx_type,
+		sub_key, sub_is_group, sub_type from news_subscribers where ctx_id=#ctxId# AND ctx_type=#ctxType# AND sub_is_group='1'
+		order by sub_key</select>
+	<select id="isSubscriberExistInCtx" parameterClass="map" resultClass="int"> SELECT count(id) FROM news_subscribers
+		WHERE sub_key=#principal# and ctx_id=#ctxId# and ctx_type=#ctxType# and sub_is_group=#isGroup#</select>
+	<select id="hasSubscribersInCtx" parameterClass="map" resultClass="int"> SELECT count(id) FROM news_subscribers WHERE
+		ctx_id=#ctxId# and ctx_type=#ctxType#</select>
+	<delete id="removeSubscriberByCtxId" parameterClass="map"> delete from news_subscribers where id=#id# AND ctx_id =
+		#ctxId# AND ctx_type=#ctxType#</delete>
+	<delete id="removeAllSubscribersByCtxIdForSubType" parameterClass="map"> delete from news_subscribers where
+		sub_type=#subType# AND ctx_type=#ctxType# AND ctx_id=#ctxId#</delete>
+	<delete id="removeAllSubscribersByCtxId" parameterClass="map"> delete from news_subscribers where ctx_id=#ctxId# AND
+		ctx_type=#ctxType#</delete>
+	<insert id="addSubscriber" parameterClass="subscriber"> insert into news_subscribers (id, ctx_id, ctx_type, sub_key,
+		sub_is_group, sub_type) values (#id#, #ctxId#, #ctxType#, #principal#, #isGroup#, #subType#)</insert>
+</sqlMap>

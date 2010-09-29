@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap>
+	<typeAlias type="org.cmis.portlets.news.domain.AttachmentOptions" alias="options" />
+	
+	<resultMap id="resultAttachmentOptions" class="options">
+		<result property="optionId" column="attachment_options_id" />
+		<result property="globalOptions" column="is_app_options" />
+		<result property="maxSize" column="max_size" />
+		<result property="authorizedFilesExtensions" column="authorized_files_extensions" />
+		<result property="forbiddenFilesExtensions" column="forbidden_files_extensions" />
+	</resultMap>
+
+	<select id="getApplicationOptions" resultMap="resultAttachmentOptions" >
+		select attachment_options_id, is_app_options, max_size, authorized_files_extensions, forbidden_files_extensions
+		from news_attachment_options 
+		where is_app_options='1'
+    </select>
+
+	<select id="getEntityOptions" resultMap="resultAttachmentOptions" parameterClass="java.lang.Long">
+		select nao.attachment_options_id, nao.is_app_options, nao.max_size, nao.authorized_files_extensions, nao.forbidden_files_extensions
+		from news_entity_attachment_options neao, news_attachment_options nao  
+		where neao.entity_id=#value# and nao.attachment_options_id = neao.attachment_options_id
+    </select>
+
+    <insert id="insertAttachmentOptions" parameterClass="options">
+		insert into news_attachment_options (attachment_options_id, is_app_options, max_size, authorized_files_extensions, forbidden_files_extensions) 
+		values (#optionId#, #globalOptions#, #maxSize#, #authorizedFilesExtensions#, #forbiddenFilesExtensions#)
+    </insert>
+
+    <insert id="linkAttachmentOptionsToEntity" parameterClass="map">
+		insert into news_entity_attachment_options (attachment_options_id, entity_id) 
+		values (#attachmentOptionsId#, #entityId#)
+    </insert>
+
+	<update id="updateAttachmentOptions" parameterClass="options">
+		update news_attachment_options set 
+			is_app_options=#globalOptions#, max_size=#maxSize#,
+			authorized_files_extensions=#authorizedFilesExtensions#, 
+			forbidden_files_extensions=#forbiddenFilesExtensions#
+		where attachment_options_id=#optionId#
+     </update>  
+     
+     <delete id="deleteAttachmentOptsLinkToEntity" parameterClass="java.lang.Long">
+     	delete from news_entity_attachment_options 
+     	where entity_id=#value#
+     </delete>  
+     
+     <delete id="deleteAttachmentOptions" parameterClass="java.lang.Long">
+     	delete from news_attachment_options 
+     	where attachment_options_id=#value#
+     </delete> 
+</sqlMap>
+

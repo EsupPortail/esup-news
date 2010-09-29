@@ -1,0 +1,29 @@
+Required :
+- java 1.6
+- Mysql Database must be configured with InnoDB engine (required for transactions).
+- Please try to configure UTF-8 as default enconding in your database !
+
+For the first install :
+
+- Adapt config files to your environment : build.properties, properties/news.properties, properties/log4j.properties
+- ant init (will do an ant clean and ant portlet-init, always avalaible)
+- ant db-init  (warning in web-root/WEB-INF/db/ read Readme.txt)
+- ant deploy
+- publish portlet with :
+	 portlet definition  ID : PROJECT_NAME.news
+	 fonctional name (fname) : PROJECT_NAME
+  where PROJECT_NAME is the value of the property app.name in build.properties
+  
+For an update :
+
+- make your choice of the good sql migration script specified in build.properties.
+- use the same commands as an install but do an 'ant db-update' instead of 'ant db-init'.
+
+The migration from newsPortlet 2.0.x datas should be done in the application by the Superadmin user after installation.
+For the migration you will need only to create entities and to associate categories on it. And update permissions on entity if needed !
+  
+
+To use the application with the one link association with Esup-lecture (at least version 1.5.1 is required), go on the admin menu and watch on types, an XML link will be available by type.
+
+
+Please refer to http://sourcesup.cru.fr/newsportlet/#install for detailed information (This documentation must be updated for Esup-News version)

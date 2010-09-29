@@ -1,0 +1,67 @@
+Version initial de NewsPortlet en version 2.0.6
+
+==== Version 2.1.0 ====
+	- Suppression des attributs email et user_name de la base de données. 
+	- Modification de l'affichage des utilisateurs avec détail dans les différentes vues, et définition d'une listes des attributs à afficher paramétrable.
+	- Mapping de ces attributs avec récupération dans le LDAP (esup-commons).
+	- Modification de la notification par mail afin d'effectuer la recherche des email courant des utilisateurs dans le LDAP.
+	
+	=> Meilleur prise en compte des modifications "dynamique" sur les attributs des utilisateurs. 
+
+==== Version 2.1.1 ====
+	- Modification des rôles des utilisateurs sans avoir à effectuer de suppression au préalable (Il suffit d'ajouter un nouveau role pour un utilisateur déjà renseigné). A voir pour les permissions !
+	- Corrections de quelques petits bugs d'affichage.
+	
+==== Version 2.1.2 ====
+	- Modification de l'affichage des attributs des utilisateurs (séparateur "-")
+	- Pagination et trie des tableau de recherche (manque la sauvegarde des selections pages par pages).
+	- Modification des css liés aux display table.
+	- Traitement de l'erreur en cas de retour du nombre de recherche LDAP trop importante.
+	- Modification FCKEditor et maj en 2.5 java et 2.6.5 javascript (upload de fichiers désactivé).
+	- Modification de l'agenda javascript et mise à jour pour le problème des caratères UTF-8
+	- Problème du modePortlet help et view, en allant en mode help on ne pouvait plus revenir sur le mode view.
+	- Ajout de la confirmation de suppression utilisateur ou groupe ou annonce ou catégorie, là ou cela manquait.
+	
+==== Version 2.1.3 ====
+	- Prise en compte de quelques modifications de newsPortlet version 2.0.7 et avec des adaptations.
+	- Librairie DisplayTag en version 1.2.
+	- Possibilité de nommer l'application selon le paramètre app.name dans le build.properties, permettant ainsi de pouvoir publier plusieurs instances de news.
+	- Possibilité de choisir le type de déploiement, avec ou sans redeploiement du fichier de context du pool de connexion à la BD, même principe pour le undeploy (suppression ou non).
+	
+==== Version 2.1.4 ====
+	- Modification du formulaire de gestion des "audiences", sauvegarde des selections avec navigation et tri sur les diférentes pages.
+	- Ajout de la possibilité de modifier une position d'annonce, de thème et de catégorie avec "descendre tout en bas" ou "monter tout en haut".
+
+==== Version 2.2.0 -> Version 0.2.0 ====
+	- Nouveau nom = nouvelle version
+	- Ajout de la notion d'entité
+	- Ajout de la possibilité de typé une annonce afin d'effectuer des filtres sur les catégories à retourner dans un certain contexte (flux xml pour esup-lecture).
+	- Ajout de la notion de filtre de recherche sur une entité aussi bien un attribut ldap que sur un groupe principal dans lequel les recherches seront effectuées. 
+		Attention les filtres LDAP sont concaténés dans une même requête avec un ET.
+	- Gestion et genération des flux rss et xml pour une entité.
+	- Connection à esup-lecture (version < 1.5.1) possible avec un seul flux xml pour l'ensemble des catégories pour tous les établissements (attention à ordonner par entity.
+	- Si l'utilisateur n'est pas un superAdmin et qu'il n'a qu'une seule entité en accès il est directement placé dans le context de l'entité.
+	- Gestion des pièces jointes dans les annonces.
+	- Définition d'une population ciblée par défaut au niveau de l'entité si pour une catégorie et un ou des thèmes de la catégorie il n'y a aucune population ciblée de définie.
+	- Définition des liens xml pour une entité (vue des propriétés de la catégorie), et un par type de contexte (vue admin des types).
+	- Prise en compte PostgreSQL, script d'init et de MAJ (manque la contrainte not null dans news_category.entity_id pour l'update, mais possible uniquement quand toutes les catégories seront associées à un entité).
+		Révision de la façon dont sont adaptés les fichier de mapping, il n'y a plus besoin de modifier les sources pour que ce soit compatible, cela se fait par rapport à la variable définie dans le fichier build.properties. Par contre il faudra maintenir plusieurs versions des fichiers hbm.
+	- Révision du mode de définition des permissions avec incidence sur entité/category/thème.
+	- Passage en version RC
+	- Corrections de bug mineurs sur les pièces jointes
+	- Ajout de quelques documentations
+
+		
+
+==== TODO ====
+	- Terminer les doc de la version.
+	- Ajouter la notion de priorité d'affichage des annonces des entités (ordre de priorité entre les entités). Est-ce bien nécessaire avec la notion de type sur les entités/catégories ?
+	- Effectuer une meilleur gestion de certaines erreurs et de leur affichage dans les jsp (noDelete.jsp, noitem.jsp par exemple)
+	- Voir pour afficher plus de messages lors de certaines opérations (confirmation d'ajout d'un utilisateur, Ajax ?)
+	- Vérifier le fonctionnement avec une BD PostgreSQL
+	- Ajouter la possibilité de donner des accès (admin, editeur, contributeur) aux catégories, thèmes... à des groupes.
+	- Regarder le système d'ordre d'affichage des annonces, des thèmes et des catégories, système non optimisé demande beaucoup trop de requêtes sql pour les modifications.
+	- Modifier la gestion des clés primaires et suppression de la classe des séquences sur l'ancienne partie newsportlet. 
+	- Ajouter des contraintes "Foreign Key" de la base existante afin de mieux lier tables et contrôler les répercutions lors d'ajout ou de suppression...
+	- Ajouter des modes de recherche des utilisateurs, selection sur un attribut spécifique et non plus uniquement sur l'attribut de recherche.
+	- Voir pour définir un système de filtre LDAP (l'utilisateur défini le filtre via une interface adaptée, choix des conditions...)

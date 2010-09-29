@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="news_entity">
+
+	<typeAlias alias="entity" type="org.esco.portlets.news.domain.Entity" />
+	<typeAlias alias="type" type="org.esco.portlets.news.domain.Type" />
+
+	<resultMap class="entity" id="entityResult">
+		<result column="entity_id" property="entityId" />
+		<result column="name" property="name" />
+		<result column="created_by" property="createdBy" />
+		<result column="creation_date" property="creationDate" />
+		<result column="description" property="description" />
+	</resultMap>
+
+	<resultMap class="type" id="type_result">
+			<result column="type_id" property="typeId" />
+			<result column="name" property="name" />
+			<result column="description" property="description" />
+	</resultMap>
+	
+	<select id="selectEntityById" parameterClass="java.lang.Long" resultMap="entityResult">
+		select entity_id, name, created_by, creation_date, description
+		from news_entity
+		where entity_id = #value#
+    </select>
+    
+    <select id="canDeleteEntityForCategory" resultClass="int">
+		SELECT COUNT(cat_id) AS total FROM news_category WHERE entity_id = #value#
+	</select>
+    
+    <select id="existEntityName" resultClass="int">
+		SELECT COUNT(entity_id) AS total FROM news_entity WHERE name = #value#
+	</select>
+	
+	<select id="sameEntityNameExist" resultClass="int">
+		SELECT COUNT(entity_id) AS total FROM news_entity WHERE name = #name# and entity_id != #entityId#
+	</select>
+
+	<delete id="deleteEntityById" parameterClass="java.lang.Long">
+		delete from news_entity
+		where entity_id = #value#
+    </delete>
+    
+	<insert id="insertEntity" parameterClass="entity">
+		<![CDATA[insert into news_entity (name, created_by, creation_date, description)
+		values (#name#,	#createdBy#, #creationDate#, #description#)]]>
+		<selectKey keyProperty="entityId" resultClass="java.lang.Long" type="post">
+			SELECT currval('news_entity_entity_id_seq')
+        </selectKey>
+	</insert>
+
+	<update id="updateEntityByIdSelective" parameterClass="entity">
+		update news_entity
+		<dynamic prepend="set">
+			<isNotNull prepend="," property="name">
+				name = #name#
+      </isNotNull>
+			<isNotNull prepend="," property="createdBy">
+				created_by = #createdBy#
+      </isNotNull>
+			<isNotNull prepend="," property="creationDate">
+				creation_date = #creationDate#
+      </isNotNull>
+			<isNotNull prepend="," property="description">
+				description = #description#
+      </isNotNull>
+		</dynamic>
+		where entity_id = #entityId#
+	</update>
+
+	<update id="updateEntityById" parameterClass="entity">
+		update news_entity
+		set name = #name#, created_by = #createdBy#, creation_date = #creationDate#, description = #description#
+		where entity_id = #entityId#
+    </update>
+
+	<select id="getAllEntity" resultMap="entityResult">
+		select entity_id, name,
+		created_by, creation_date, description
+		from news_entity
+		order by name asc
+    </select>
+    
+    <select id="getEntityByUser" parameterClass="java.lang.String" resultMap="entityResult">
+		select entity_id, name,
+		created_by, creation_date, description
+		from news_entity, news_user_role as nur 
+		where news_entity.entity_id=nur.ctx_id and nur.ctx_type='E' and nur.is_group='0' and nur.principal=#principal# 
+		order by name asc
+    </select>
+    
+    <select id="getEntitiesByType" parameterClass="java.lang.Long" resultMap="entityResult">
+		select e.entity_id, e.name,
+		e.created_by, e.creation_date, e.description
+		from news_entity e, news_entity_type et
+		where et.type_id=#value# and et.entity_id=e.entity_id
+		order by name asc
+    </select>
+
+	<select id="getAuthorizedTypeListByEntity" parameterClass="java.lang.Long" resultMap="type_result">
+		select t.type_id, t.name, t.description
+		from news_entity_type et, news_type t
+		where et.entity_id=#value# and et.type_id=t.type_id
+		order by t.name asc
+    </select>
+    
+	<insert id="insertOneAuthorizedTypeOfEntity" parameterClass="map">
+		insert into
+		news_entity_type (entity_id, type_id)
+		values (#entityId#, #typeId#)
+	</insert>
+	
+	<delete id="deleteOneAuthorizedTypeOnEntity" parameterClass="map">
+		delete from news_entity_type
+		where entity_id = #entityId# and type_id = #typeId#
+	</delete>
+	<delete id="deleteAllAuthorizedTypeOnEntity" parameterClass="java.lang.Long">
+		delete from news_entity_type
+		where entity_id = #entityId#
+	</delete>
+
+</sqlMap>

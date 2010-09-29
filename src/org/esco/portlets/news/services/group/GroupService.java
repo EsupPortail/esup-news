@@ -1,0 +1,36 @@
+/**
+ * ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+ * For any information please refer to http://esup-helpdesk.sourceforge.net
+ * You may obtain a copy of the licence at http://www.esup-portail.org/license/
+ */
+package org.esco.portlets.news.services.group;
+
+import java.util.List;
+
+import org.esupportail.portal.ws.client.PortalGroup;
+import org.esupportail.portal.ws.client.exceptions.PortalErrorException;
+
+/**
+ * Interface for Group Services.
+ * @author GIP RECIA - Gribonvald Julien
+ * 31 mai 2010
+ */
+public interface GroupService {
+
+    /**
+     * Looking for groups.
+     * @param token
+     * @return List<PortalGroup>
+     * @throws PortalErrorException 
+     */
+    List<PortalGroup> searchPortalGroups(final String token) throws PortalErrorException;
+
+    /**
+     * Looking for a group.
+     * @param id
+     * @return PortalGroup
+     * @throws PortalErrorException 
+     */
+    PortalGroup getPortalGroupById(final String id) throws PortalErrorException;
+
+}

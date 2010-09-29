@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap>
+	<typeAlias type="org.cmis.portlets.news.domain.Attachment" alias="attachment" />
+	
+	<resultMap id="resultAttachment" class="attachment">
+		<result property="attachmentId" column="attachment_id" />
+		<result property="cmisUid" column="cmis_uid" />
+		<result property="fileName" column="file_name" />
+		<result property="title" column="title" />
+		<result property="description" column="description" />
+		<result property="insertDate" column="insert_date" />
+		<result property="size" column="size" />
+	</resultMap>
+
+	<select id="getAttachmentById" resultMap="resultAttachment" parameterClass="java.lang.Long">
+		select attachment_id, cmis_uid, file_name, title, description, insert_date, size
+		from news_attachment 
+		where attachment_id=#value#
+    </select>
+
+	<select id="getAttachmentListByItem" resultMap="resultAttachment" parameterClass="java.lang.Long">
+		select at.attachment_id, at.cmis_uid, at.file_name, at.title, at.description, at.insert_date, at.size
+		from news_attachment_item na, news_attachment at  
+		where na.item_id=#value# and at.attachment_id = na.attachment_id
+    </select>
+    
+    <select id="getItemsLinkedToAttachment" resultClass="java.util.List" parameterClass="java.lang.Long">
+		select item_id from news_attachment_item 
+		where attachment_id=#attachmentId#
+    </select>
+    
+    <insert id="updateAttachment" parameterClass="map">
+		update news_attachment set title=#title#, description=#description#
+		where attachment_id=#attachmentId#
+    </insert>
+       
+    <insert id="insertAttachment" parameterClass="attachment">
+		insert into news_attachment (attachment_id, cmis_uid, file_name, title, description, insert_date, path, size) 
+		values (#attachmentId#, #cmisUid#, #fileName#, #title#, #description#, #insertDate#, #path#, #size#)
+    </insert>
+
+	<insert id="insertAttachmentToItem" parameterClass="map">
+		insert into news_attachment_item (item_id, attachment_id) 
+		values (#itemId#, #attachmentId#)
+    </insert>
+    
+    
+	<delete id="deleteAttachment" parameterClass="java.lang.Long">
+		delete from news_attachment where attachment_id=#value#
+    </delete>
+
+	<delete id="deleteAttachmentForItem" parameterClass="map">
+		delete from news_attachment_item where item_id=#itemId# and attachment_id=#attachmentId#
+	</delete>
+
+</sqlMap>
+

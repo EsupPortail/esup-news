@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+           xmlns:p="http://www.springframework.org/schema/p"
+	   xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
+                <property name="ignoreResourceNotFound" value="true"/>
+                <property name="locations">
+                   <list>
+                      <value>/WEB-INF/context/news.properties</value>
+                   </list>
+                </property>
+</bean>
+<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource" p:basename="classpath:messages" p:defaultEncoding="UTF-8" p:fileEncodings="UTF-8"/>
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:cache="true" p:viewClass="org.springframework.web.servlet.view.JstlView" p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
+<bean id="defaultExceptionHandlerTemplate" class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver" abstract="true">
+                <property name="defaultErrorView" value="defError"/>
+                <property name="exceptionMappings">
+                        <props>
+                                <prop key="javax.portlet.PortletSecurityException">notAuthorized</prop>
+                                <prop key="javax.portlet.UnavailableException">notAvailable</prop>
+                                <prop key="org.springframework.dao.DataAccessException">dataAccessFailure</prop>
+                                <prop key="org.springframework.jdbc.BadSqlGrammarException">dberror</prop>
+                                <prop key="org.springframework.ldap.SearchLimitExceededException">searchLimitExceeded</prop>
+                                <prop key="org.springframework.orm.ObjectRetrievalFailureException">objectRetrievalFailure</prop>
+                                <prop key="org.uhp.portlets.news.service.exception.UserNotFoundException">userNotFoundException</prop>
+                                <prop key="org.uhp.portlets.news.service.exception.SecurityException">securityException</prop>
+                                <prop key="org.uhp.portlets.news.service.exception.ResourceException">resourceException</prop>
+                                <prop key="org.uhp.portlets.news.service.exception.NoSuchTopicException">noSuchTopicException</prop>
+                                <prop key="org.uhp.portlets.news.service.exception.NoSuchItemException">noSuchItemException</prop>
+                                <prop key="org.cmis.portlets.news.services.exceptions.DownloadException">downloadException</prop>
+                                <prop key="org.cmis.portlets.news.services.exceptions.CmisException">cmisException</prop>
+                                <prop key="org.esupportail.commons.services.ldap.LdapException">ldapException</prop>
+                                <prop key="javax.naming.TimeLimitExceededException">timeLimitExceeded</prop>
+                        </props>
+                </property>
+</bean> 
+    <!--
+ <bean id="portalService" class="org.esupportail.portal.ws.client.support.uportal.CachingUportalServiceImpl"
+     p:url="${ws.url}" 
+     p:cacheManager-ref="cacheManager"
+     p:cacheName=""/>
+     
+ <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+ p:configLocation="classpath:/properties/cache/ehcache.xml" />
+-->
+<bean id="portalService" class="org.esupportail.portal.ws.client.support.uportal.BasicUportalServiceImpl" p:url="${ws.url}"/>      
+
+<bean id="groupService" class="org.esco.portlets.news.services.group.GroupServiceImpl" p:portalService-ref="portalService"/>
+
+</beans>

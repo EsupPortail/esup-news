@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+           xmlns:p="http://www.springframework.org/schema/p"
+	   xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+       <context:annotation-config />
+       <context:component-scan base-package="org.uhp.portlets.news.service" />
+       <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+                <property name="locations">
+                        <list>
+                                <value>WEB-INF/context/news.properties</value>
+                        </list>
+                </property>
+       </bean>
+       <tx:annotation-driven/>
+       <bean id="itemManager" class="org.uhp.portlets.news.service.ItemManagerImpl" p:nbDaysAfterForExp="${item.expire.nbDaysForExp}"/> 
+       <bean id="attachmentManager" class="org.cmis.portlets.news.services.AttachmentManagerImpl"/>
+       <bean id="subscribeService" class="org.uhp.portlets.news.service.SubscribeServiceImpl"/> 
+       <bean id="entityValidator" class="org.esco.portlets.news.web.validator.EntityValidator"/>
+       <bean id="categoryValidator" class="org.uhp.portlets.news.web.validator.CategoryValidator"/>
+       <bean id="categoryEValidator" class="org.uhp.portlets.news.web.validator.CategoryEValidator"/>
+       <bean id="topicValidator" class="org.uhp.portlets.news.web.validator.TopicValidator"/>  
+       <bean id="typeValidator" class="org.esco.portlets.news.web.validator.TypeValidator"/> 
+       <bean id="filterValidator" class="org.esco.portlets.news.web.validator.FilterValidator"/> 
+       <bean id="topicEValidator" class="org.uhp.portlets.news.web.validator.TopicEValidator"/>
+       <bean id="itemValidator" class="org.uhp.portlets.news.web.validator.ItemValidator"/>
+       <bean id="subValidator" class="org.uhp.portlets.news.web.validator.SubValidator"/>
+       <bean id="PermissionValidator" class="org.uhp.portlets.news.web.validator.PermissionValidator"/>
+       
+       <bean id="attachmentOptionsValidator" class="org.cmis.portlets.news.web.validator.AttachmentOptionsValidator"/>
+       <bean id="cmisServerParamsValidator" class="org.cmis.portlets.news.web.validator.CmisServerParamsValidator"/>
+       
+       <bean id="newsStoreController" class="org.uhp.portlets.news.web.NewsStoreController"/>     
+       <bean id="newsStoreHelpController" class="org.springframework.web.portlet.mvc.ParameterizableViewController" p:viewName="newsHelp"/>  
+       
+       <bean id="categoryEditController" class="org.uhp.portlets.news.web.CategoryEditController" p:sessionForm="true" p:validator-ref="categoryEValidator"/>
+       <bean id="categoryAddController" class="org.uhp.portlets.news.web.CategoryAddController" p:sessionForm="true" p:validator-ref="categoryValidator"/>      
+       <bean id="categoryViewController" class="org.uhp.portlets.news.web.CategoryViewController"/>               
+       <bean id="categorySettingViewController" class="org.uhp.portlets.news.web.ShowCategorySettingController"/>    
+       <bean id="categoryDeleteController" class="org.uhp.portlets.news.web.CategoryDeleteController" />      
+       <bean id="categoryIncrementController" class="org.uhp.portlets.news.web.CategoryIncrementController"/>      
+       
+       <bean id="topicIncrementController" class="org.uhp.portlets.news.web.TopicIncrementController"/>      
+       <bean id="topicEditController" class="org.uhp.portlets.news.web.TopicEditController" p:sessionForm="true" p:validator-ref="topicEValidator"/>    
+       <bean id="topicAddController" class="org.uhp.portlets.news.web.TopicAddController" p:sessionForm="true" p:validator-ref="topicValidator"/>
+       <bean id="topicViewController" class="org.uhp.portlets.news.web.TopicViewController" p:nbItemsToShow="${items.nbItemsToShow}"/>
+       <bean id="topicSettingViewController" class="org.uhp.portlets.news.web.ShowTopicSettingController" />      
+       <bean id="topicFeedsViewController" class="org.uhp.portlets.news.web.TopicFeedsViewController" p:feedType="${feed.type}"/>          
+       <bean id="topicDeleteController" class="org.uhp.portlets.news.web.TopicDeleteController" />
+       
+       <bean id="portletMultipartResolver" class="org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver">
+       		<!-- the maximum file size in bytes -->
+       		<property name="maxUploadSize" value="100000000"/>
+       </bean>
+ 
+       <bean id="typeEditController" class="org.esco.portlets.news.web.TypeEditController" p:sessionForm="true" p:validator-ref="typeValidator"/>
+       <bean id="typeAddController" class="org.esco.portlets.news.web.TypeAddController" p:sessionForm="true" p:validator-ref="typeValidator"/>      
+       <bean id="typeViewController" class="org.esco.portlets.news.web.TypeViewController"/>               
+       <bean id="typeSettingViewController" class="org.esco.portlets.news.web.TypeSettingViewController"/>    
+       <bean id="typeDeleteController" class="org.esco.portlets.news.web.TypeDeleteController" />
+       
+       <bean id="filterAddController" class="org.esco.portlets.news.web.FilterAddController" p:sessionForm="true" p:validator-ref="filterValidator"/>      
+       <bean id="filterViewController" class="org.esco.portlets.news.web.FilterViewController"/>               
+       <bean id="filterEditController" class="org.esco.portlets.news.web.FilterEditController" p:sessionForm="true" p:validator-ref="filterValidator"/>
+       <bean id="filterDeleteController" class="org.esco.portlets.news.web.FilterDeleteController" />
+               
+       <bean id="attachmentConfViewController" class="org.cmis.portlets.news.web.AttachmentConfViewController"/>         
+       <bean id="entityAttachmentConfViewController" class="org.cmis.portlets.news.web.EntityAttachmentConfViewController"/> 
+       <bean id="attachmentOptionsController" class="org.cmis.portlets.news.web.AttachmentOptionsController" p:validator-ref="attachmentOptionsValidator"/> 
+       <bean id="entityAttachmentOptionsController" class="org.cmis.portlets.news.web.EntityAttachmentOptionsController" p:validator-ref="attachmentOptionsValidator"/> 
+       <bean id="cmisServerParamsController" class="org.cmis.portlets.news.web.CmisServerParamsController" p:validator-ref="cmisServerParamsValidator"/> 
+       <bean id="entityCmisServerParamsController" class="org.cmis.portlets.news.web.EntityCmisServerParamsController" p:validator-ref="cmisServerParamsValidator"/> 
+       
+       <bean id="entityEditController" class="org.esco.portlets.news.web.EntityEditController" p:sessionForm="true" p:validator-ref="entityValidator"/>
+       <bean id="entityAddController" class="org.esco.portlets.news.web.EntityAddController" p:sessionForm="true" p:validator-ref="entityValidator"/>   
+       <bean id="entityViewController" class="org.esco.portlets.news.web.EntityViewController"/>
+       <bean id="entityDeleteController" class="org.esco.portlets.news.web.EntityDeleteController" />               
+       <bean id="entitySettingViewController" class="org.esco.portlets.news.web.EntitySettingViewController"/>
+               
+       <bean id="itemEditController" class="org.uhp.portlets.news.web.ItemEditController" p:validator-ref="itemValidator">
+       		<property name="temporaryStoragePath" value="WEB-INF/upload"/>
+       </bean> 
+       <bean id="itemAddController" class="org.uhp.portlets.news.web.ItemAddController" p:validator-ref="itemValidator">
+       		<property name="temporaryStoragePath" value="WEB-INF/upload"/>
+       </bean> 
+       <bean id="itemApprovalController" class="org.uhp.portlets.news.web.ItemApprovalController" />    
+       <bean id="itemIncrementController" class="org.uhp.portlets.news.web.ItemIncrementController" />     
+       <bean id="itemViewController" class="org.uhp.portlets.news.web.ItemViewController" />   
+       <bean id="itemDeleteController" class="org.uhp.portlets.news.web.ItemDeleteController" />   
+       
+       <bean id="userDeleteController" class="org.uhp.portlets.news.web.UserDeleteController" />
+       <bean id="userRoleDeleteController" class="org.uhp.portlets.news.web.UserRoleDeleteController" />
+       <bean id="userDetailController" class="org.uhp.portlets.news.web.UserDetailController" />      
+       <bean id="userActivateController" class="org.uhp.portlets.news.web.UserActivateController" />
+       
+       <bean id="permEViewController" class="org.uhp.portlets.news.web.PermissionViewController" p:ctx="E"/>
+       <bean id="permCViewController" class="org.uhp.portlets.news.web.PermissionViewController" p:ctx="C"/>   
+       <bean id="permTViewController" class="org.uhp.portlets.news.web.PermissionViewController" p:ctx="T"/> 
+       <bean id="permissionController"   class="org.uhp.portlets.news.web.PermissionController" p:nbItemsToShow="${perm.nbItemsToShow}" p:validator-ref="PermissionValidator"/> 
+       
+       <bean id="audienceEViewController" class="org.uhp.portlets.news.web.AudienceViewController" p:ctx="E"/>
+       <bean id="audienceCViewController" class="org.uhp.portlets.news.web.AudienceViewController" p:ctx="C"/>       
+       <bean id="audienceTViewController" class="org.uhp.portlets.news.web.AudienceViewController" p:ctx="T"/>    
+       <bean id="subcribeController" class="org.uhp.portlets.news.web.SubcribeController" p:nbItemsToShow="${subscribe.nbItemsToShow}" p:validator-ref="subValidator"/>   
+       <bean id="subscriberDeleteController" class="org.uhp.portlets.news.web.SubscriberDeleteController"/>       
+      
+       <bean id="managersViewController" class="org.uhp.portlets.news.web.ManagersViewController" p:nbUsersToShow="${managers.nbUsersToShow}"/>   
+       <bean id="rolesViewController" class="org.uhp.portlets.news.web.RolesViewController"/>       
+       <bean id="superUController" class="org.uhp.portlets.news.web.SuperUserController" p:nbItemsToShow="${perm.nbItemsToShow}"/>                  
+       
+       
+       <bean id="defaultExceptionHandler" parent="defaultExceptionHandlerTemplate"/>
+       <bean id="userRoleInterceptor" class="org.esco.portlets.news.web.UserRoleInterceptor"/>        
+       <bean id="parameterMappingInterceptor" class="org.springframework.web.portlet.handler.ParameterMappingInterceptor"/>
+       <bean id="portletModeParameterHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeParameterHandlerMapping">
+                <property name="order" value="10"/>
+                <property name="interceptors">
+                        <list>
+                           <ref bean="parameterMappingInterceptor"/>
+                           <ref bean="userRoleInterceptor"/>
+                        </list>
+                </property>
+                <property name="portletModeParameterMap">
+                        <map>
+                                <entry key="view">
+                                        <map>
+                                        		<entry key="newsHelp"><ref bean="newsStoreHelpController"/></entry>
+                                                <entry key="newsStore"><ref bean="newsStoreController"/></entry>
+                                                
+                                                <entry key="viewEntity"><ref bean="entityViewController"/></entry>
+                                                <entry key="addEntity"><ref bean="entityAddController"/></entry>
+                                                <entry key="deleteEntity"><ref bean="entityDeleteController"/></entry>
+                                                <entry key="editEntity"><ref bean="entityEditController"/></entry>
+                                                <entry key="viewEntitySetting"><ref bean="entitySettingViewController"/></entry>
+                                                
+                                                <entry key="viewCategory"><ref bean="categoryViewController"/></entry>
+                                                <entry key="viewCategorySetting"><ref bean="categorySettingViewController"/></entry>
+                                                <entry key="editCategory"><ref bean="categoryEditController"/></entry>
+                                                <entry key="deleteCategory"><ref bean="categoryDeleteController"/></entry>
+                                                <entry key="addCategory"><ref bean="categoryAddController"/></entry>
+                                                <entry key="incrementCategory"><ref bean="categoryIncrementController"/></entry>
+                                                
+                                                <entry key="xmlTopicsFeeds"><ref bean="topicFeedsViewController"/></entry>
+                                                <entry key="viewTopic"><ref bean="topicViewController"/></entry>
+                                                <entry key="viewTopicSetting"><ref bean="topicSettingViewController"/></entry>
+                                                <entry key="editTopic"><ref bean="topicEditController"/></entry>
+                                                <entry key="incrementTopic"><ref bean="topicIncrementController"/></entry>
+                                                <entry key="deleteTopic"><ref bean="topicDeleteController"/></entry>
+                                                <entry key="addTopic"><ref bean="topicAddController"/></entry>
+                                               
+                                                <entry key="viewTypes"><ref bean="typeViewController"/></entry>
+                                                <entry key="viewTypeSetting"><ref bean="typeSettingViewController"/></entry>
+                                                <entry key="editType"><ref bean="typeEditController"/></entry>
+                                                <entry key="deleteType"><ref bean="typeDeleteController"/></entry>
+                                                <entry key="addType"><ref bean="typeAddController"/></entry>
+                                                
+                                                <entry key="viewFilters"><ref bean="filterViewController"/></entry>
+                                                <entry key="editFilter"><ref bean="filterEditController"/></entry>
+                                                <entry key="deleteFilter"><ref bean="filterDeleteController"/></entry>
+                                                <entry key="addFilter"><ref bean="filterAddController"/></entry>
+                                                
+                                                <entry key="viewAttachmentConf"><ref bean="attachmentConfViewController"/></entry>
+                                                <entry key="viewEntityAttachmentConf"><ref bean="entityAttachmentConfViewController"/></entry>
+                                                <entry key="editAttachmentOptions"><ref bean="attachmentOptionsController"/></entry>
+                                                <entry key="editEntityAttachmentOptions"><ref bean="entityAttachmentOptionsController"/></entry>
+                                                <entry key="editCmisServerParams"><ref bean="cmisServerParamsController"/></entry>
+                                                <entry key="editEntityCmisServerParams"><ref bean="entityCmisServerParamsController"/></entry>
+                                                
+                                                <entry key="viewItem"><ref bean="itemViewController"/></entry>
+                                                <entry key="editItem"><ref bean="itemEditController"/></entry>
+                                                <entry key="incrementItem"><ref bean="itemIncrementController"/></entry>
+                                                <entry key="deleteItem"><ref bean="itemDeleteController"/></entry>
+                                                <entry key="apprItem"><ref bean="itemApprovalController"/></entry>
+                                                <entry key="addItem"><ref bean="itemAddController"/></entry>
+                                                
+                                                <entry key="deleteUser"><ref bean="userDeleteController"/></entry>
+                                                <entry key="userDetails"><ref bean="userDetailController"/></entry>
+                                                <entry key="deleteUserRole"><ref bean="userRoleDeleteController"/></entry>
+                                                <entry key="activateUser"><ref bean="userActivateController"/></entry>
+                                                <entry key="deleteSubscriber"><ref bean="subscriberDeleteController"/></entry>
+                                                <entry key="addSuperAdm"><ref bean="superUController"/></entry>
+                                                <entry key="viewManagers"><ref bean="managersViewController"/></entry>
+                                                
+                                                <entry key="addPermission"><ref bean="permissionController"/></entry>
+                                                <entry key="viewPermissionE"><ref bean="permEViewController"/></entry>
+                                                <entry key="viewPermissionC"><ref bean="permCViewController"/></entry>
+                                                <entry key="viewPermissionT"><ref bean="permTViewController"/></entry>
+                                                
+                                                <entry key="viewAudienceE"><ref bean="audienceEViewController"/></entry>
+                                                <entry key="viewAudienceC"><ref bean="audienceCViewController"/></entry>
+                                                <entry key="viewAudienceT"><ref bean="audienceTViewController"/></entry>
+                                                <entry key="addAudience"><ref bean="subcribeController"/></entry>
+                                                
+                                                <entry key="viewRoles"><ref bean="rolesViewController"/></entry>
+                                       </map>
+                                </entry>
+                        </map>
+                </property>
+        </bean>
+        <bean id="portletModeHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
+			<property name="order" value="20" />
+			<property name="interceptors">
+				<list>
+					<ref bean="userRoleInterceptor" />
+				</list>
+			</property>
+			<property name="portletModeMap">
+				<map>
+					<entry key="view"><ref bean="newsStoreController" /></entry>
+					<entry key="help"><ref bean="newsStoreHelpController" /></entry>
+				</map>
+			</property>
+		</bean>       
+</beans>

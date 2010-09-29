@@ -1,0 +1,46 @@
+# Properties file 
+
+
+#ldap properties
+ldap.url=ldap://ldap.univ.fr:389
+ldap.base=ou=people,dc=univ,dc=fr
+ldap.username=cn=admin,ou=administrateurs,dc=univ,dc=fr
+ldap.password=*****
+
+# Attribut pour la recherche des utilisateurs (cn ou sn) 
+ldap.userSearchAttr=cn
+# Liste des attributs d'un utilisateur à afficher
+ldap.searchDisplayedAttr=displayName, mail, uid, escouai
+# Id/uid identifiant de recherche des utilisateurs
+ldap.userId=uid
+# attribut LDAP du nom d'utilisateur pour l'affichage
+ldap.userDisplayName=displayName
+# attribut LDAP du champ mail de l'utilisateur
+ldap.userEmail=mail
+
+# Liste des attributs LDAP autorisés afin de constituer des filtres.
+ldap.filterSearchUserAttr=escouai, ENTEleveClasses, ENTEleveGroupes, ENTAuxEnsClasses, ENTAuxEnsGroupes
+
+# Si la date d'expiration d'une annonce non définie : date d'expiration = date d'apparition +  ${item.expire.nbDaysForExp}
+item.expire.nbDaysForExp=30
+
+# nbr de lignes affichées par page pour la gestion des permissions
+perm.nbItemsToShow=5
+
+# nbr de lignes affichées par page pour la vue gestionnaires
+managers.nbUsersToShow=8
+
+# nbr de lignes affichées par page pour la gestion de ciblage
+subscribe.nbItemsToShow=25
+
+# nbr de lignes affichées par page pour la liste des annonces
+items.nbItemsToShow=15
+
+# url du web service, exemple : http://ent.univ.fr/services/UportalService 
+ws.url=http\://my.univ.fr/uPortal/services/UportalService 
+
+# export feed type, supported feed formats : rss_0.92, rss_1.0, rss_2.0, atom_0. 3, atom_1.0
+feed.type=rss_2.0
+
+# export Category latest news feed from last n days
+feed.dayCount=5

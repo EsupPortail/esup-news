@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="news_type">
+
+	<typeAlias alias="type" type="org.esco.portlets.news.domain.Type" />
+
+	<resultMap class="type" id="typeResult">
+		<result column="type_id" jdbcType="BIGINT" property="typeId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="description" jdbcType="LONGVARCHAR" property="description" />
+	</resultMap>
+
+	<select id="selectTypeById" parameterClass="java.lang.Long" resultMap="typeResult">
+		select type_id, name, description
+		from news_type
+		where type_id = #value#
+    </select>
+    
+    <select id="selectTypeByName" parameterClass="java.lang.String" resultMap="typeResult">
+		select type_id, name, description
+		from news_type
+		where name = #value#
+    </select>
+    
+    <select id="existTypeName" resultClass="int">
+		SELECT COUNT(type_id) AS total FROM news_type WHERE name = #value#
+	</select>
+	
+	<select id="sameTypeNameExist" parameterClass="map" resultClass="int">
+		SELECT COUNT(type_id) AS total FROM news_type WHERE name = #name# and type_id != #typeId#
+	</select>
+    
+    <select id="canDeleteTypeForCategory" resultClass="int">
+		SELECT COUNT(cat_id) AS total FROM news_category_type WHERE type_id = #value#
+	</select>
+	<select id="canDeleteTypeForEntity" resultClass="int">
+		SELECT COUNT(entity_id) AS total FROM news_entity_type WHERE type_id = #value#
+	</select>
+
+	<delete id="deleteTypeById" parameterClass="java.lang.Long">
+		delete from news_type
+		where type_id = #value#
+    </delete>
+
+	<insert id="insertType" parameterClass="type">
+		<![CDATA[insert into news_type (name, description)
+		values (#name#, #description#)]]>
+		<selectKey keyProperty="typeId" resultClass="java.lang.Long" type="post">
+			SELECT LAST_INSERT_ID() AS type_id
+        </selectKey>
+    </insert>
+
+	<update id="updateTypeByIdSelective" parameterClass="type">
+		update news_type
+		<dynamic prepend="set">
+			<isNotNull prepend="," property="name">
+				name = #name#
+      </isNotNull>
+			<isNotNull prepend="," property="description">
+				description = #description#
+      </isNotNull>
+		</dynamic>
+		where type_id = #typeId#
+	</update>
+
+	<update id="updateTypeById" parameterClass="type">
+		update news_type
+		set name = #name#, description = #description#
+		where type_id = #typeId#
+    </update>
+
+	<select id="getAllType" resultMap="typeResult">
+		select type_id, name, description
+		from news_type
+		order by name asc
+    </select>
+</sqlMap>

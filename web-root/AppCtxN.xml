@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="[JDBC.DRIVER]" />
+		<property name="url" value="[JDBC.URL]" />
+		<property name="username" value="[JDBC.USERNAME]" />
+		<property name="password" value="[JDBC.PASSWORD]" />
+		<property name="initialSize">
+			<value>8</value>
+		</property>
+		<property name="maxActive">
+			<value>50</value>
+		</property>
+		<property name="maxIdle">
+			<value>16</value>
+		</property>
+		<property name="minIdle">
+			<value>8</value>
+		</property>
+		<property name="maxWait">
+			<value>15000</value>
+		</property>
+	</bean>
+	
+	<bean id="contextSource"
+		class="org.springframework.ldap.support.LdapContextSource"
+		p:url="[LDAP.URL]" p:base="[LDAP.BASE]"
+		p:userName="[LDAP.USERNAME]" p:password="[LDAP.PASSWORD]" />
+	<bean id="ldapTemplate"
+		class="org.springframework.ldap.LdapTemplate">
+		<constructor-arg ref="contextSource" />
+	</bean>
+
+	<bean id="list" class="java.util.LinkedList">
+		<constructor-arg>
+			<bean class="org.esco.portlets.news.utils.ListEditor"
+				p:property="[LDAP.SEARCH.DISPLAYED.ATTR]" />
+		</constructor-arg>
+	</bean>
+	
+	<bean 
+		id="cacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"		>
+		<description>
+			This bean is used to configure EhCache.
+		</description>
+		<property name="configLocation" value="properties/cache/ehcache.xml" />
+	</bean>
+
+	<bean id="ldapUserService"
+		class="org.esco.portlets.news.services.ldap.SearchableLdapUserServiceImpl"
+		p:ldapTemplate-ref="ldapTemplate" p:idAttribute="[LDAP.USER.ID]"
+		p:attributes-ref="list" p:dnSubPath=""
+		p:searchAttribute="[LDAP.USER.SEARCH.ATTR]"
+		p:searchDisplayedAttributes-ref="list"
+		p:cacheManager-ref="cacheManager" p:cacheName=""
+		p:testFilter="cn=*" />
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="sqlMapClient"
+		class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation" value="../context/sql-map-config.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="sqlUserDao"
+		class="org.uhp.portlets.news.dao.iBatis.SqlMapClientUserDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+	</bean>
+	<bean id="userDao"
+		class="org.esco.portlets.news.dao.EscoUserDaoImpl">
+		<property name="userDao" ref="sqlUserDao" />
+		<property name="ldapUserService" ref="ldapUserService" />
+		<property name="displayName" value="[LDAP.USER.DISPLAYNAME]" />
+		<property name="mail" value="[LDAP.USER.EMAIL]" />
+	</bean>
+
+	<bean id="categoryDao"
+		class="org.uhp.portlets.news.dao.iBatis.SqlMapClientCategoryDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+		<property name="sequenceDao" ref="sequenceDao" />
+	</bean>
+
+	<bean id="topicDao"
+		class="org.uhp.portlets.news.dao.iBatis.SqlMapClientTopicDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+		<property name="sequenceDao" ref="sequenceDao" />
+	</bean>
+
+	<bean id="itemDao"
+		class="org.uhp.portlets.news.dao.iBatis.SqlMapClientItemDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+		<property name="sequenceDao" ref="sequenceDao" />
+	</bean>
+	
+	<bean id="attachmentDao" 
+		class="org.cmis.portlets.news.dao.iBatis.SqlMapClientAttachmentDaoImpl">       
+		<property name="sqlMapClient" ref="sqlMapClient" />
+		<property name="sequenceDao" ref="sequenceDao" />
+	</bean>  
+	     
+	<bean id="attachmentOptionsDao" 
+		class="org.cmis.portlets.news.dao.iBatis.SqlMapClientAttachmentOptionsDaoImpl">       
+		<property name="sqlMapClient" ref="sqlMapClient" />
+		<property name="sequenceDao" ref="sequenceDao" />
+	</bean> 
+	
+	<bean id="cmisServerParamsDao" 
+		class="org.cmis.portlets.news.dao.iBatis.SqlMapClientCmisServerDaoImpl">       
+		<property name="sqlMapClient" ref="sqlMapClient" />
+		<property name="sequenceDao" ref="sequenceDao" />
+	</bean>   
+
+	<bean id="sequenceDao"
+		class="org.uhp.portlets.news.dao.iBatis.SequenceDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+	</bean>
+
+	<bean id="mailSender"
+		class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="[MAIL.SMTP.SERVER]" />
+	</bean>
+
+	<bean id="templateMessage"
+		class="org.springframework.mail.SimpleMailMessage">
+		<property name="from">
+			<value><![CDATA[ [MAIL.NOTIFY.ADDR.FROM] ]]></value>
+		</property>
+		<property name="subject" value="validation annonces" />
+		<property name="text">
+			<value>
+				<![CDATA[
+Bonjour,
+
+Vous avez %NB% nouvelle(s) annonce(s) a valider dans la categorie "%CATEGORY%" ! 
+
+Les themes concernes sont :
+ %TOPICS% 
+
+Veuillez vous connecter sur le portail http://[ENT.URL] pour la validation. 
+
+
+(Attention : ce message a ete genere automatiquement.) 
+        ]]>
+
+
+			</value>
+		</property>
+	</bean>
+
+
+	<bean id="NotificationService"
+		class="org.uhp.portlets.news.service.NotificationServiceImpl">
+		<property name="mailSender" ref="mailSender" />
+		<property name="templateMessage" ref="templateMessage" />
+		<property name="itemDao" ref="itemDao" />
+		<property name="topicDao" ref="topicDao" />
+		<property name="categoryDao" ref="categoryDao" />
+		<property name="userDao" ref="userDao" />
+		<property name="enableNotification" value="true" />
+	</bean>
+
+</beans>

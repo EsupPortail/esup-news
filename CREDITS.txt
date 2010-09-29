@@ -1,0 +1,33 @@
+*******************************************************************************
+                            ESUP-NEWS - CREDITS
+*******************************************************************************
+
+The project Esup-News is an evolution of the project NewsPortlet initialized by 
+the university of Nancy 1 (France).
+This evolution was needed for several contexts (mainly adding the Entity context) but also for a better friendly 
+User Interface and to have a better reading of users attributes.
+
+The First Evolutions were integrated by the GIP RECIA from the project NewsPortlet in version 2.0.6.
+ 
+GIP RECIA : Groupement d'Intérêt Public REgion Centre InterActive
+Address : 
+			GIP RECIA
+			151 rue de la Juine
+			Parc d'activités Les Aulnaies
+			45160 OLIVET 
+			FRANCE
+			 
+					
+Developer : 
+						Julien GRIBONVALD (julien.gribonvald@recia.fr)
+
+
+
+------------------------------------------------------------------------------
+                          NEWSPORTLET CONTRIBUTORS 
+------------------------------------------------------------------------------
+
+The first contributor is the University of Henri Pointcaré Nancy 1 (France).
+
+Developer : 
+						shijia QIANG (qiang@uhp-nancy.fr)

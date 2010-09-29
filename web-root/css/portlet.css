@@ -1,0 +1,326 @@
+/*  Web Services for Remote Portlets Specification v1.0 - July 02 2003  =
+*/ /*####  Section 10.6 CSS Style Definitions  #####*/
+	/*##  Section 10.6.1 Links (Anchor) - defined by uPortal CSS  ##*/
+	/*##  Section 10.6.2 Fonts  ##*/
+.esup-news .portlet-font {
+	color: Black;
+	font-family: Georgia, "Times New Roman", Times, serif;
+}  /*  uPortal equivalent style =3D  "uportal-text "  */
+.esup-news .portlet-font-dim {
+	color: Gray;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: small;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+	/*##  Section 10.6.3 Messages  ##*/
+.esup-news .portlet-msg-status {
+	font-size: normal;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color: #993333;
+	font-style: italic;
+}  /*  uPortal equivalent style =3D  " uportal-channel-warning"  */
+.esup-news .portlet-msg-info {
+	font-size: normal;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color: #993333;
+}  /*  uPortal equivalent style =3D  " uportal-channel-warning"  */
+.esup-news .portlet-msg-error {
+	font-size: normal;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color: #993333;
+}  /*  uPortal equivalent style =3D  " uportal-channel-error"  */
+.esup-news .portlet-msg-alert {
+	font-size: normal;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color: #990000;
+	font-style: italic;
+}  /*  uPortal equivalent style =3D  " uportal-channel-warning"  */
+.esup-news .portlet-msg-success {
+	font-size: normal;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color: #993333;
+	font-weight: bold;
+}  /*  uPortal equivalent style =3D  " uportal-channel-warning"  */
+	/*##  Section 10.6.4 Sections ##*/
+.esup-news .portlet-section-header {
+	color: #999999;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: x-large;
+	font-weight: bold;
+}  /*  uPortal equivalent style =3D  " uportal-channel-title"  */
+.esup-news .portlet-section-body {
+	color: Black;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: normal;
+}  /*  uPortal equivalent style =3D  " uportal-text"  */
+.esup-news .portlet-section-alternate {
+	color: #666666;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: normal;
+} 
+	/*  uPortal equivalent style =3D  " uportal-channel-table-row-odd"  */
+.esup-news .portlet-section-selected {
+	background: Black;
+	font-family: Georgia, "Times New Roman", Times, serif;;
+	font-size: normal;
+	color: White;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-section-subheader {
+	color: #999999;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: large;
+	font-weight: bold;
+}  /*  uPortal equivalent style =3D  " uportal-channel-subtitle"  */
+.esup-news .portlet-section-footer {
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: x-small;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-section-text {
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+}  /*  uPortal equivalent style =3D  "uportal-text-small "  */
+.esup-news .portlet-section-text-bold {
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+	font-weight: bold;
+}
+
+/*##  Section 10.6.5 Tables ##*/
+.esup-news .portlet-table-header {
+	background: #FEC98D;
+	background-color: #FEC98D;
+	color: #993333;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+	font-weight: bold;
+	text-align: left;
+	width: auto;
+}
+	
+	/*  uPortal equivalent style =3D  " uportal-channel-table-header with =
+class uportal-background-light"  */
+.esup-news .portlet-table-body {
+	background-color: #FFFFFF;
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+}  /*  uPortal equivalent style =3D  " uportal-channel-table-row-even =
+with class uportal-background-content"  */
+.esup-news .portlet-table-alternate {
+	background: #D8D8D8;
+	background-color: #D8D8D8;
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+}
+	
+	/*  uPortal equivalent style =3D  " uportal-channel-table-row-odd with =
+class uportal-background-light"  */
+.esup-news .portlet-table-selected {
+	background: #FFFFCC;
+	background-color: #FFFFCC;
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+}  /*  uPortal equivalent style =3D  " uportal-channel-table-row-even =
+with class uportal-background-selected"  */
+.esup-news .portlet-table-subheader {
+	color: #999999;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+	font-weight: bold;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-table-footer {
+	background: #FEC98D;
+	background-color: #FEC98D;
+	color: #993333;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-table-text {
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-table-text-bold {
+	font-weight: bold;
+	font-size: normal;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+.esup-news .portlet-table-text a {
+	text-decoration: none;
+	color: black;
+}
+
+.esup-news .portlet-table-text-bold a {
+	text-decoration: none;
+	color: black;
+}
+
+/*##  Section 10.6.5 Tables ##*/
+.esup-news .portlet-form-label {
+	width: 20em;
+	text-align: left;
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+	font-weight: bold;
+}  /*  uPortal equivalent style =3D  " uportal-label"  */
+.esup-news .portlet-form-input-field {
+	width: auto;
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+	background: #FDEFEF;
+}  /*  uPortal equivalent style =3D  " uportal-input-text"  */
+.esup-news .portlet-form-button {
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+	background: #FDEFEF;
+}  /*  uPortal equivalent style =3D  "uportal-button "  */
+.esup-news .portlet-icon-label {
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+	background: #CCCC99;
+}  /*  uPortal equivalent style =3D  " uportal-button"  */
+.esup-news .portlet-dlg-icon-label {
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+	background: #CCCC99;
+}  /*  uPortal equivalent style =3D  " uportal-button"  */
+.esup-news .portlet-form-field-label {
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+	font-weight: bold;
+}  /*  uPortal equivalent style =3D  " uportal-label"  */
+.esup-news .portlet-form-field {
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+	/*##  Section 10.6.7 Menus ##*/
+.esup-news .portlet-menu {
+	background: #fec98d;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-menu-item {
+	display: inline;
+	border-spacing: 0;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-menu-item input {
+	display: inline-block;
+	margin: 5px 10px;
+	padding: 5px;
+	color: #993333;
+	font-size: normal;
+	font-weight: bold;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	vertical-align: bottom;
+	background: #fec98d;
+	border-style: none;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.esup-news .portlet-menu-item a {
+	display: table-cell;
+	display: inline-block;
+	margin: 5px 10px;
+	padding: 5px;
+	text-decoration: none;
+	color: #993333;
+	font-size: normal;
+	font-weight: bold;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	vertical-align: bottom;
+}
+
+.esup-news .portlet-menu-item a:hover {
+	
+}
+
+.esup-news .portlet-menu-item-selected {
+	display: inline;
+	border-spacing: 2px 0;
+}
+
+.esup-news .portlet-menu-item-selected input {
+	display: inline-block;
+	margin: 5px 10px;
+	padding: 5px;
+	font-size: normal;
+	font-weight: bold;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color: white;
+	vertical-align: bottom;
+	background: #fec98d;
+	border-style: none;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.esup-news .portlet-menu-item-selected a {
+	display: table-cell;
+	display: inline-block;
+	margin: 5px 10px;
+	padding: 5px;
+	text-decoration: none;
+	font-size: normal;
+	font-weight: bold;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color: white;
+	vertical-align: bottom;
+}
+
+.esup-news .portlet-menu-item-hover {
+	background: #666633;
+	color: Black;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: normal;
+	font-weight: bold;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-menu-item-hover-selected {
+	background: #666633;
+	color: white;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: normal;
+	font-weight: bold;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-menu-cascade-item {
+	background: #CCCC99;
+	color: Black;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: normal;
+	font-weight: bold;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-menu-cascade-item-selected {
+	background: #666633;
+	color: White;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: normal;
+	font-weight: bold;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-menu-description {
+	background: #CCCC99;
+	color: Black;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: normal;
+	font-style: italic;
+}  /*  uPortal equivalent style =3D  " no current equivalent"  */
+.esup-news .portlet-menu-caption {
+	background: #CCCC99;
+	color: Black;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: normal;
+	font-weight: bold;
+} /*  uPortal equivalent style =3D  " no current equivalent"  */

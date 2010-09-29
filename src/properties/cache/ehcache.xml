@@ -1,0 +1,50 @@
+<ehcache>
+
+    <!--
+     | Used for storing data for persistent caches
+     +-->
+    <diskStore path="java.io.tmpdir/portail_WS"/>
+
+    <!--
+     | Cache for Entries
+     +-->
+    <cache name="org.esupportail.portal.ws.client.PortalGroup"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToIdleSeconds="300"
+        timeToLiveSeconds="600"
+    />
+    
+    <cache 
+    	name="org.esupportail.commons.services.ldap.CachingLdapEntityServiceImpl"
+    	maxElementsInMemory="1000" 
+    	eternal="false" 
+    	timeToIdleSeconds="300"
+    	timeToLiveSeconds="600" 
+    	overflowToDisk="true" 
+    	/>
+	<cache 
+    	name="org.esupportail.portal.ws.client.support.uportal.CachingUportalServiceImpl"
+    	maxElementsInMemory="1000" 
+    	eternal="false" 
+    	timeToIdleSeconds="900"
+    	timeToLiveSeconds="900" 
+    	overflowToDisk="true" 
+    	/>
+ 
+     <!--
+     | Required by EHcache
+     +-->
+    <defaultCache
+            maxElementsInMemory="10000"
+            eternal="false"
+            timeToIdleSeconds="120"
+            timeToLiveSeconds="120"
+            overflowToDisk="true"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU"
+            />
+   
+</ehcache>

@@ -1,0 +1,231 @@
+
+<project name="Esup-News" default="compile" basedir=".">
+
+	<property file="build.properties" />
+	<property file="properties/news.properties" />
+
+	<property name="app.name" value="${app.name}" />
+	<property name="app.version" value="0.2.0" />
+	<property name="compile.debug" value="true" />
+	<property name="compile.deprecation" value="false" />
+	<property name="compile.optimize" value="true" />
+	<property name="src.home" value="src" />
+	<property name="lib.home" value="lib" />
+	<property name="extlib.home" value="extLib" />
+	<property name="build.home" value="build" />
+	<property name="dist.home" value="dist" />
+	<property name="update.dir" value="update-esco" />
+	<property name="classes.home" value="${build.home}/WEB-INF/classes" />
+	<property name="attachement.temporary.upload.home" value="${build.home}/WEB-INF/upload" />
+
+	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${lib.home}/ant-contrib-1.0b3.jar"/>
+
+	<!-- ==================== Compilation Classpath =========================== -->
+	<path id="compile.classpath">
+		<fileset dir="${lib.home}">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${extlib.home}">
+			<include name="*.jar" />
+		</fileset>
+		<pathelement path="${classes.home}" />
+		<pathelement path="${build.home}/WEB-INF/classes/properties/cache/ehcache.xml" />
+	</path>
+
+	<target name="init" description="Initialisation of the temporary deployement dir" depends="clean,portlet-init" />
+
+	<target name="clean" description="Delete old build directory">
+		<echo message="clean ..." />
+		<delete dir="${build.home}" />
+	</target>
+	
+
+	<target name="portlet-init">
+		<echo message="Init ..." />
+		<mkdir dir="${build.home}" />
+		<mkdir dir="${classes.home}" />
+		<mkdir dir="${attachement.temporary.upload.home}" />
+		
+		<copy todir="${build.home}/css">
+			<fileset dir="web-root/css" />
+		</copy>
+		<copy todir="${build.home}/scripts">
+			<fileset dir="web-root/scripts" />
+		</copy>
+		<copy todir="${build.home}/images">
+			<fileset dir="web-root/images" />
+		</copy>
+		<copy todir="${build.home}/fckeditor">
+			<fileset dir="web-root/fckeditor" />
+		</copy>
+
+		<copy todir="${build.home}/WEB-INF">
+			<fileset dir="web-root/WEB-INF" />
+		</copy>
+
+		<copy todir="${build.home}/WEB-INF/lib">
+			<fileset dir="${lib.home}">
+				<include name="*.jar" />
+				<exclude name="portlet-api-1.0.jar" />
+				<exclude name="servlet-api.jar" />
+			</fileset>
+		</copy>
+		
+		<if>
+			<equals arg1="${deploy.update-esco}" arg2="true" />
+			<then>
+				<echo message="Deploying update directory !" />
+				<copy todir="${build.home}" overwrite="yes">
+					<fileset dir="${update.dir}/web-root" />
+				</copy>
+			</then>
+		</if>
+			
+
+		<copy file="web-root/web.xml" todir="${build.home}/WEB-INF" overwrite="yes" />
+		<replace file="${build.home}/WEB-INF/web.xml" token="[CAS_URL_LOGIN]" value="${cas.url.login}" />
+		<replace file="${build.home}/WEB-INF/web.xml" token="[CAS_URL_VALIDATE]" value="${cas.url.validate}" />
+		<replace file="${build.home}/WEB-INF/web.xml" token="[APP_URL_CAS_PROXY_VALIDATE]" value="${app.url.cas_proxy_validate}" />
+		<replace file="${build.home}/WEB-INF/web.xml" token="[SERVER_URL]" value="${server.finalURL}" />
+		<replace file="${build.home}/WEB-INF/web.xml" token="[APP_NAME]" value="${app.name}" />
+		<copy file="web-root/AppCtxN.xml" todir="${classes.home}" overwrite="yes" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[JDBC.DRIVER]" value="${jdbc.driverClassName}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[JDBC.URL]" value="${jdbc.url}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[JDBC.USERNAME]" value="${jdbc.username}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[JDBC.PASSWORD]" value="${jdbc.password}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[ENT.URL]" value="${portal.finalURL}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[MAIL.SMTP.SERVER]" value="${mail.smtp.server}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[MAIL.NOTIFY.ADDR.FROM]" value="${mail.notify.addr.from}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[MAIL.NOTIFY.SUBJECT]" value="${mail.notify.subject}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.URL]" value="${ldap.url}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.PASSWORD]" value="${ldap.password}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.BASE]" value="${ldap.base}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.USERNAME]" value="${ldap.username}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.SEARCH.DISPLAYED.ATTR]" value="${ldap.searchDisplayedAttr}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.USER.ID]" value="${ldap.userId}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.USER.SEARCH.ATTR]" value="${ldap.userSearchAttr}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.USER.DISPLAYNAME]" value="${ldap.userDisplayName}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.USER.EMAIL]" value="${ldap.userEmail}" />
+
+		<replace file="${build.home}/WEB-INF/jsp/include.jsp" token="@NEWS_VERSION@" value="${app.version}" />
+		<replace file="${build.home}/WEB-INF/jsp/item.jsp" token="@NEWS_VERSION@" value="${app.version}" />
+		<replace file="${build.home}/WEB-INF/jsp/items.jsp" token="@NEWS_VERSION@" value="${app.version}" />
+		
+		<replace file="${build.home}/WEB-INF/jsp/include.jsp" token="@NEWS_ATTACHMENTS_ACTIVATION@" value="${attachments.activate}" />		
+
+		<copy file="properties/news.properties" todir="${build.home}/WEB-INF/context" overwrite="yes" />
+		<replace file="${build.home}/WEB-INF/context/sql-map-config.xml" token="@db_type@" value="${db.type}" />
+		
+		<copy file="properties/log4j.properties" todir="${build.home}/WEB-INF/classes" overwrite="yes" />
+		<copy todir="${build.home}/WEB-INF/classes" overwrite="yes">
+			<fileset dir="properties/">
+				<filename name="fckeditor*.properties" />
+			</fileset>
+		</copy>
+		<if>
+			<equals arg1="${deploy.context}" arg2="true" />
+			<then>
+				<copy file="web-root/Context.xml" tofile="${tomcat.home}/conf/Catalina/localhost/${app.name}.xml" overwrite="yes" />
+				<replace file="${tomcat.home}/conf/Catalina/localhost/${app.name}.xml" token="[APP.NAME]" value="${app.name}" />
+				<replace file="${tomcat.home}/conf/Catalina/localhost/${app.name}.xml" token="[DEPLOY.HOME]" value="${deploy.home}" />
+				<replace file="${tomcat.home}/conf/Catalina/localhost/${app.name}.xml" token="[JDBC.USERNAME]" value="${jdbc.username}" />
+				<replace file="${tomcat.home}/conf/Catalina/localhost/${app.name}.xml" token="[JDBC.PASSWORD]" value="${jdbc.password}" />
+				<replace file="${tomcat.home}/conf/Catalina/localhost/${app.name}.xml" token="[JDBC.DRIVER]" value="${jdbc.driverClassName}" />
+				<replace file="${tomcat.home}/conf/Catalina/localhost/${app.name}.xml" token="[JDBC.URL]" value="${jdbc.url}" />
+			</then>
+			<else>
+				<echo message="Deployement of the context file wasn't done.\n Check property deploy.context in build.properties file if you want to deploy it."/>
+			</else>
+		</if>
+	</target>
+
+	<!-- db-init create tables for the NewsPublisher Portlet -->
+	<target name="db-init">
+		<copy file="web-root/db/create_${db.type}.sql" tofile="db/create.sql" overwrite="yes" />
+		<replace file="db/create.sql" token="[SUPER_USER_UID]" value="${first.super.user.uid}" />
+		<replace file="db/create.sql" token="[SUPER_USER_EMAIL]" value="${first.super.user.email}" />
+		<echo message=" Creating the tables for Esup-News it will fail if the table already exist" />
+		<sql driver="${jdbc.driverClassName}" url="${jdbc.url}" userid="${jdbc.username}" password="${jdbc.password}" classpathref="compile.classpath" print="yes">
+			<transaction src="db/create.sql" />
+		</sql>
+	</target>
+
+	<!-- db-update update tables for the NewsPublisher Portlet. -->
+	<target name="db-update">
+		<copy file="web-root/db/${db.filename}" todir="db" overwrite="yes" />
+		<echo message="Updating the database with ${db.filename} script." />
+		<sql driver="${jdbc.driverClassName}" url="${jdbc.url}" userid="${jdbc.username}" password="${jdbc.password}" classpathref="compile.classpath" print="yes">
+			<transaction src="db/${db.filename}" />
+		</sql>
+	</target>
+
+	<!-- ==================== Compile Target ================================== -->
+	<target name="compile" description="Compile Java sources">
+		<echo message="Compile ..." />
+		<!-- Compile Java classes as necessary to build location -->
+		<javac srcdir="${src.home}" destdir="${classes.home}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}" encoding="UTF-8">
+			<classpath refid="compile.classpath" />
+			<exclude name="**/test/**"/>
+		</javac>
+		<copy todir="${classes.home}">
+			<fileset dir="${src.home}">
+				<exclude name="**/*.java" />
+				<exclude name="CVS" />
+				<exclude name="**/mysql/**"/>
+				<exclude name="**/postgresql/**"/>
+				<exclude name="**/test/**"/>
+			</fileset>
+		</copy>
+		
+		<copy todir="${classes.home}/" overwrite="yes">
+			<fileset dir="${src.home}" >
+				<include name="**/${db.type}/*" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="deploy" description="Deploy the portlet apps" depends="compile">
+		<echo message="Deploy Portlet..." />
+		<copy todir="${deploy.home}/${app.name}" overwrite="yes" failonerror="false">
+			<fileset dir="${build.home}" />
+		</copy>
+
+		<echo message="*********************************************************" />
+		<echo message="ATTENTION: please ensure that the Webservices esup-portal-ws (just server side) is installed in your portal, you can refer to: http://sourcesup.cru.fr/esup-portal-ws/main/index.html for more information" />
+		<echo message="*********************************************************" />
+	</target>
+	
+	<target name="notify" description="Notification">
+		<echo message="Invoking Email Notification" />
+		<java fork="true" dir="${build.home}/WEB-INF/classes" classname="org.uhp.portlets.news.notification.NotificationRunner">
+			<classpath>
+				<path refid="compile.classpath" />
+			</classpath>
+			<sysproperty key="file.encoding" value="UTF-8" />
+		</java>
+
+	</target>
+
+
+	<target name="undeploy" description="Undeploy the portlet">
+		<echo message="Un-deploy Portlet..." />
+		<delete dir="${deploy.home}/${app.name}" />
+		<if>
+			<equals arg1="${undeploy.context}" arg2="true" />
+			<then>
+				<delete file="${tomcat.home}/conf/Catalina/localhost/${app.name}.xml" />
+			</then>
+			<else>
+				<echo message="Delete of the context file wasn't done. Check property undeploy.context in build.properties file if you want to remove it.." />
+			</else>
+		</if>
+	</target>
+
+	<target name="war" description="Make a war of the portlet.">
+		<war destfile="${app.name}.war" webxml="${build.home}/WEB-INF/web.xml">
+			<zipfileset dir="${build.home}" />
+		</war>
+	</target>
+
+</project>

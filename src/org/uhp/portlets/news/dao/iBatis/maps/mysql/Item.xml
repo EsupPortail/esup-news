@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap>
+	<typeAlias type="org.uhp.portlets.news.domain.Item" alias="item" />
+	<typeAlias type="org.uhp.portlets.news.domain.Topic" alias="topic" />
+
+	<cacheModel id="cacheItem" type="MEMORY">
+		<flushInterval hours="24" />
+		<flushOnExecute statement="updateItem" />
+		<flushOnExecute statement="updateItemOrderInTopicById" />
+		<flushOnExecute statement="updateItemOrderInTopic" />
+		<flushOnExecute statement="updateItemOrderInTopicByOrder" />
+		<flushOnExecute statement="updateItemStatus" />
+		<flushOnExecute statement="insertItem" />
+		<flushOnExecute statement="insertItemToTopic" />
+		<flushOnExecute statement="deleteItem" />
+		<flushOnExecute statement="deleteItemForTopic" />
+		<flushOnExecute statement="deleteItemForAllTopic" />
+		<property name="size" value="600" />
+		<property name="reference-type" value="WEAK" />
+	</cacheModel>
+
+	<resultMap class="item" id="item_result">
+		<result property="itemId" column="item_id" />
+		<result property="categoryId" column="category_id" />
+		<result property="title" column="title" />
+		<result property="summary" column="summary" />
+		<result property="body" column="body" />
+		<result property="postDate" column="post_date" javaType="java.util.Date" />
+		<result property="startDate" column="start_date" javaType="java.util.Date" />
+		<result property="endDate" column="end_date" javaType="java.util.Date" />
+		<result property="lastUpdatedDate" column="last_update_date"
+			javaType="java.util.Date" />
+		<result property="postedBy" column="posted_by" />
+		<result property="lastUpdatedBy" column="last_updated_by" />
+		<result property="status" column="status" />
+	</resultMap>
+
+	<resultMap id="topic_result" class="topic">
+		<result property="topicId" column="topic_id" />
+		<result property="name" column="name" />
+	</resultMap>
+
+	<select id="getItemById" resultMap="item_result" parameterClass="java.lang.Long"
+		cacheModel="cacheItem">
+		select it.item_id, it.category_id, it.title, it.summary, it.body,
+		it.post_date, it.start_date, it.end_date, it.last_update_date,
+		it.posted_by, it.last_updated_by, it.status from news_item it where
+		it.item_id=#value#
+        </select>
+
+	<select id="getItemListByTopic" resultMap="item_result"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+               <![CDATA[  select it.item_id, it.category_id, it.title, it.summary, it.body, it.post_date, it.start_date, it.end_date, it.last_update_date, it.posted_by, it.last_updated_by, it.status from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.status='1' and it.start_date <= now() and it.end_date >= now()  order by ti.display_order  desc ]]>
+	</select>
+
+	<select id="getValidatedItemListByTopic" resultMap="item_result"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+
+<![CDATA[  select it.item_id, it.category_id, it.title, it.summary, it.body, it.post_date, it.start_date, it.end_date, it.last_update_date, it.posted_by, it.last_updated_by, it.status from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.status='1'  and it.start_date <= now() and it.end_date >= now()  order by ti.display_order  desc ]]>
+	</select>
+
+	<select id="getScheduledItemListByTopic" resultMap="item_result"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+
+<![CDATA[  select it.item_id, it.category_id, it.title, it.summary, it.body, it.post_date, it.start_date, it.end_date, it.last_update_date, it.posted_by, it.last_updated_by, it.status from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.status='1'  and it.start_date > now()  order by ti.display_order  desc ]]>
+	</select>
+
+
+
+	<select id="getPendingItemListByTopic" resultMap="item_result"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+		select it.item_id, it.category_id, it.title, it.summary, it.body,
+		it.post_date, it.start_date, it.end_date, it.last_update_date,
+		it.posted_by, it.last_updated_by, it.status from news_item it,
+		news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value#
+		and it.status='0' order by it.post_date desc
+        </select>
+
+	<select id="getExpiredItemListByTopic" resultMap="item_result"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+               <![CDATA[  select it.item_id, it.category_id, it.title, it.summary, it.body, it.post_date, it.start_date, it.end_date, it.last_update_date, it.posted_by, it.last_updated_by, it.status from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.status='1' and  it.end_date < now() order by it.post_date desc  ]]>
+	</select>
+
+	<select id="getItemListByStatusForTopic" resultMap="item_result"
+		parameterClass="map" cacheModel="cacheItem">
+		select it.item_id, it.category_id, it.title, it.summary, it.body,
+		it.post_date, it.start_date, it.end_date, it.last_update_date,
+		it.posted_by, it.last_updated_by, it.status from news_item it,
+		news_topic_item ti where it.item_id=ti.item_id and
+		ti.topic_id=#topicId# and it.status=#status# order by ti.display_order
+		desc
+        </select>
+
+	<select id="getAllItemListByTopic" resultMap="item_result"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+		select it.item_id, it.category_id, it.title, it.summary, it.body,
+		it.post_date, it.start_date, it.end_date, it.last_update_date,
+		it.posted_by, it.last_updated_by, it.status from news_item it,
+		news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value#
+		order by it.post_date desc
+        </select>
+
+	<select id="getItemsCountByTopic" resultClass="int"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+              <![CDATA[  select count(it.item_id) from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# AND it.status='1' and it.start_date <= now() and it.end_date >= now() ]]>
+	</select>
+
+	<select id="getTotalItemsCountByTopic" resultClass="int"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+              <![CDATA[  select count(it.item_id) from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value#  ]]>
+	</select>
+
+	<select id="getPendingItemsCountByTopic" resultClass="int"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+		select count(it.item_id) from news_item it INNER JOIN news_topic_item ti ON
+		it.item_id=ti.item_id and ti.topic_id=#value# AND it.status='0'
+	</select>
+
+	<select id="getScheduledItemsCountByTopic" resultClass="int"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+<![CDATA[  select count(DISTINCT it.item_id) from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.status='1'  and it.start_date > now() ]]>
+	</select>
+
+	<select id="getPendingItemsCountForTopics" resultClass="int"
+		parameterClass="map">
+		select count(DISTINCT it.item_id) from news_item it INNER JOIN
+		news_topic_item ti ON it.item_id=ti.item_id AND it.status='0'
+		<dynamic prepend="WHERE">
+			<iterate property="topicIds" open="ti.topic_id IN (" close=")"
+				conjunction=",">
+				#topicIds[]#
+            </iterate>
+		</dynamic>
+	</select>
+	
+	 
+    <select id="countItemsWithAttachmentByTopic" resultClass="int" parameterClass="java.lang.Long">
+		 select count(it.item_id) from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.item_id IN (select distinct item_id from news_attachment_item)
+    </select>
+    <select id="getItemsWithAttachmentsByTopic" resultMap="item_result"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+		select it.item_id, it.category_id, it.title, it.summary, it.body,
+		it.post_date, it.start_date, it.end_date, it.last_update_date,
+		it.posted_by, it.last_updated_by, it.status
+		from news_item it, news_topic_item ti 
+		where it.item_id=ti.item_id and ti.topic_id=#value# and it.item_id IN (select distinct item_id from news_attachment_item)
+	</select>
+
+	<select id="getPendingItemsCountByCategory" resultClass="int"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+		select count(it.item_id) from news_item it where it.category_id=#value# AND
+		it.status='0'
+        </select>
+
+	<select id="getTotalItemsCountByCategory" resultClass="int"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+          <![CDATA[ select count(it.item_id) from news_item it where  it.category_id=#value#]]>
+	</select>
+
+	<select id="getNItemsByTopic" resultMap="item_result"
+		parameterClass="map" cacheModel="cacheItem">
+		select it.item_id, it.category_id, it.title, it.summary, it.body,
+		it.post_date, it.start_date, it.end_date, it.last_update_date,
+		it.posted_by, it.last_updated_by, it.status from news_item it,
+		news_topic_item ti where it.item_id=ti.item_id and
+		ti.topic_id=#topicId# order by ti.display_order desc LIMIT #n#
+	</select>
+
+	<select id="getItemListByCategory" resultMap="item_result"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+		select distinct it.item_id, it.category_id, it.title, it.summary, it.body,
+		it.post_date, it.start_date, it.end_date, it.last_update_date,
+		it.posted_by, it.last_updated_by, it.status from news_item it,
+		news_topic_item ti, news_topic nt where it.item_id=ti.item_id and
+		ti.topic_id=nt.topic_id and nt.category_id=#value# order by nt.name,
+		ti.display_order desc;
+        </select>
+
+	<select id="getTopicListByItem" resultMap="topic_result"
+		parameterClass="java.lang.Long" cacheModel="cacheItem">
+		select t.topic_id as topic_id, t.name as name from news_item i, news_topic
+		t, news_topic_item ti where i.item_id = ti.item_id and
+		t.topic_id=ti.topic_id and i.item_id=#value#
+        </select>
+
+	<insert id="insertItem" parameterClass="item">
+		insert into news_item (item_id, category_id, title, summary, body,
+		post_date, start_date, end_date, posted_by, last_updated_by,
+		last_update_date, status) values (#itemId#, #categoryId#, #title#,
+		#summary#, #body#, #postDate#, #startDate#, #endDate#, #postedBy#,
+		#lastUpdatedBy#, #lastUpdatedDate#, #status#)
+        </insert>
+
+	<insert id="insertItemToTopic" parameterClass="map">
+		insert into news_topic_item (item_id, topic_id, display_order) values
+		(#itemId#, #topicId#, #displayOrder#)
+        </insert>
+
+	<update id="updateItemOrderInTopic" parameterClass="map">
+                <![CDATA[
+               update news_topic_item set display_order=#displayOrder# where item_id=#itemId#  and topic_id=#topicId#
+                 ]]>
+
+	</update>
+
+	<update id="updateItem" parameterClass="item">
+		update news_item set title=#title#, summary=#summary#, body=#body#,
+		post_date=#postDate#, start_date=#startDate#, end_date=#endDate#,
+		last_update_date=#lastUpdatedDate#, last_updated_by=#lastUpdatedBy#,
+		status=#status# where item_id=#itemId#
+        </update>
+
+	<update id="updateItemStatus" parameterClass="map">
+		update news_item set status = #status# where item_id=#itemId#
+    </update>
+
+	<select id="getMaxItemOrderInTopic" parameterClass="java.lang.Long"
+		resultClass="int" cacheModel="cacheItem">
+		select max(display_order) from news_topic_item where topic_id = #value#
+	</select>
+
+	<select id="hasItemInTopic" parameterClass="java.lang.Long"
+		resultClass="int">
+		select count(1) from news_topic_item where topic_id = #value#
+  </select>
+
+	<select id="isOrphan" parameterClass="java.lang.Long"
+		resultClass="int">
+		select count(1) from news_topic_item where item_id = #value#
+  </select>
+
+	<select id="hasProtectedTopic" resultClass="int" parameterClass="java.lang.Long"
+		cacheModel="cacheItem">
+		SELECT count(t.topic_id) FROM news_item i, news_topic t, news_topic_item ti
+		WHERE i.item_id = ti.item_id AND t.topic_id = ti.topic_id AND
+		t.rss_allowed = '1' AND public_view = '0' AND i.item_id =#value#
+	</select>
+
+	<select id="getItemOrderInTopic" parameterClass="map"
+		resultClass="int">
+		select display_order from news_topic_item where topic_id = #topicId# and
+		item_id = #itemId#
+  </select>
+
+	<update id="updateItemOrderInTopicById" parameterClass="map">
+   <![CDATA[
+        update news_topic_item set display_order = #displayOrder# where topic_id = #topicId# and item_id=#ItemId#
+    ]]>
+
+	</update>
+
+	<update id="updateItemOrderInTopicByOrder" parameterClass="map">
+		update news_topic_item set display_order = #displayOrder1# where
+		topic_id = #topicId# and display_order=#displayOrder2#
+    </update>
+
+	<!-- specific mysql -->
+	<select id="getMostRecentItemsByCategory" resultMap="item_result"
+		parameterClass="map" cacheModel="cacheItem">
+    <![CDATA[
+    select it.item_id, it.category_id, it.title, it.summary, it.body, it.post_date, it.start_date, it.end_date, 
+    it.last_update_date, it.posted_by, it.last_updated_by, it.status  
+    FROM news_item it 
+    WHERE it.category_id=#categoryId# and DATEDIFF(CURRENT_DATE, it.post_date) < #dayCount# 
+    and it.status='1' and it.start_date <= now() and it.end_date >= now() 
+    order by it.post_date desc
+    ]]>
+	</select>
+
+	<delete id="deleteItem" parameterClass="java.lang.Long">
+		delete from news_item where item_id=#value#
+        </delete>
+
+	<delete id="deleteItemForTopic" parameterClass="map">
+		delete from news_topic_item where item_id=#itemId# and topic_id=#topicId#
+	</delete>
+
+	<delete id="deleteItemForAllTopic" parameterClass="java.lang.Long">
+		delete from news_topic_item where item_id=#itemId#
+        </delete>
+
+</sqlMap>
