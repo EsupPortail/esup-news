@@ -6,6 +6,8 @@ ldap.url=ldap://ldap.univ.fr:389
 ldap.base=ou=people,dc=univ,dc=fr
 ldap.username=cn=admin,ou=administrateurs,dc=univ,dc=fr
 ldap.password=*****
+ldap.anonymousReadOnly=false
+#ldap.anonymousReadOnly=true
 
 # Attribut pour la recherche des utilisateurs (cn ou sn) 
 ldap.userSearchAttr=cn

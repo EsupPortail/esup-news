@@ -101,6 +101,7 @@
 		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.PASSWORD]" value="${ldap.password}" />
 		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.BASE]" value="${ldap.base}" />
 		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.USERNAME]" value="${ldap.username}" />
+		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.ANONYMOUSREADONLY]" value="${ldap.anonymousReadOnly}" />
 		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.SEARCH.DISPLAYED.ATTR]" value="${ldap.searchDisplayedAttr}" />
 		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.USER.ID]" value="${ldap.userId}" />
 		<replace file="${build.home}/WEB-INF/classes/AppCtxN.xml" token="[LDAP.USER.SEARCH.ATTR]" value="${ldap.userSearchAttr}" />

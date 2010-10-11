@@ -29,7 +29,7 @@ Version initial de NewsPortlet en version 2.0.6
 	- Possibilité de choisir le type de déploiement, avec ou sans redeploiement du fichier de context du pool de connexion à la BD, même principe pour le undeploy (suppression ou non).
 	
 ==== Version 2.1.4 ====
-	- Modification du formulaire de gestion des "audiences", sauvegarde des selections avec navigation et tri sur les diférentes pages.
+	- Modification du formulaire de gestion des "audiences", sauvegarde des selections avec navigation et tri sur les différentes pages.
 	- Ajout de la possibilité de modifier une position d'annonce, de thème et de catégorie avec "descendre tout en bas" ou "monter tout en haut".
 
 ==== Version 2.2.0 -> Version 0.2.0 ====
@@ -50,6 +50,9 @@ Version initial de NewsPortlet en version 2.0.6
 	- Passage en version RC
 	- Corrections de bug mineurs sur les pièces jointes
 	- Ajout de quelques documentations
+	
+==== Version 0.2.1 ====
+	- Ajout d'une option pour les accès LDAP en anonyme.
 
 		
 
