@@ -23,7 +23,7 @@ http://www.springframework.org/schema/jee http://www.springframework.org/schema/
         <bean id="itemDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientItemDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
         <bean id="sequenceDao" class="org.uhp.portlets.news.dao.iBatis.SequenceDaoImpl" p:sqlMapClient-ref="sqlMapClient"/>    
         <bean id="subscriberDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientSubscriberDaoImpl"  p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
-        <bean id="contextSource" class="org.springframework.ldap.support.LdapContextSource" p:url="${ldap.url}" p:base="${ldap.base}" p:userName="${ldap.username}" p:password="${ldap.password}" />     
+        <bean id="contextSource" class="org.springframework.ldap.support.LdapContextSource" p:url="${ldap.url}" p:base="${ldap.base}" p:userName="${ldap.username}" p:password="${ldap.password}" p:anonymousReadOnly="${ldap.anonymousReadOnly}"/>     
         
         <bean id="attachmentDao" class="org.cmis.portlets.news.dao.iBatis.SqlMapClientAttachmentDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>       
         <bean id="attachmentOptionsDao" class="org.cmis.portlets.news.dao.iBatis.SqlMapClientAttachmentOptionsDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>       

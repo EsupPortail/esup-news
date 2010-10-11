@@ -34,10 +34,6 @@
 	<portlet:param name="action" value="addCategory" />
 	<portlet:param name="eId" value="${entity.entityId}" />
 </portlet:renderURL>
-<portlet:renderURL var="viewCatRenderUrl">
-	<portlet:param name="action" value="viewCategory" />
-	<portlet:param name="cId" value="${category.categoryId}" />
-</portlet:renderURL>
 <portlet:renderURL var="editCatRenderUrl">
 	<portlet:param name="action" value="editCategory" />
 	<portlet:param name="cId" value="${category.categoryId}" />

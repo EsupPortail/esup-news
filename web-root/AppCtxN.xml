@@ -35,7 +35,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	
 	<bean id="contextSource"
 		class="org.springframework.ldap.support.LdapContextSource"
-		p:url="[LDAP.URL]" p:base="[LDAP.BASE]"
+		p:url="[LDAP.URL]" p:base="[LDAP.BASE]" p:anonymousReadOnly="[LDAP.ANONYMOUSREADONLY]"
 		p:userName="[LDAP.USERNAME]" p:password="[LDAP.PASSWORD]" />
 	<bean id="ldapTemplate"
 		class="org.springframework.ldap.LdapTemplate">
