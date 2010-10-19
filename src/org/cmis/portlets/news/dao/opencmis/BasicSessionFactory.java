@@ -84,10 +84,6 @@ public class BasicSessionFactory implements CmisSessionFactory {
 
 	// connection settings
 	String serverUrl = server.getServerUrl();
-	if (!serverUrl.contains("atom"))
-	{
-	    serverUrl += "atom";
-	}
 	parameter.put(SessionParameter.ATOMPUB_URL, serverUrl);
 	parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 	parameter.put(SessionParameter.REPOSITORY_ID, server.getRepositoryId());
