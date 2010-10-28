@@ -23,7 +23,7 @@ import org.uhp.portlets.news.domain.RolePerm;
 import org.uhp.portlets.news.web.support.Constants;
 
 /**
- * View Controller of all attachments properties
+ * View Controller of all attachments properties.
  * 
  * @author Anyware Services - Delphine Gavalda. 6 juil. 2010
  */
@@ -54,6 +54,7 @@ public class AttachmentConfViewController extends AbstractController implements 
      *      handleRenderRequest(javax.portlet.RenderRequest,
      *      javax.portlet.RenderResponse)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public ModelAndView handleRenderRequest(final RenderRequest request, final RenderResponse response)
 	    throws Exception {
@@ -120,19 +121,33 @@ public class AttachmentConfViewController extends AbstractController implements 
 		+ " must not be null.");
     }
 
-    public void setAm(AttachmentManager am) {
+    /**
+     * @param am
+     */
+    @SuppressWarnings("hiding")
+    public void setAm(final AttachmentManager am) {
 	this.am = am;
     }
 
+    /**
+     * @return AttachmentManager
+     */
     public AttachmentManager getAm() {
 	return am;
     }
 
+    /**
+     * @return UserManager
+     */
     public UserManager getUm() {
 	return um;
     }
-
-    public void setUm(UserManager um) {
+    
+    /**
+     * @param um
+     */
+    @SuppressWarnings("hiding")
+    public void setUm(final UserManager um) {
 	this.um = um;
     }
 

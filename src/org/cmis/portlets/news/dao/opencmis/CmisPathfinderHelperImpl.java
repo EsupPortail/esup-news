@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.cmis.portlets.news.dao.opencmis;
 
 import java.util.Calendar;
@@ -36,7 +33,12 @@ public class CmisPathfinderHelperImpl implements CmisPathFinderHelper {
     @Autowired
     private EntityManager em;
 
-    public String getPathForAttachment(final Session openCmisSession, Map<String, Object> properties) {
+    /** Constructeur.  */
+    public CmisPathfinderHelperImpl() {
+        super();
+    }
+    
+    public String getPathForAttachment(final Session openCmisSession, final Map<String, Object> properties) {
 
 	String fileName = (String) properties.get(FILE_NAME);
 	Date insertDate = (Date) properties.get(INSERT_DATE);
@@ -134,7 +136,7 @@ public class CmisPathfinderHelperImpl implements CmisPathFinderHelper {
 	return null;
     }
 
-    private String findFileName(Session cmisSession, String path, String name) {
+    private String findFileName(final Session cmisSession, final String path, final String name) {
 	String start;
 	String end;
 	if (name.indexOf(".") > 0) {
@@ -166,7 +168,7 @@ public class CmisPathfinderHelperImpl implements CmisPathFinderHelper {
 	return testName;
     }
 
-    private Folder createFolder(Session cmisSession, Folder folder, String path, String name) {
+    private Folder createFolder(final Session cmisSession, final Folder folder, final String path, final String name) {
 	Map<String, String> newFolderProps = new HashMap<String, String>();
 	newFolderProps.put(PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_FOLDER.value());
 	newFolderProps.put(PropertyIds.NAME, name);

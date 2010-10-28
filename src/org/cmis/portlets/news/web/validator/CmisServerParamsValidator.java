@@ -31,6 +31,13 @@ import org.uhp.portlets.news.web.validator.AbstractValidator;
  */
 public class CmisServerParamsValidator extends AbstractValidator {
 
+    /**
+     * Constructor of the CmisServerParamsValidator object.
+     */
+    public CmisServerParamsValidator() {
+        super();
+    }
+    
     @Override
     public void validate(final Object obj, final Errors errors) {
 
@@ -46,17 +53,18 @@ public class CmisServerParamsValidator extends AbstractValidator {
 	    valid = true;
 	}
 	if (valid) {
-	    ValidationUtils.rejectIfEmpty(errors, "serverUrl", "CMIS_SERVER_URL_REQUIRED", "The server URL is required");
+	    ValidationUtils.rejectIfEmpty(errors, "serverUrl", "CMIS_SERVER_URL_REQUIRED", 
+		    "The server URL is required");
 	    ValidationUtils.rejectIfEmpty(errors, "serverLogin", "CMIS_SERVER_LOGIN_REQUIRED", "The login is required");
 	    ValidationUtils.rejectIfEmpty(errors, "serverPwd", "CMIS_SERVER_PWD_REQUIRED", "The password is required ");
 	    if (!form.getServerPwd().equalsIgnoreCase(form.getServerPwd2())) {
 		errors.rejectValue("serverPwd", "CMIS_SERVER_PWDS_NOT_EQUALS", "The two passwords are differents.");
 	    }
-	    ValidationUtils.rejectIfEmpty(errors, "repositoryId", "CMIS_SERVER_REPOID_REQUIRED", "The repository identifier is required");
+	    ValidationUtils.rejectIfEmpty(errors, "repositoryId", "CMIS_SERVER_REPOID_REQUIRED", 
+		    "The repository identifier is required");
 	}
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected Class getValidatorSupportClass() {
 	return CmisServerParamsForm.class;

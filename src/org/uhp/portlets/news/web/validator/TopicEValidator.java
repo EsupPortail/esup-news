@@ -32,21 +32,26 @@ public class TopicEValidator extends AbstractValidator {
 	}
 
 	@Override
-	public void validate(final Object obj, final Errors errors) {		
-		final Topic topic = (Topic) obj;		
+	public void validate(final Object obj, final Errors errors) {	
+		final Topic topic = (Topic) obj;	
 		validateTitle(topic, errors);
-	    validateDescription(topic, errors);	   
+	    validateDescription(topic, errors);
+	    validateTTL(topic, errors); 
 	}
    
 	public void validateTitle(final Topic topic, final Errors errors) {
 		ValidationUtils.rejectIfEmpty(errors, "name", "TOPIC_TITLE_REQUIRED", "Title is required.");
-		if(this.topicDao.isTopicNameExist(topic.getName(), topic.getTopicId())) {
+		if(this.topicDao.isSameTopicNameExistInCat(topic.getName(), topic.getTopicId(), topic.getCategoryId())) {
 	      	  errors.rejectValue("name", "TOPIC_NAME_EXISTS", "A topic with same title exists yet.");
 	        }
 	}
 
 	public void validateDescription(final Topic topic, final Errors errors) {
 		ValidationUtils.rejectIfEmpty(errors, "desc", "TOPIC_DESC_REQUIRED", "Description is required.");
+	}
+	public void validateTTL(final Topic topic, final Errors errors) {
+		if(("day".equalsIgnoreCase(topic.getRefreshPeriod()) && topic.getRefreshFrequency() > 120) || ("hour".equalsIgnoreCase(topic.getRefreshPeriod()) && topic.getRefreshFrequency() > 5))
+		ValidationUtils.rejectIfEmpty(errors, "refreshFrequency", "TTL_EXCESSIVE", "TTL too excessive.");
 	}
 	
 	@SuppressWarnings("unchecked")

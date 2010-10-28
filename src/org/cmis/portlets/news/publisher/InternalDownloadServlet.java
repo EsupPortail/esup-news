@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.cmis.portlets.news.publisher;
 
 import java.io.InputStream;

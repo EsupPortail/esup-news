@@ -3,8 +3,6 @@ package org.cmis.portlets.news.dao.iBatis;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.cmis.portlets.news.dao.AttachmentOptionsDao;
 import org.cmis.portlets.news.domain.AttachmentOptions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +22,18 @@ import org.uhp.portlets.news.dao.SequenceDao;
 @Repository("attachmentOptionsDao")
 public class SqlMapClientAttachmentOptionsDaoImpl extends SqlMapClientDaoSupport implements AttachmentOptionsDao {
 
-    private static final Log LOG = LogFactory.getLog(SqlMapClientAttachmentOptionsDaoImpl.class);
     @Autowired
     private SequenceDao sequenceDao;
 
+    /** Constructeur.  */
+    public SqlMapClientAttachmentOptionsDaoImpl() {
+        super();
+    }
+    
+    /**
+     * @param sequenceDao
+     */
+    @SuppressWarnings("hiding")
     public void setSequenceDao(final SequenceDao sequenceDao) {
 	this.sequenceDao = sequenceDao;
     }
@@ -40,7 +46,7 @@ public class SqlMapClientAttachmentOptionsDaoImpl extends SqlMapClientDaoSupport
 	return (AttachmentOptions) getSqlMapClientTemplate().queryForObject("getEntityOptions", entityId);
     }
 
-    public Long insertAttachmentOptions(AttachmentOptions options) throws DataAccessException {
+    public Long insertAttachmentOptions(final AttachmentOptions options) throws DataAccessException {
 	options.setOptionId(this.sequenceDao.getNextId(Constants.SEQ_ATT_OPTIONS));
 	getSqlMapClientTemplate().insert("insertAttachmentOptions", options);
 	return options.getOptionId();
@@ -53,7 +59,7 @@ public class SqlMapClientAttachmentOptionsDaoImpl extends SqlMapClientDaoSupport
 	getSqlMapClientTemplate().insert("linkAttachmentOptionsToEntity", params);
     }
 
-    public void updateAttachmentOptions(AttachmentOptions options) throws DataAccessException {
+    public void updateAttachmentOptions(final AttachmentOptions options) throws DataAccessException {
 	getSqlMapClientTemplate().update("updateAttachmentOptions", options);
     }
 

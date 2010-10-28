@@ -37,6 +37,7 @@ import org.uhp.portlets.news.web.support.Constants;
 public class AttachmentOptionsController extends SimpleFormController implements InitializingBean {
 
     /** Logger. */
+    @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(AttachmentOptionsController.class);
     /** The Attachment Manager. */
     @Autowired
@@ -46,7 +47,7 @@ public class AttachmentOptionsController extends SimpleFormController implements
     private UserManager um;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public AttachmentOptionsController() {
 	setCommandClass(AttachmentOptionsForm.class);
@@ -62,7 +63,8 @@ public class AttachmentOptionsController extends SimpleFormController implements
     }
 
     @Override
-    protected ModelAndView showForm(RenderRequest request, RenderResponse response, BindException errors)
+    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response, 
+	    				final BindException errors)
 	    throws Exception {
 	if (!this.um.isSuperAdmin(request.getRemoteUser())) {
 	    ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
@@ -88,8 +90,9 @@ public class AttachmentOptionsController extends SimpleFormController implements
 	return model;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    protected Object formBackingObject(PortletRequest request) throws Exception {
+    protected Object formBackingObject(final PortletRequest request) throws Exception {
 	AttachmentOptionsForm form = new AttachmentOptionsForm();
 
 	AttachmentOptions options = am.getApplicationAttachmentOptions();
@@ -124,7 +127,8 @@ public class AttachmentOptionsController extends SimpleFormController implements
     }
 
     @Override
-    protected void onSubmitAction(ActionRequest request, ActionResponse response, Object command, BindException errors)
+    protected void onSubmitAction(final ActionRequest request, final ActionResponse response, 
+	    				final Object command, final BindException errors)
 	    throws Exception {
 
 	AttachmentOptionsForm aof = (AttachmentOptionsForm) command;

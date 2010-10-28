@@ -25,7 +25,7 @@ import org.uhp.portlets.news.domain.RolePerm;
 import org.uhp.portlets.news.web.support.Constants;
 
 /**
- * View Controller of all attachments properties
+ * View Controller of all attachments properties.
  * 
  * @author Anyware Services - Delphine Gavalda. 6 juil. 2010
  */
@@ -59,6 +59,7 @@ public class EntityAttachmentConfViewController extends AbstractController imple
      *      handleRenderRequest(javax.portlet.RenderRequest,
      *      javax.portlet.RenderResponse)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public ModelAndView handleRenderRequest(final RenderRequest request, final RenderResponse response)
 	    throws Exception {
@@ -143,28 +144,32 @@ public class EntityAttachmentConfViewController extends AbstractController imple
 		+ " must not be null.");
     }
 
-    public void setAm(AttachmentManager am) {
-	this.am = am;
+
+    @SuppressWarnings("unused")
+    private void setAm(final AttachmentManager manager) {
+	this.am = manager;
     }
 
-    public AttachmentManager getAm() {
+    private AttachmentManager getAm() {
 	return am;
     }
 
-    public UserManager getUm() {
+    private UserManager getUm() {
 	return um;
     }
 
-    public void setUm(UserManager um) {
-	this.um = um;
+    @SuppressWarnings("unused")
+    private void setUm(final UserManager manager) {
+	this.um = manager;
     }
 
-    public EntityManager getEm() {
+    private EntityManager getEm() {
 	return em;
     }
 
-    public void setEm(EntityManager em) {
-	this.em = em;
+    @SuppressWarnings("unused")
+    private void setEm(final EntityManager manager) {
+	this.em = manager;
     }
 
 }

@@ -45,6 +45,14 @@ public class Attachment implements Serializable {
      */
     private Long size;
 
+    
+    /**
+     * Constructor of the Attachment object.
+     */
+    public Attachment() {
+	 super();
+    }
+    
     /**
      * @return the attachmentId
      */
@@ -56,7 +64,8 @@ public class Attachment implements Serializable {
      * @param attachmentId
      *            the attachmentId to set
      */
-    public void setAttachmentId(Long attachmentId) {
+    @SuppressWarnings("hiding")
+    public void setAttachmentId(final Long attachmentId) {
 	this.attachmentId = attachmentId;
     }
 
@@ -71,7 +80,8 @@ public class Attachment implements Serializable {
      * @param cmisUid
      *            the cmisUid to set
      */
-    public void setCmisUid(String cmisUid) {
+    @SuppressWarnings("hiding")
+    public void setCmisUid(final String cmisUid) {
 	this.cmisUid = cmisUid;
     }
 
@@ -86,7 +96,8 @@ public class Attachment implements Serializable {
      * @param fileName
      *            the fileName to set
      */
-    public void setFileName(String fileName) {
+    @SuppressWarnings("hiding")
+    public void setFileName(final String fileName) {
 	this.fileName = fileName;
     }
 
@@ -101,7 +112,8 @@ public class Attachment implements Serializable {
      * @param title
      *            the title to set
      */
-    public void setTitle(String title) {
+    @SuppressWarnings("hiding")
+    public void setTitle(final String title) {
 	this.title = title;
     }
 
@@ -116,7 +128,8 @@ public class Attachment implements Serializable {
      * @param description
      *            the description to set
      */
-    public void setDescription(String description) {
+    @SuppressWarnings("hiding")
+    public void setDescription(final String description) {
 	this.description = description;
     }
 
@@ -131,7 +144,8 @@ public class Attachment implements Serializable {
      * @param insertDate
      *            the insertDate to set
      */
-    public void setInsertDate(Date insertDate) {
+    @SuppressWarnings("hiding")
+    public void setInsertDate(final Date insertDate) {
 	this.insertDate = insertDate;
     }
 
@@ -146,32 +160,34 @@ public class Attachment implements Serializable {
      * @param path
      *            the path to set
      */
-    public void setPath(String path) {
+    @SuppressWarnings("hiding")
+    public void setPath(final String path) {
 	this.path = path;
     }
 
     /**
-     * Get the file size
+     * Get the file size.
      * 
-     * @return
+     * @return Long 
      */
     public Long getSize() {
 	return size;
     }
 
     /**
-     * Set the file size
+     * Set the file size.
      * 
      * @param size
      */
-    public void setSize(Long size) {
+    @SuppressWarnings("hiding")
+    public void setSize(final Long size) {
 	this.size = size;
     }
 
     /**
-     * File type
+     * File type.
      * 
-     * @return
+     * @return String
      */
     public String getType() {
 	return this.fileName.substring(this.fileName.lastIndexOf(".") + 1, this.fileName.length());

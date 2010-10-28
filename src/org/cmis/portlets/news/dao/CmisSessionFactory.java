@@ -11,7 +11,7 @@ import org.cmis.portlets.news.services.exceptions.CmisException;
 public interface CmisSessionFactory {
 
     /**
-     * Return the CMIS Session object according to the entity id parameter
+     * Return the CMIS Session object according to the entity id parameter.
      * 
      * @param entityId
      * @return Session
@@ -20,7 +20,7 @@ public interface CmisSessionFactory {
     Session getSession(Long entityId) throws CmisException;
 
     /**
-     * Remove a CMIS Session object following a change of the server
+     * Remove a CMIS Session object following a change of the server.
      * configuration parameters
      * 
      * @param entityId
@@ -29,7 +29,7 @@ public interface CmisSessionFactory {
     void removeSession(Long entityId) throws CmisException;
 
     /**
-     * Remove the default CMIS Session object following a change of the server
+     * Remove the default CMIS Session object following a change of the server.
      * configuration parameters
      * 
      * @param entityId

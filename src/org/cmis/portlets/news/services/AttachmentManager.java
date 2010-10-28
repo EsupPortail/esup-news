@@ -20,7 +20,7 @@ import org.uhp.portlets.news.web.ItemForm;
 public interface AttachmentManager {
 
     /**
-     * Get an attachment with its id
+     * Get an attachment with its id.
      * 
      * @param id
      * @return Attachment
@@ -29,16 +29,16 @@ public interface AttachmentManager {
     Attachment getAttachmentById(Long id) throws DataAccessException;
 
     /**
-     * Get all the attachments for an item
+     * Get all the attachments for an item.
      * 
      * @param itemId
-     * @return <code> List<Attachment> </code>
+     * @return <code> List&lt;Attachment&gt; </code>
      * @throws DataAccessException
      */
     List<Attachment> getAttachmentsListByItem(Long itemId) throws DataAccessException;
 
     /**
-     * Add an attachement to an item
+     * Add an attachement to an item.
      * 
      * @param itemForm
      * @param itemId
@@ -49,7 +49,7 @@ public interface AttachmentManager {
     void addAttachmentToItem(ItemForm itemForm, Long itemId, Long entityId) throws DataAccessException, CmisException;
 
     /**
-     * Update an attachement
+     * Update an attachement.
      * 
      * @param itemForm
      * @param itemId
@@ -60,7 +60,7 @@ public interface AttachmentManager {
     void updateItemAttachment(ItemForm itemForm, Long itemId, Long entityId) throws DataAccessException, CmisException;
 
     /**
-     * Delete a given attachement for an item
+     * Delete a given attachement for an item.
      * 
      * @param attachment
      * @param itemId
@@ -71,7 +71,7 @@ public interface AttachmentManager {
     void deleteAttachment(Attachment attachment, Long itemId, Long entityId) throws DataAccessException, CmisException;
 
     /**
-     * Delete attachements for an item
+     * Delete attachements for an item.
      * 
      * @param itemId
      * @param entityId
@@ -81,7 +81,7 @@ public interface AttachmentManager {
     void deleteItemAttachments(Long itemId, Long entityId) throws DataAccessException, CmisException;
 
     /**
-     * Get attachments options defined for an entity
+     * Get attachments options defined for an entity.
      * 
      * @param entityId
      * @return AttachmentOptions
@@ -89,21 +89,21 @@ public interface AttachmentManager {
     AttachmentOptions getEntityAttachmentOptions(Long entityId);
 
     /**
-     * Get attachments options defined for the application
+     * Get attachments options defined for the application.
      * 
      * @return AttachmentOptions
      */
     AttachmentOptions getApplicationAttachmentOptions();
 
     /**
-     * Update attachments options
+     * Update attachments options.
      * 
      * @param options
      */
     void updateAttachmentOptions(AttachmentOptions options);
 
     /**
-     * Save attachments options
+     * Save attachments options.
      * 
      * @param options
      * @return Long
@@ -111,7 +111,7 @@ public interface AttachmentManager {
     Long insertAttachmentOptions(AttachmentOptions options);
 
     /**
-     * Add attachments options to an entity
+     * Add attachments options to an entity.
      * 
      * @param optionsId
      * @param entityId
@@ -119,7 +119,7 @@ public interface AttachmentManager {
     void linkAttachmentOptionsToEntity(Long optionsId, Long entityId);
 
     /**
-     * Delete attachments options
+     * Delete attachments options.
      * 
      * @param optionsId
      */
@@ -131,14 +131,14 @@ public interface AttachmentManager {
     void deleteAttachmentOptsLinkToEntity(Long entityId);
 
     /**
-     * Get the CMIS server params defined for the application
+     * Get the CMIS server params defined for the application.
      * 
      * @return CmisServer
      */
     CmisServer getApplicationServer();
 
     /**
-     * Get the CMIS server params defined for a given entity
+     * Get the CMIS server params defined for a given entity.
      * 
      * @param entityId
      * @return CmisServer
@@ -146,28 +146,28 @@ public interface AttachmentManager {
     CmisServer getEntityServer(Long entityId);
 
     /**
-     * Delete CMIS server params
+     * Delete CMIS server params.
      * 
      * @param serverId
      */
     void deleteServerParams(Long serverId);
 
     /**
-     * Delete CMIS server params for a given entity
+     * Delete CMIS server params for a given entity.
      * 
      * @param entityId
      */
     void deleteServerLinkToEntity(Long entityId);
 
     /**
-     * Update CMIS server params
+     * Update CMIS server params.
      * 
      * @param serverParams
      */
     void updateServerInfos(CmisServer serverParams);
 
     /**
-     * Add CMIS server params to a given entity
+     * Add CMIS server params to a given entity.
      * 
      * @param serverId
      * @param entityId
@@ -175,7 +175,7 @@ public interface AttachmentManager {
     void linkServerToEntity(Long serverId, Long entityId);
 
     /**
-     * Save CMIS server params
+     * Save CMIS server params.
      * 
      * @param serverParams
      * @return Long
@@ -183,7 +183,7 @@ public interface AttachmentManager {
     Long insertServerParams(CmisServer serverParams);
 
     /**
-     * Clean the temporary directory : delete all olders files
+     * Clean the temporary directory : delete all olders files.
      * 
      * @param path
      */

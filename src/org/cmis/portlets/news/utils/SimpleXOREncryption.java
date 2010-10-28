@@ -10,13 +10,19 @@ package org.cmis.portlets.news.utils;
  */
 public final class SimpleXOREncryption {
     // The key to be used for both encryption and decryption
-    private static int KEY = 129;
+    private static final int KEY = 129;
 
-    /** Define a private constructor */
+    /** Define a private constructor. */
     private SimpleXOREncryption() {
+	// nothing
     }
 
-    public static String encryptDecrypt(String textToEncrypt) {
+    /**
+     * Return the string parameter encrypted.
+     * @param textToEncrypt
+     * @return String
+     */
+    public static String encryptDecrypt(final String textToEncrypt) {
 	StringBuilder inSb = new StringBuilder(textToEncrypt);
 	StringBuilder outSb = new StringBuilder(textToEncrypt.length());
 	char c;

@@ -14,7 +14,7 @@ import org.cmis.portlets.news.services.exceptions.CmisException;
 public interface CmisAttachmentDao {
 
     /**
-     * Get an Attachment with his id
+     * Get an Attachment with his id.
      * 
      * @param id
      * @param entityId
@@ -24,7 +24,7 @@ public interface CmisAttachmentDao {
     AttachmentD getAttachmentById(String id, Long entityId) throws CmisException;
 
     /**
-     * Insert a new attachment
+     * Insert a new attachment.
      * 
      * @param attachment
      * @param entityId
@@ -33,10 +33,11 @@ public interface CmisAttachmentDao {
      * @return cmis uid of the new added document
      * @throws CmisException
      */
-    Attachment insertAttachment(org.uhp.portlets.news.web.ItemForm.Attachment attachment, Long entityId, Map<String, Object> prop) throws CmisException;
+    Attachment insertAttachment(org.uhp.portlets.news.web.ItemForm.Attachment attachment, 
+	    			Long entityId, Map<String, Object> prop) throws CmisException;
 
     /**
-     * Delete an attachment
+     * Delete an attachment.
      * 
      * @param attachmentId
      * @param entityId

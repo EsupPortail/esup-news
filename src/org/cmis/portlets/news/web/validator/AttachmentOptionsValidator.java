@@ -34,6 +34,15 @@ import org.uhp.portlets.news.web.validator.AbstractValidator;
  */
 public class AttachmentOptionsValidator extends AbstractValidator {
 
+    private static final int MIN_SIZE_VALUE = 1000;
+
+    /**
+     * Constructor of the AttachmentOptionsValidator object.
+     */
+    public AttachmentOptionsValidator() {
+        super();
+    }
+    
     @Override
     public void validate(final Object obj, final Errors errors) {
 
@@ -55,6 +64,11 @@ public class AttachmentOptionsValidator extends AbstractValidator {
 	}
     }
 
+    /**
+     * Validate the max size value.
+     * @param form
+     * @param errors
+     */
     public void validateMaxSize(final AttachmentOptionsForm form, final Errors errors) {
 	long maxSize = 0;
 	if (StringUtils.isNotEmpty(form.getMaxSize())) {
@@ -62,13 +76,19 @@ public class AttachmentOptionsValidator extends AbstractValidator {
 	}
 
 	// file size can not be less than 1000 bytes
-	if (maxSize < 1000) {
+	if (maxSize < MIN_SIZE_VALUE) {
 	    form.setMaxSize("" + maxSize);
-	    errors.rejectValue("maxSize", "ATTACHMENT_MAXSIZE_REQUIRED", "Max size can not be smaller than 1000 bytes.");
+	    errors.rejectValue("maxSize", "ATTACHMENT_MAXSIZE_REQUIRED", 
+		    "Max size can not be smaller than 1000 bytes.");
 	}
     }
 
-    public void validateAuthorizedExts(AttachmentOptionsForm form, Errors errors) {
+    /**
+     * Validate the authorized extensions.
+     * @param form
+     * @param errors
+     */
+    public void validateAuthorizedExts(final AttachmentOptionsForm form, final Errors errors) {
 	String[] authorizedList = form.getAuthorizedExts().split(";");
 	List<String> displayed = new ArrayList<String>();
 	boolean valid = true;
@@ -84,11 +104,17 @@ public class AttachmentOptionsValidator extends AbstractValidator {
 	}
 	if (!valid) {
 	    form.setAuthorizedList(displayed);
-	    errors.rejectValue("authorizedExts", "ATTACHMENT_EXT_WRONG_CHAR", "Files Extensions must only contain alpha numeric characters");
+	    errors.rejectValue("authorizedExts", "ATTACHMENT_EXT_WRONG_CHAR", 
+		    "Files Extensions must only contain alpha numeric characters");
 	}
     }
 
-    public void validateForbiddenExts(AttachmentOptionsForm form, Errors errors) {
+    /**
+     * Validate the forbidden extensions.
+     * @param form
+     * @param errors
+     */
+    public void validateForbiddenExts(final AttachmentOptionsForm form, final Errors errors) {
 	String[] forbiddenList = form.getForbiddenExts().split(";");
 	List<String> displayed = new ArrayList<String>();
 	boolean valid = true;
@@ -104,11 +130,11 @@ public class AttachmentOptionsValidator extends AbstractValidator {
 	}
 	if (!valid) {
 	    form.setForbiddenList(displayed);
-	    errors.rejectValue("forbiddenExts", "ATTACHMENT_EXT_WRONG_CHAR", "Files Extensions must only contain alpha numeric characters");
+	    errors.rejectValue("forbiddenExts", "ATTACHMENT_EXT_WRONG_CHAR", 
+		    "Files Extensions must only contain alpha numeric characters");
 	}
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected Class getValidatorSupportClass() {
 	return AttachmentOptionsForm.class;

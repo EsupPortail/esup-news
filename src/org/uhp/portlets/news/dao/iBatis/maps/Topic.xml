@@ -91,18 +91,16 @@
     </select>
 
 	<select id="canDeleteTopic" resultClass="int" parameterClass="java.lang.Long">
-		SELECT COUNT(item_id) AS total FROM news_topic_item WHERE topic_id =
-		#value#
+		SELECT COUNT(item_id) AS total FROM news_topic_item WHERE topic_id = #value#
   </select>
 
 	<delete id="deleteTopic" parameterClass="java.lang.Long">
 		delete from news_topic where topic_id=#value#
    </delete>
 
-	<select id="isSameTopicNameExist" parameterClass="map"
+	<select id="isSameTopicNameExistInCat" parameterClass="map"
 		resultClass="int">
-		SELECT count(topic_id) FROM news_topic WHERE name=#name# and topic_id !=
-		#id#
+		SELECT count(topic_id) FROM news_topic WHERE name=#name# and topic_id != #topicId# and category_id=#categoryId#
   </select>
 
 	<select id="getAvailableTopicsByUser" parameterClass="map"

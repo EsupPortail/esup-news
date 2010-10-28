@@ -43,6 +43,6 @@ import org.uhp.portlets.news.domain.Topic;
 
 			public boolean isTopicNameExistInCat(String name, Long id) throws DataAccessException;
 			
-			public boolean isTopicNameExist(String name, Long id) throws DataAccessException;
+			public boolean isSameTopicNameExistInCat(String name, Long topicId, Long catId) throws DataAccessException;
 	        
 	}

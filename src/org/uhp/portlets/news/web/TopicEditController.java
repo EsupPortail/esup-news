@@ -94,8 +94,7 @@ public class TopicEditController extends SimpleFormController implements Initial
 
 
 	@Override
-	protected  ModelAndView     showForm(RenderRequest request, RenderResponse response, BindException errors) throws Exception {
-
+	protected ModelAndView showForm(RenderRequest request, RenderResponse response, BindException errors) throws Exception {
 		ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
 		if(!this.um.isUserAdminInCtx(this.topicId, NewsConstants.CTX_T, request.getRemoteUser())) {       		
 			String msg = "you are not authorized for this action";

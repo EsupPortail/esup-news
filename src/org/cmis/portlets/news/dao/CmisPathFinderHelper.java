@@ -12,19 +12,24 @@ import org.apache.chemistry.opencmis.client.api.Session;
  */
 public interface CmisPathFinderHelper {
 
-    public static final String INSERT_DATE = "insertDate";
-
-    public static final String FILE_NAME = "filename";
-
-    public static final String CATEGORY_ID = "categoryId";
-
-    public static final String ENTITY_ID = "entityId";
-
-    public static final String TOPICS_ID = "topicsId";
+    /** Constant for the insert date value. */
+    String INSERT_DATE = "insertDate";
+    
+    /** Constant for the filename value. */
+    String FILE_NAME = "filename";
+    
+    /** Constant for the categoryId value. */
+    String CATEGORY_ID = "categoryId";
+    
+    /** Constant for the entityId value. */
+    String ENTITY_ID = "entityId";
+    
+    /** Constant for the topicsId value. */
+    String TOPICS_ID = "topicsId";
 
     /**
      * Return a valid complete path, containing a valid filename, to insert a
-     * new file
+     * new file.
      * 
      * @param cmisSession
      *            the connexion Object to the cmis server (depends on the chosen
@@ -33,5 +38,5 @@ public interface CmisPathFinderHelper {
      *            Map of properties required to calculate a new path
      * @return String the valid path
      */
-    public String getPathForAttachment(Session cmisSession, Map<String, Object> properties);
+    String getPathForAttachment(Session cmisSession, Map<String, Object> properties);
 }

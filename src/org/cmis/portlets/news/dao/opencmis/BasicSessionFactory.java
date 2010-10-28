@@ -34,14 +34,17 @@ public class BasicSessionFactory implements CmisSessionFactory {
 
     private Map<Long, Session> sessionsMap;
 
+    /** Constructeur.  */
+    public BasicSessionFactory() {
+        super();
+    }
+    
     public Session getSession(final Long entityId) throws CmisException {
 
-	if (sessionsMap == null)
-	{
+	if (sessionsMap == null) {
 	    sessionsMap = new HashMap<Long, Session>();
 	}
-	if (sessionsMap.get(entityId) == null)
-	{
+	if (sessionsMap.get(entityId) == null) {
 	    return createSession(entityId);
 	}
 
@@ -52,19 +55,16 @@ public class BasicSessionFactory implements CmisSessionFactory {
 
 	CmisServer server = am.getEntityServer(entityId);
 	boolean useDefault = false;
-	if (server == null)
-	{
+	if (server == null) {
 	    server = am.getApplicationServer();
 	    useDefault = true;
 	}
-	if (server == null)
-	{
+	if (server == null) {
 	    LOG.error("BasicSessionFactory : No CMIS server has been defined.");
 	    throw new CmisException("Aucun serveur CMIS n'a été défini.");
 	}
 
-	if (useDefault && sessionsMap.get((long) -1) != null)
-	{
+	if (useDefault && sessionsMap.get((long) -1) != null) {
 	    return sessionsMap.get((long) -1);
 	}
 
@@ -94,49 +94,41 @@ public class BasicSessionFactory implements CmisSessionFactory {
 	parameter.put(SessionParameter.LOCALE_VARIANT, "");
 
 	// create session
-	try
-	{
-	    Session session = (f).createSession(parameter);
-	    if (session == null)
-	    {
+	try {
+	    Session session = f.createSession(parameter);
+	    if (session == null) {
 		LOG.error("BasicSessionFactory : unable to connect to the cmis server at : " + serverUrl);
 		throw new CmisException("Impossible de se connecter au serveur avec l'URL suivante : " + serverUrl);
 	    }
 
-	    if (useDefault)
-	    {
+	    if (useDefault) {
 		sessionsMap.put((long) -1, session);
 		return sessionsMap.get((long) -1);
 
-	    } else
-	    {
+	    } else {
 		sessionsMap.put(entityId, session);
 		return sessionsMap.get(entityId);
 	    }
 
-	} catch (Exception e)
-	{
+	} catch (Exception e) {
 	    LOG.error("BasicSessionFactory : An error occurs trying to connect to the cmis server at : " + serverUrl);
 	    LOG.error(e, e.fillInStackTrace());
-	    throw new CmisException("Une erreur est survenue durant la connection au serveur avec l'URL suivante : " + serverUrl, e.fillInStackTrace());
+	    throw new CmisException("Une erreur est survenue durant la connection au serveur avec l'URL suivante : "
+		    + serverUrl, e.fillInStackTrace());
 	}
     }
 
     public void removeSession(final Long entityId) throws CmisException {
-	if (sessionsMap != null)
-	{
-	    if (sessionsMap.get(entityId) != null)
-	    {
+	if (sessionsMap != null) {
+	    if (sessionsMap.get(entityId) != null) {
 		sessionsMap.remove(entityId);
 	    }
 	}
     }
 
     public void removeDefaultSession() throws CmisException {
-	if (sessionsMap != null)
-	{
-	    if (sessionsMap.get((long) -1) != null)
-	    {
+	if (sessionsMap != null) {
+	    if (sessionsMap.get((long) -1) != null) {
 		sessionsMap.remove((long) -1);
 	    }
 	}

@@ -41,7 +41,7 @@ public class DownloadServlet extends BaseAppContext {
     /**
      * logger.
      */
-    private static final Log logger = LogFactory.getLog(DownloadServlet.class);
+    private static final Log LOG = LogFactory.getLog(DownloadServlet.class);
 
     /**
      * The encoding.
@@ -85,13 +85,18 @@ public class DownloadServlet extends BaseAppContext {
 	    throw new ServletException(new IllegalStateException("feedService == null"));
 	}
 	HttpSession session = request.getSession();
-	if (logger.isDebugEnabled()) {
-	    logger
+	if (LOG.isDebugEnabled()) {
+	    LOG
 		    .debug("doGet: sesion uid=" + session.getAttribute("uid") + " remote user="
 			    + request.getRemoteUser());
 	}
 
-	final boolean isProtected = request.getServletPath().contains(Constants.PRIVATE_ACCESS) ? true : false;
+	final boolean isProtected;
+	if (request.getServletPath().contains(Constants.PRIVATE_ACCESS)) {
+	    isProtected = true;
+	} else {
+	    isProtected = false;
+	}
 
 	String itemId = request.getParameter("itemID");
 	String downloadId = request.getParameter("downloadID");
@@ -128,7 +133,7 @@ public class DownloadServlet extends BaseAppContext {
 		    out.write(data);
 		}
 	    } catch (SocketException e) {
-		logger.warn("SocketException was raides while downloading, " + "probably because the client cancelled");
+		LOG.warn("SocketException was raides while downloading, " + "probably because the client cancelled");
 	    } finally {
 		stream.close();
 		out.close();

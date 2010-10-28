@@ -37,6 +37,8 @@ import org.uhp.portlets.news.web.ItemForm;
 @Transactional(readOnly = true)
 public class AttachmentManagerImpl implements AttachmentManager {
 
+    private static final Log LOG = LogFactory.getLog(AttachmentManagerImpl.class);
+    
     @Autowired
     private AttachmentDao attachmentDao;
     @Autowired
@@ -46,10 +48,16 @@ public class AttachmentManagerImpl implements AttachmentManager {
     @Autowired
     private CmisAttachmentDao cmisDao;
 
-    private static final Log log = LogFactory.getLog(AttachmentManagerImpl.class);
-
+    
+    /**
+     * Constructor.
+     */
+    public AttachmentManagerImpl() {
+	super();
+    }
+    
     /******************************************
-     * Cmis server methods
+     * Cmis server methods.
      */
     public CmisServer getApplicationServer() {
 	return cmisServerDao.getApplicationServer();
@@ -60,7 +68,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Long insertServerParams(CmisServer serverParams) {
+    public Long insertServerParams(final CmisServer serverParams) {
 	Long newID = cmisServerDao.insertServerParams(serverParams);
 	return newID;
     }
@@ -71,7 +79,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void updateServerInfos(CmisServer serverParams) {
+    public void updateServerInfos(final CmisServer serverParams) {
 	cmisServerDao.updateServerInfos(serverParams);
     }
 
@@ -86,7 +94,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
     }
 
     /******************************************
-     * Attachement parameters management methods
+     * Attachement parameters management methods.
      */
 
     public AttachmentOptions getApplicationAttachmentOptions() {
@@ -124,7 +132,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
     }
 
     /**********************************
-     * Attachement management methods
+     * Attachement management methods.
      * 
      * @throws CmisException
      */
@@ -157,14 +165,15 @@ public class AttachmentManagerImpl implements AttachmentManager {
 		    long sqlId = attachmentDao.insertAttachment(sqlAtt);
 		    attachmentDao.addAttachmentToItem(sqlId, itemId);
 		} catch (Exception e) {
-		    log.error(e, e.fillInStackTrace());
+		    LOG.error(e, e.fillInStackTrace());
 		}
 	    }
 	}
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void updateItemAttachment(ItemForm itemForm, Long itemId, final Long entityId) throws DataAccessException,
+    public void updateItemAttachment(final ItemForm itemForm, final Long itemId, 
+	    				final Long entityId) throws DataAccessException,
 	    CmisException {
 	// Current list of attachments
 	List<org.uhp.portlets.news.web.ItemForm.Attachment> attachments = itemForm.getAttachments();
@@ -227,7 +236,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
 			long sqlId = attachmentDao.insertAttachment(sqlAtt);
 			attachmentDao.addAttachmentToItem(sqlId, itemId);
 		    } catch (Exception e) {
-			log.error(e, e.fillInStackTrace());
+			LOG.error(e, e.fillInStackTrace());
 		    }
 		}
 	    }
@@ -235,16 +244,17 @@ public class AttachmentManagerImpl implements AttachmentManager {
 
     }
 
-    public List<Attachment> getAttachmentsListByItem(Long itemId) throws DataAccessException {
+    public List<Attachment> getAttachmentsListByItem(final Long itemId) throws DataAccessException {
 	return this.attachmentDao.getAttachmentsListByItem(itemId);
     }
 
-    public Attachment getAttachmentById(Long id) throws DataAccessException {
+    public Attachment getAttachmentById(final Long id) throws DataAccessException {
 	return this.attachmentDao.getAttachmentById(id);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void deleteAttachment(Attachment attachment, Long itemId, final Long entityId) throws DataAccessException,
+    public void deleteAttachment(final Attachment attachment, final Long itemId, 
+	    				final Long entityId) throws DataAccessException,
 	    CmisException {
 	// remove the link between this item and the attachment
 
@@ -267,7 +277,8 @@ public class AttachmentManagerImpl implements AttachmentManager {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void deleteItemAttachments(Long itemId, final Long entityId) throws DataAccessException, CmisException {
+    public void deleteItemAttachments(final Long itemId, final Long entityId) 
+    throws DataAccessException, CmisException {
 	List<Attachment> attachments = getAttachmentsListByItem(itemId);
 	if (attachments != null) {
 	    for (Attachment att : attachments) {
@@ -292,7 +303,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
 	}
     }
 
-    public void cleanTempStorageDirectory(String path) {
+    public void cleanTempStorageDirectory(final String path) {
 	try {
 	    long now = Calendar.getInstance().getTimeInMillis();
 	    File dir = new File(path);
@@ -307,7 +318,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
 		}
 	    }
 	} catch (Exception e) {
-	    log.error("Unable to delete temporary files from " + path, e);
+	    LOG.error("Unable to delete temporary files from " + path, e);
 	}
 
     }

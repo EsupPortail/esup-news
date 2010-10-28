@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.cmis.portlets.news.dao.AttachmentDao;
 import org.cmis.portlets.news.domain.Attachment;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +23,18 @@ import org.uhp.portlets.news.dao.SequenceDao;
 @Repository("attachmentDao")
 public class SqlMapClientAttachmentDaoImpl extends SqlMapClientDaoSupport implements AttachmentDao {
 
-    private static final Log LOG = LogFactory.getLog(SqlMapClientAttachmentDaoImpl.class);
     @Autowired
     private SequenceDao sequenceDao;
 
+    /** Constructeur.  */
+    public SqlMapClientAttachmentDaoImpl() {
+        super();
+    }
+    
+    /**
+     * @param sequenceDao
+     */
+    @SuppressWarnings("hiding")
     public void setSequenceDao(final SequenceDao sequenceDao) {
 	this.sequenceDao = sequenceDao;
     }

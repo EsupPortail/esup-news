@@ -180,8 +180,8 @@ public class SimpleLdapEntityServiceImpl extends AbstractLdapService implements 
 		theFilter.and(filter);
 		try {
 		        List<String> attrsList = attributesMapper.getAttributes();
-			String[] attrs = attrsList.toArray(new String[attrsList.size()]);
-			return (List<LdapEntity>) ldapTemplate.search(
+		        String[] attrs = attrsList.toArray(new String[attrsList.size()]);
+		        return (List<LdapEntity>) ldapTemplate.search(
 					dn, theFilter.encode(), SearchControls.SUBTREE_SCOPE, attrs, attributesMapper);
 		} catch (UncategorizedLdapException e) {
 			if (e.getCause() != null && e.getCause() instanceof ServiceUnavailableException && retry) {
@@ -194,6 +194,7 @@ public class SimpleLdapEntityServiceImpl extends AbstractLdapService implements 
 		} catch (DataAccessException e) {
 			ex = e;
 		}
+		LOG.error(ex);
 		throw wrapException("could not retrieve entities from the LDAP directory", filter.encode(), ex);
 	}
 	

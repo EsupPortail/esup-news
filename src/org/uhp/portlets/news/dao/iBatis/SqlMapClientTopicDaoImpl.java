@@ -157,11 +157,12 @@ public class SqlMapClientTopicDaoImpl extends SqlMapClientDaoSupport implements
 		return (((Integer) getSqlMapClientTemplate().queryForObject("isTopicNameExistInCat", params)).intValue() > 0);
 	}
 
-	public boolean isTopicNameExist(String name, Long id) throws DataAccessException {
+	public boolean isSameTopicNameExistInCat(String name, Long topicId, Long catId) throws DataAccessException {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put(Constants.NAME, name);	
-		params.put(Constants.ID, id);
-		return (((Integer) getSqlMapClientTemplate().queryForObject("isSameTopicNameExist", params)).intValue() > 0);		
+		params.put(Constants.NAME, name);
+		params.put(NewsConstants.T_ID, topicId);
+		params.put(Constants.CAT_ID, catId);
+		return (((Integer) getSqlMapClientTemplate().queryForObject("isSameTopicNameExistInCat", params)).intValue() > 0);		
 	}
 
 }

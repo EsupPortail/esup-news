@@ -16,7 +16,7 @@ import org.springframework.dao.DataAccessException;
 public interface AttachmentDao {
 
     /**
-     * Retrieve an attachment with its id
+     * Retrieve an attachment with its id.
      * 
      * @param id
      * @return Attachment
@@ -25,25 +25,25 @@ public interface AttachmentDao {
     Attachment getAttachmentById(Long id) throws DataAccessException;
 
     /**
-     * Retrieve all attachment for an item
+     * Retrieve all attachment for an item.
      * 
      * @param itemId
-     * @return <code> List<Attachment> </code>
+     * @return <code> List&lt;Attachment&gt; </code>
      * @throws DataAccessException
      */
     List<Attachment> getAttachmentsListByItem(Long itemId) throws DataAccessException;
 
     /**
-     * Get items linked to a given attachment
+     * Get items linked to a given attachment.
      * 
      * @param attachmentId
-     * @return <code> List<Long> </code>
+     * @return <code> List&lt;Long&gt; </code>
      * @throws DataAccessException
      */
     List<Long> getItemsLinkedToAttachment(final Long attachmentId) throws DataAccessException;
 
     /**
-     * Insert an attachment
+     * Insert an attachment.
      * 
      * @param attachment
      * @return Long
@@ -52,15 +52,15 @@ public interface AttachmentDao {
     long insertAttachment(Attachment attachment) throws DataAccessException;
 
     /**
-     * Update an attachment
+     * Update an attachment.
      * 
      * @param params
      * @throws DataAccessException
      */
-    void updateAttachment(final Map params) throws DataAccessException ;
+    void updateAttachment(final Map params) throws DataAccessException;
     
     /**
-     * Add an attachment to a item
+     * Add an attachment to a item.
      * 
      * @param attachmentId
      * @param itemId
@@ -69,7 +69,7 @@ public interface AttachmentDao {
     void addAttachmentToItem(Long attachmentId, Long itemId) throws DataAccessException;
 
     /**
-     * Delete an attachment
+     * Delete an attachment.
      * 
      * @param attachmentId
      * @throws DataAccessException
@@ -77,7 +77,7 @@ public interface AttachmentDao {
     void deleteAttachment(Long attachmentId) throws DataAccessException;
 
     /**
-     * Delete an attachmentfor a item
+     * Delete an attachmentfor a item.
      * 
      * @param attachmentId
      * @param itemId

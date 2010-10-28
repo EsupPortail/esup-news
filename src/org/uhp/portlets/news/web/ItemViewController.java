@@ -130,12 +130,6 @@ public class ItemViewController extends AbstractController implements Initializi
             }
 
             List<Attachment> attachments = this.am.getAttachmentsListByItem(id);
-            for (Attachment att : attachments) {
-                // Size diplayed in Ko
-                double size = att.getSize() / 1024.0;
-                size = Math.round(size);
-                att.setSize((long) size);
-            }
             mav.addObject(Constants.ATT_A_LIST, attachments);
 
             //mav.addObject("r", this.um.canValidate(uid, item) ? Constants.CONST_Y : Constants.CONST_N);

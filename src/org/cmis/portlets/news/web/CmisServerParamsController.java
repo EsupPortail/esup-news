@@ -37,6 +37,7 @@ import org.uhp.portlets.news.web.support.Constants;
 public class CmisServerParamsController extends SimpleFormController implements InitializingBean {
 
     /** Logger. */
+    @SuppressWarnings("unused")
     private static final Log LOG = LogFactory.getLog(CmisServerParamsController.class);
 
     @Autowired
@@ -46,12 +47,11 @@ public class CmisServerParamsController extends SimpleFormController implements 
     @Autowired
     private CmisSessionFactory sf;
 
-    public void afterPropertiesSet() throws Exception {
-	if (this.am == null || this.um == null || this.sf == null) {
-	    throw new IllegalArgumentException("An AttachmentManager, a User Manager are required");
-	}
-    }
 
+
+    /**
+     * Constructor.
+     */
     public CmisServerParamsController() {
 	setCommandClass(CmisServerParamsForm.class);
 	setCommandName(Constants.CMD_CMIS_SERV_PARAMS);
@@ -59,8 +59,15 @@ public class CmisServerParamsController extends SimpleFormController implements 
 	setSuccessView(Constants.ACT_VIEW_ATT_CONF);
     }
 
+    public void afterPropertiesSet() throws Exception {
+	if (this.am == null || this.um == null || this.sf == null) {
+	    throw new IllegalArgumentException("An AttachmentManager, a User Manager are required");
+	}
+    }
+    
     @Override
-    protected ModelAndView showForm(RenderRequest request, RenderResponse response, BindException errors)
+    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response, 
+	    				final BindException errors)
 	    throws Exception {
 	if (!this.um.isSuperAdmin(request.getRemoteUser())) {
 	    ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
@@ -87,7 +94,7 @@ public class CmisServerParamsController extends SimpleFormController implements 
     }
 
     @Override
-    protected Object formBackingObject(PortletRequest request) throws Exception {
+    protected Object formBackingObject(final  PortletRequest request) throws Exception {
 	CmisServerParamsForm form = new CmisServerParamsForm();
 
 	CmisServer servParams = am.getApplicationServer();
@@ -104,7 +111,8 @@ public class CmisServerParamsController extends SimpleFormController implements 
     }
 
     @Override
-    protected void onSubmitAction(ActionRequest request, ActionResponse response, Object command, BindException errors)
+    protected void onSubmitAction(final ActionRequest request, final ActionResponse response, 
+	    				final Object command, final BindException errors)
 	    throws Exception {
 	CmisServerParamsForm form = (CmisServerParamsForm) command;
 

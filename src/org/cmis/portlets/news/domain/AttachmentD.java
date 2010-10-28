@@ -24,6 +24,13 @@ public class AttachmentD implements Serializable {
     private Document cmisDocument;
 
     /**
+     * Constructor of the AttachmentD object.
+     */
+    public AttachmentD() {
+	 super();
+    }
+    
+    /**
      * @return the attachmentId
      */
     public Long getAttachmentId() {
@@ -34,7 +41,8 @@ public class AttachmentD implements Serializable {
      * @param attachmentId
      *            the attachmentId to set
      */
-    public void setAttachmentId(Long attachmentId) {
+    @SuppressWarnings("hiding")
+    public void setAttachmentId(final Long attachmentId) {
 	this.attachmentId = attachmentId;
     }
 
@@ -49,7 +57,8 @@ public class AttachmentD implements Serializable {
      * @param cmisUid
      *            the cmisUid to set
      */
-    public void setCmisUid(String cmisUid) {
+    @SuppressWarnings("hiding")
+    public void setCmisUid(final String cmisUid) {
 	this.cmisUid = cmisUid;
     }
 
@@ -64,15 +73,25 @@ public class AttachmentD implements Serializable {
      * @param fileName
      *            the fileName to set
      */
-    public void setFileName(String fileName) {
+    @SuppressWarnings("hiding")
+    public void setFileName(final String fileName) {
 	this.fileName = fileName;
     }
 
+    /**
+     * Get the Cmis document.
+     * @return Document
+     */
     public Document getCmisDocument() {
 	return cmisDocument;
     }
 
-    public void setCmisDocument(Document cmisDocument) {
+    /**
+     * Set the Cmis document.
+     * @param cmisDocument
+     */
+    @SuppressWarnings("hiding")
+    public void setCmisDocument(final Document cmisDocument) {
 	this.cmisDocument = cmisDocument;
     }
 }

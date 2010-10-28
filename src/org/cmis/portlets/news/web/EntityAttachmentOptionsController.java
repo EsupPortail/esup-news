@@ -52,7 +52,7 @@ public class EntityAttachmentOptionsController extends SimpleFormController impl
     private EntityManager em;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public EntityAttachmentOptionsController() {
 	setCommandClass(AttachmentOptionsForm.class);
@@ -69,7 +69,8 @@ public class EntityAttachmentOptionsController extends SimpleFormController impl
     }
 
     @Override
-    protected ModelAndView showForm(RenderRequest request, RenderResponse response, BindException errors)
+    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response, 
+	    				final BindException errors)
 	    throws Exception {
 	final Long ctxId = Long.valueOf(request.getParameter(Constants.ATT_ENTITY_ID));
 	if (!this.um.isUserAdminInCtx(ctxId, NewsConstants.CTX_E, request.getRemoteUser())) {
@@ -105,8 +106,9 @@ public class EntityAttachmentOptionsController extends SimpleFormController impl
 	return model;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    protected Object formBackingObject(PortletRequest request) throws Exception {
+    protected Object formBackingObject(final PortletRequest request) throws Exception {
 	AttachmentOptionsForm form = new AttachmentOptionsForm();
 
 	String parameter = request.getParameter(Constants.ATT_ENTITY_ID);
@@ -161,7 +163,8 @@ public class EntityAttachmentOptionsController extends SimpleFormController impl
     }
 
     @Override
-    protected void onSubmitAction(ActionRequest request, ActionResponse response, Object command, BindException errors)
+    protected void onSubmitAction(final ActionRequest request, final ActionResponse response, 
+	    				final Object command, final BindException errors)
 	    throws Exception {
 
 	AttachmentOptionsForm aof = (AttachmentOptionsForm) command;
@@ -230,7 +233,12 @@ public class EntityAttachmentOptionsController extends SimpleFormController impl
 
 	    options.setGlobalOptions("0");
 
-	    boolean isAppOpt = (optionsId == appOptionsId) ? true : false;
+	    boolean isAppOpt;
+	    if (optionsId == appOptionsId) {
+		isAppOpt = true;
+	    } else {
+		isAppOpt = false;
+	    }
 
 	    if (optionsId > 0 && !isAppOpt) {
 		options.setOptionId(optionsId);

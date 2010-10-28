@@ -54,6 +54,17 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
     @Autowired
     private CmisSessionFactory sf;
 
+
+    /**
+     * Constructor.
+     */
+    public EntityCmisServerParamsController() {
+	setCommandClass(CmisServerParamsForm.class);
+	setCommandName(Constants.CMD_CMIS_SERV_PARAMS);
+	setFormView(Constants.ACT_EDIT_E_CMIS_SERV_PARAMS);
+	setSuccessView(Constants.ACT_VIEW_E_ATT_CONF);
+    }
+    
     public void afterPropertiesSet() throws Exception {
 	if (this.am == null || this.um == null || this.em == null || this.sf == null) {
 	    throw new IllegalArgumentException(
@@ -61,16 +72,11 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
 	}
     }
 
-    public EntityCmisServerParamsController() {
-	setCommandClass(CmisServerParamsForm.class);
-	setCommandName(Constants.CMD_CMIS_SERV_PARAMS);
-	setFormView(Constants.ACT_EDIT_E_CMIS_SERV_PARAMS);
-	setSuccessView(Constants.ACT_VIEW_E_ATT_CONF);
-    }
-
     @Override
-    protected ModelAndView showForm(RenderRequest request, RenderResponse response, BindException errors)
+    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response, 
+	    				final BindException errors)
 	    throws Exception {
+	BindException newError = null;
 	String eid = request.getParameter(Constants.ATT_ENTITY_ID);
 	String cancel = request.getParameter("cancel");
 	if (eid != null) {
@@ -85,9 +91,13 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
 	}
 	if (cancel != null) {
 	    BindingResult bindingResult = errors.getBindingResult();
-	    errors = new BindException(bindingResult);
+	    newError = new BindException(bindingResult);
 	}
-	return super.showForm(request, response, errors);
+	if (newError != null) {
+	    return super.showForm(request, response, newError);
+	} else {  
+	    return super.showForm(request, response, errors);
+	}
     }
 
     @Override
@@ -113,7 +123,7 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
     }
 
     @Override
-    protected Object formBackingObject(PortletRequest request) throws Exception {
+    protected Object formBackingObject(final PortletRequest request) throws Exception {
 	CmisServerParamsForm form = new CmisServerParamsForm();
 
 	String parameter = request.getParameter(Constants.ATT_ENTITY_ID);
@@ -152,7 +162,8 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
     }
 
     @Override
-    protected void onSubmitAction(ActionRequest request, ActionResponse response, Object command, BindException errors)
+    protected void onSubmitAction(final ActionRequest request, final ActionResponse response, 
+	    				final Object command, final BindException errors)
 	    throws Exception {
 	CmisServerParamsForm form = (CmisServerParamsForm) command;
 
@@ -202,7 +213,13 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
 
 	    servParams.setRepositoryId(form.getRepositoryId());
 
-	    boolean isAppServer = (serverId == appServerId) ? true : false;
+	    boolean isAppServer;
+	    if (serverId == appServerId) {
+		isAppServer = true;
+	    } else {
+		isAppServer = false;
+	    }
+	    
 	    if (serverId > 0 && !isAppServer) {
 		servParams.setServerId(serverId);
 		am.updateServerInfos(servParams);

@@ -11,7 +11,7 @@ import org.springframework.dao.DataAccessException;
 public interface CmisServerParamsDao {
 
     /**
-     * Get the server configuration defined for the application
+     * Get the server configuration defined for the application.
      * 
      * @return CmisServer
      * @throws DataAccessException
@@ -19,7 +19,7 @@ public interface CmisServerParamsDao {
     CmisServer getApplicationServer() throws DataAccessException;
 
     /**
-     * Get the server configuration for a given entity
+     * Get the server configuration for a given entity.
      * 
      * @param entityId
      * @return CmisServer
@@ -28,7 +28,7 @@ public interface CmisServerParamsDao {
     CmisServer getEntityServer(Long entityId) throws DataAccessException;
 
     /**
-     * Save a new server configuration
+     * Save a new server configuration.
      * 
      * @param serverParams
      * @return Long
@@ -37,7 +37,7 @@ public interface CmisServerParamsDao {
     Long insertServerParams(CmisServer serverParams) throws DataAccessException;
 
     /**
-     * Link a server configuration to an entity
+     * Link a server configuration to an entity.
      * 
      * @param serverId
      * @param entityId
@@ -46,7 +46,7 @@ public interface CmisServerParamsDao {
     void linkServerToEntity(Long serverId, Long entityId) throws DataAccessException;
 
     /**
-     * update server configuration
+     * update server configuration.
      * 
      * @param serverParams
      * @throws DataAccessException
@@ -54,14 +54,14 @@ public interface CmisServerParamsDao {
     void updateServerInfos(CmisServer serverParams) throws DataAccessException;
 
     /**
-     * Delete the link between entity and a server configuration
+     * Delete the link between entity and a server configuration.
      * 
      * @param entityId
      */
     void deleteServerLinkToEntity(Long entityId);
 
     /**
-     * Delete server params
+     * Delete server params.
      * 
      * @param serverId
      */

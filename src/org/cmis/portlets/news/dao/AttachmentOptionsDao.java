@@ -11,7 +11,7 @@ import org.springframework.dao.DataAccessException;
 public interface AttachmentOptionsDao {
 
     /**
-     * Get the attachment parameters defined for the application
+     * Get the attachment parameters defined for the application.
      * 
      * @return AttachmentOptions
      * @throws DataAccessException
@@ -19,7 +19,7 @@ public interface AttachmentOptionsDao {
     AttachmentOptions getApplicationOptions() throws DataAccessException;
 
     /**
-     * Get the attachment parameters defined for a given entity
+     * Get the attachment parameters defined for a given entity.
      * 
      * @param entityId
      * @return AttachmentOptions
@@ -28,7 +28,7 @@ public interface AttachmentOptionsDao {
     AttachmentOptions getEntityOptions(Long entityId) throws DataAccessException;
 
     /**
-     * Save attachment parameters
+     * Save attachment parameters.
      * 
      * @param options
      * @return Long
@@ -37,7 +37,7 @@ public interface AttachmentOptionsDao {
     Long insertAttachmentOptions(AttachmentOptions options) throws DataAccessException;
 
     /**
-     * Link attachment parameters to an entity
+     * Link attachment parameters to an entity.
      * 
      * @param optionsId
      * @param entityId
@@ -46,7 +46,7 @@ public interface AttachmentOptionsDao {
     void linkAttachmentOptionsToEntity(Long optionsId, Long entityId) throws DataAccessException;
 
     /**
-     * Update attachment parameters
+     * Update attachment parameters.
      * 
      * @param options
      * @throws DataAccessException
@@ -54,14 +54,14 @@ public interface AttachmentOptionsDao {
     void updateAttachmentOptions(AttachmentOptions options) throws DataAccessException;
 
     /**
-     * Delete attachment parameters for an entity
+     * Delete attachment parameters for an entity.
      * 
      * @param entityId
      */
     void deleteAttachmentOptsLinkToEntity(Long entityId);
 
     /**
-     * Delete attachment parameters
+     * Delete attachment parameters.
      * 
      * @param optionsId
      */

@@ -16,7 +16,7 @@ package org.uhp.portlets.news.service;
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
+ 
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndContentImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -61,6 +61,8 @@ import org.uhp.portlets.news.domain.SubscribeType;
 import org.uhp.portlets.news.domain.Subscriber;
 import org.uhp.portlets.news.domain.Topic;
 import org.uhp.portlets.news.publisher.Constants;
+
+
 
 
 /**
@@ -560,11 +562,6 @@ public class BasicFeedService implements FeedService, InitializingBean {
             iv.setCatName(c.getName());
             
             List<Attachment> attachments = attachmentDao.getAttachmentsListByItem(id);
-            for (Attachment att : attachments) {
-                double size = att.getSize() / 1024.0;
-                size = Math.round(size);
-                att.setSize((long) size);
-            }
             iv.setAttachments(attachments);
             
             return iv;

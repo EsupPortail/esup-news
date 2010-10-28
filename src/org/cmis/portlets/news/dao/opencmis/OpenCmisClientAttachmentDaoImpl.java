@@ -44,7 +44,12 @@ public class OpenCmisClientAttachmentDaoImpl implements CmisAttachmentDao {
     @Autowired
     private CmisPathFinderHelper pathHelper;
 
-    public void deleteAttachment(String attachmentId, final Long entityId) throws CmisException {
+    /** Constructeur.  */
+    public OpenCmisClientAttachmentDaoImpl() {
+        super();
+    }
+    
+    public void deleteAttachment(final String attachmentId, final Long entityId) throws CmisException {
 
 	Session session = sessionFactory.getSession(entityId);
 
@@ -54,7 +59,7 @@ public class OpenCmisClientAttachmentDaoImpl implements CmisAttachmentDao {
 	object.delete(true);
     }
 
-    public AttachmentD getAttachmentById(String id, final Long entityId) throws CmisException {
+    public AttachmentD getAttachmentById(final String id, final Long entityId) throws CmisException {
 
 	Session session = sessionFactory.getSession(entityId);
 
@@ -69,14 +74,12 @@ public class OpenCmisClientAttachmentDaoImpl implements CmisAttachmentDao {
 	return ad;
     }
 
-    public Attachment insertAttachment(final org.uhp.portlets.news.web.ItemForm.Attachment attachment, final Long entityId, Map<String, Object> prop)
-	    throws CmisException {
+    public Attachment insertAttachment(final org.uhp.portlets.news.web.ItemForm.Attachment attachment,
+	    final Long entityId, final Map<String, Object> prop) throws CmisException {
 	Session session;
-	try
-	{
+	try {
 	    session = sessionFactory.getSession(entityId);
-	} catch (CmisException e)
-	{
+	} catch (CmisException e) {
 	    throw new CmisException(e.getMessage(), e.fillInStackTrace());
 	}
 
@@ -103,26 +106,23 @@ public class OpenCmisClientAttachmentDaoImpl implements CmisAttachmentDao {
 	ContentStream stream = null;
 	ObjectId oid = null;
 	FileInputStream fis = null;
-	try
-	{
+	try {
 	    // Store the file
 	    fis = new FileInputStream(file);
 	    stream = new ContentStreamImpl(filename, BigInteger.valueOf(file.length()), attachment.getMimeType(), fis);
-	    oid = session.createDocument(properties, new ObjectIdImpl(folder.getId()), stream, VersioningState.NONE, null, null, null);
+	    oid = session.createDocument(properties, new ObjectIdImpl(folder.getId()), stream, VersioningState.NONE,
+		    null, null, null);
 
-	} catch (Exception e)
-	{
+	} catch (Exception e) {
 	    LOG.error(e, e.fillInStackTrace());
 	    throw new CmisException("Impossible de lire le contenu du fichier.", e.fillInStackTrace());
 
-	} finally
-	{
-	    try
-	    {
-		fis.close();
-
-	    } catch (IOException e)
-	    {
+	} finally {
+	    try {
+		if (fis != null) {
+		    fis.close();
+		}
+	    } catch (IOException e) {
 		LOG.error(e, e.fillInStackTrace());
 		throw new CmisException(e.getMessage(), e.fillInStackTrace());
 	    }
@@ -131,8 +131,7 @@ public class OpenCmisClientAttachmentDaoImpl implements CmisAttachmentDao {
 	}
 
 	Attachment sqlAtt = null;
-	if (oid != null)
-	{
+	if (oid != null) {
 	    // build the sqlMap object
 	    sqlAtt = new Attachment();
 	    sqlAtt.setCmisUid(oid.getId());

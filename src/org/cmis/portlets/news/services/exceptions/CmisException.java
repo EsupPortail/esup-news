@@ -10,19 +10,32 @@ public class CmisException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Constructor.
+     */
     public CmisException() {
 	super();
     }
 
-    public CmisException(String message) {
+    /**
+     * @param message
+     */
+    public CmisException(final String message) {
 	super(message);
     }
 
+    /**
+     * @param cause
+     */
     public CmisException(final Throwable cause) {
 	super(cause);
     }
 
-    public CmisException(final String message, Throwable cause) {
+    /**
+     * @param message
+     * @param cause
+     */
+    public CmisException(final String message, final Throwable cause) {
 	super(message, cause);
     }
 }
