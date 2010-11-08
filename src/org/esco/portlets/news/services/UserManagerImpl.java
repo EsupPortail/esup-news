@@ -888,8 +888,12 @@ public class UserManagerImpl implements UserManager, InitializingBean {
      * @see org.esco.portlets.news.services.UserManager#getUserNameByUid(java.lang.String)
      */
     public String getUserNameByUid(final String uid) {
-        return this.userDao.getUserNameById(uid);
-
+//TODO a modifier    	
+        try {
+			return this.userDao.getUserNameById(uid);
+		} catch (org.esupportail.commons.exceptions.UserNotFoundException e) {
+			return uid;
+		}
     }
     
     /**
