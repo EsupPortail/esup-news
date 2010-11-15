@@ -3,8 +3,6 @@
 <link rel="stylesheet" type="text/css"
 	href="${ctxPath}/css/displaytag.css">
 <%@ include file="/WEB-INF/jsp/submenu_t.jsp" %>
-<%@ include file="/WEB-INF/jsp/header2T.jsp" %>
-<div id="news_clear"></div>
 <c:choose>
 	<c:when test="${s eq '1'}">
 		<c:set var="aN" value="viewTopic" />
@@ -23,7 +21,8 @@
 		<c:set var="titleKey" value="view.topic.pendingItems.page.title" />
 	</c:otherwise>
 </c:choose>
-
+<%@ include file="/WEB-INF/jsp/header2T.jsp" %>
+<div id="news_clear"></div>
 <portlet:renderURL var="baseRenderUrl">
 	<portlet:param name="action" value="viewItem" />
 	<portlet:param name="id" value="${item.itemId}" />

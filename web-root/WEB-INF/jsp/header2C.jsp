@@ -13,9 +13,11 @@
 	<li <c:if test='${aN=="viewCat"}'>id="current" </c:if>><a
 		href="${viewCatRenderUrl}"><fmt:message
 		key="menu.topics" /> </a></li>
-	<li <c:if test='${aN=="newItem"}'>id="current" </c:if>><a
-		href="${newItemRenderUrl}" class="portlet-menu-item" /> <fmt:message
-		key="menu.newItem" /> </a></li>
+	<c:if test='${pMask ge rC}'>
+		<li <c:if test='${aN=="newItem"}'>id="current" </c:if>><a
+			href="${newItemRenderUrl}" class="portlet-menu-item" /> <fmt:message
+			key="menu.newItem" /> </a></li>
+	</c:if>
 	<c:if test='${pMask ge rM}'>
 		<li <c:if test='${aN=="newTopic"}'>id="current" </c:if>><a
 			href="${newTopicRenderUrl}" class="portlet-menu-item"><fmt:message
