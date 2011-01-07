@@ -35,266 +35,266 @@ import org.springframework.web.multipart.MultipartFile;
 import org.uhp.portlets.news.domain.Item;
 
 public class ItemForm implements Serializable {
-    private static final Log log = LogFactory.getLog(ItemForm.class);
+	private static final Log LOGGER = LogFactory.getLog(ItemForm.class);
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private Item item = new Item();
+	private Item item = new Item();
 
-    private String[] topicIds;
+	private String[] topicIds;
 
-    private List<Attachment> attachments;
+	private List<Attachment> attachments;
 
-    // Values for external attachment
-    private Attachment external = new Attachment();
-    // Values for attachment to update
-    private Attachment attachmentToUpdate;
+	// Values for external attachment
+	private Attachment external = new Attachment();
+	// Values for attachment to update
+	private Attachment attachmentToUpdate;
 
-    // Values for internal attachment
-    private Long categoryId;
-    private Long topicId;
-    private Long itemId;
+	// Values for internal attachment
+	private Long categoryId;
+	private Long topicId;
+	private Long itemId;
 
-    public Item getItem() {
-	return this.item;
-    }
-
-    public void setItem(Item item) {
-	this.item = item;
-    }
-
-    public String[] getTopicIds() {
-	return this.topicIds;
-    }
-
-    public void setTopicIds(String[] topicIds) {
-	this.topicIds = new String[topicIds.length];
-	System.arraycopy(topicIds, 0, this.topicIds, 0, topicIds.length);
-    }
-
-    public Attachment getExternal() {
-	return external;
-    }
-
-    public void setExternal(Attachment external) {
-	this.external = external;
-    }
-
-    public Long getCategoryId() {
-	return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-	this.categoryId = categoryId;
-    }
-
-    public Long getTopicId() {
-	return topicId;
-    }
-
-    public void setTopicId(Long topicId) {
-	this.topicId = topicId;
-    }
-
-    public Long getItemId() {
-	return itemId;
-    }
-
-    public void setItemId(Long itemId) {
-	this.itemId = itemId;
-    }
-
-    public List<Attachment> getAttachments() {
-	if (attachments == null)
-	{
-	    attachments = new ArrayList<Attachment>();
+	public Item getItem() {
+		return this.item;
 	}
-	return attachments;
-    }
 
-    public void setAttachments(List<Attachment> externalAttachments) {
-	this.attachments = externalAttachments;
-    }
+	public void setItem(Item item) {
+		this.item = item;
+	}
 
-    public void addInternalAttachment(org.cmis.portlets.news.domain.Attachment attachment) {
-	Attachment att = new Attachment();
-	att.setId(attachment.getAttachmentId().toString());
-	att.setTitle(attachment.getTitle());
-	att.setDesc(attachment.getDescription());
-	att.setInsertDate(attachment.getInsertDate());
+	public String[] getTopicIds() {
+		return this.topicIds;
+	}
 
-	String filename = attachment.getFileName();
-	att.setType(filename.substring(filename.lastIndexOf(".") + 1, filename.length()));
+	public void setTopicIds(String[] topicIds) {
+		this.topicIds = new String[topicIds.length];
+		System.arraycopy(topicIds, 0, this.topicIds, 0, topicIds.length);
+	}
 
-	getAttachments().add(att);
-    }
+	public Attachment getExternal() {
+		return external;
+	}
 
-    public void addExternalAttachment(String temporaryStoragePath) {
-	if (getExternal().getTitle().length() > 1)
-	{
-	    Attachment external = getExternal();
+	public void setExternal(Attachment external) {
+		this.external = external;
+	}
 
-	    File tmp = null;
-	    FileOutputStream outputStream = null;
-	    InputStream inputStream = null;
-	    try
-	    {
-		File dir = new File(temporaryStoragePath);
-		if (!dir.exists())
+	public Long getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public Long getTopicId() {
+		return topicId;
+	}
+
+	public void setTopicId(Long topicId) {
+		this.topicId = topicId;
+	}
+
+	public Long getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(Long itemId) {
+		this.itemId = itemId;
+	}
+
+	public List<Attachment> getAttachments() {
+		if (attachments == null)
 		{
-		    dir.mkdir();
+			attachments = new ArrayList<Attachment>();
 		}
-		tmp = new File(temporaryStoragePath + "/" + external.getFile().getOriginalFilename());
-		outputStream = new FileOutputStream(tmp);
-		inputStream = external.getFile().getInputStream();
-		byte[] buf = new byte[(int) external.getFile().getSize()];
-		int len;
-		while ((len = inputStream.read(buf)) > 0)
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> externalAttachments) {
+		this.attachments = externalAttachments;
+	}
+
+	public void addInternalAttachment(org.cmis.portlets.news.domain.Attachment attachment) {
+		Attachment att = new Attachment();
+		att.setId(attachment.getAttachmentId().toString());
+		att.setTitle(attachment.getTitle());
+		att.setDesc(attachment.getDescription());
+		att.setInsertDate(attachment.getInsertDate());
+
+		String filename = attachment.getFileName();
+		att.setType(filename.substring(filename.lastIndexOf(".") + 1, filename.length()));
+
+		getAttachments().add(att);
+	}
+
+	public void addExternalAttachment(String temporaryStoragePath) {
+		if (getExternal().getTitle().length() > 1)
 		{
-		    outputStream.write(buf, 0, len);
+			Attachment external = getExternal();
+
+			File tmp = null;
+			FileOutputStream outputStream = null;
+			InputStream inputStream = null;
+			try
+			{
+				File dir = new File(temporaryStoragePath);
+				if (!dir.exists())
+				{
+					dir.mkdir();
+				}
+				tmp = new File(temporaryStoragePath + "/" + external.getFile().getOriginalFilename());
+				outputStream = new FileOutputStream(tmp);
+				inputStream = external.getFile().getInputStream();
+				byte[] buf = new byte[(int) external.getFile().getSize()];
+				int len;
+				while ((len = inputStream.read(buf)) > 0)
+				{
+					outputStream.write(buf, 0, len);
+				}
+			} catch (Exception e)
+			{
+				LOGGER.error(e, e.fillInStackTrace());
+			} finally
+			{
+				try
+				{
+					if (outputStream != null)
+					{
+						outputStream.close();
+					}
+					if (inputStream != null)
+					{
+						inputStream.close();
+					}
+
+				} catch (IOException e)
+				{
+					LOGGER.error(e, e.fillInStackTrace());
+				}
+			}
+			if (tmp != null)
+			{
+				external.setTempDiskStoredFile(tmp);
+				external.setMimeType(external.getFile().getContentType());
+				getAttachments().add(external);
+			}
+			setExternal(new Attachment());
 		}
-	    } catch (Exception e)
-	    {
-		log.error(e, e.fillInStackTrace());
-	    } finally
-	    {
-		try
-		{
-		    if (outputStream != null)
-		    {
-			outputStream.close();
-		    }
-		    if (inputStream != null)
-		    {
-			inputStream.close();
-		    }
+	}
 
-		} catch (IOException e)
-		{
-		    log.error(e, e.fillInStackTrace());
+	public void cleanExternalAttachment() {
+		setExternal(new Attachment());
+	}
+
+	public void cleanInternalAttachment() {
+		categoryId = Long.valueOf(-1);
+		topicId = Long.valueOf(-1);
+		itemId = Long.valueOf(-1);
+	}
+
+
+	/**
+	 * @return the attachmentToUpdate
+	 */
+	public Attachment getAttachmentToUpdate() {
+		return attachmentToUpdate;
+	}
+
+	/**
+	 * @param id
+	 * @param title 
+	 * @param desc 
+	 * @param attachmentToUpdate the attachmentToUpdate to set
+	 */
+	public void setAttachmentToUpdate(String id, String title, String desc) {
+		this.attachmentToUpdate = new Attachment();
+		attachmentToUpdate.setId(id);
+		attachmentToUpdate.setTitle(title);
+		attachmentToUpdate.setDesc(desc);
+	}
+
+	public class Attachment {
+		private String id = "";
+		private MultipartFile file;
+		private File tempDiskStoredFile;
+		private String type;
+		private String mimeType;
+		private String title;
+		private String desc;
+		private Date insertDate = new Date();
+
+		public String getId() {
+			return id;
 		}
-	    }
-	    if (tmp != null)
-	    {
-		external.setTempDiskStoredFile(tmp);
-		external.setMimeType(external.getFile().getContentType());
-		getAttachments().add(external);
-	    }
-	    setExternal(new Attachment());
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getTitle() {
+			return title;
+		}
+
+		public void setTitle(String title) {
+			this.title = title;
+		}
+
+		public String getDesc() {
+			return desc;
+		}
+
+		public void setDesc(String desc) {
+			this.desc = desc;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
+
+		public void setFile(MultipartFile file) {
+			this.file = file;
+			String originalFilename = file.getOriginalFilename();
+			if (StringUtils.isNotEmpty(originalFilename))
+			{
+				String type = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
+				setType(type);
+			}
+		}
+
+		public MultipartFile getFile() {
+			return file;
+		}
+
+		public Date getInsertDate() {
+			return insertDate;
+		}
+
+		public void setInsertDate(Date insertDate) {
+			this.insertDate = insertDate;
+		}
+
+		public void setTempDiskStoredFile(File tempDiskStoredFile) {
+			this.tempDiskStoredFile = tempDiskStoredFile;
+		}
+
+		public File getTempDiskStoredFile() {
+			return tempDiskStoredFile;
+		}
+
+		public void setMimeType(String mimeType) {
+			this.mimeType = mimeType;
+		}
+
+		public String getMimeType() {
+			return mimeType;
+		}
 	}
-    }
-
-    public void cleanExternalAttachment() {
-	setExternal(new Attachment());
-    }
-
-    public void cleanInternalAttachment() {
-	categoryId = new Long(-1);
-	topicId = new Long(-1);
-	itemId = new Long(-1);
-    }
-
-
-    /**
-     * @return the attachmentToUpdate
-     */
-    public Attachment getAttachmentToUpdate() {
-        return attachmentToUpdate;
-    }
-
-    /**
-     * @param id
-     * @param title 
-     * @param desc 
-     * @param attachmentToUpdate the attachmentToUpdate to set
-     */
-    public void setAttachmentToUpdate(String id, String title, String desc) {
-        this.attachmentToUpdate = new Attachment();
-        attachmentToUpdate.setId(id);
-        attachmentToUpdate.setTitle(title);
-        attachmentToUpdate.setDesc(desc);
-    }
-    
-    public class Attachment {
-	private String id = "";
-	private MultipartFile file;
-	private File tempDiskStoredFile;
-	private String type;
-	private String mimeType;
-	private String title;
-	private String desc;
-	private Date insertDate = new Date();
-
-	public String getId() {
-	    return id;
-	}
-
-	public void setId(String id) {
-	    this.id = id;
-	}
-
-	public String getTitle() {
-	    return title;
-	}
-
-	public void setTitle(String title) {
-	    this.title = title;
-	}
-
-	public String getDesc() {
-	    return desc;
-	}
-
-	public void setDesc(String desc) {
-	    this.desc = desc;
-	}
-
-	public String getType() {
-	    return type;
-	}
-
-	public void setType(String type) {
-	    this.type = type;
-	}
-
-	public void setFile(MultipartFile file) {
-	    this.file = file;
-	    String originalFilename = file.getOriginalFilename();
-	    if (StringUtils.isNotEmpty(originalFilename))
-	    {
-		String type = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
-		setType(type);
-	    }
-	}
-
-	public MultipartFile getFile() {
-	    return file;
-	}
-
-	public Date getInsertDate() {
-	    return insertDate;
-	}
-
-	public void setInsertDate(Date insertDate) {
-	    this.insertDate = insertDate;
-	}
-
-	public void setTempDiskStoredFile(File tempDiskStoredFile) {
-	    this.tempDiskStoredFile = tempDiskStoredFile;
-	}
-
-	public File getTempDiskStoredFile() {
-	    return tempDiskStoredFile;
-	}
-
-	public void setMimeType(String mimeType) {
-	    this.mimeType = mimeType;
-	}
-
-	public String getMimeType() {
-	    return mimeType;
-	}
-    }
 
 
 }

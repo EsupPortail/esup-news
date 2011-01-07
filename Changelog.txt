@@ -51,10 +51,16 @@ Version initial de NewsPortlet en version 2.0.6
 	- Corrections de bug mineurs sur les pièces jointes
 	- Ajout de quelques documentations
 	
-==== Version 0.2.1 ====
-	- Ajout d'une option pour les accès LDAP en anonyme.
-
-		
+==== Pré Version 0.2.1 ====
+	- Ajout d'une option pour les accès LDAP en anonyme, dans properties/news.properties il s'agit de l'option ldap.anonymousReadOnly=true or false.
+	- Ajout d'une target ant init effectuant un ant clean et portlet-init.
+	- Convertion automatique de la taille des fichiers en octets,Ko,Mo,Go
+	- Correction du problème de connexion à Nuxeo, par contre les liens avec openCMIS devront contenir /atom à la fin s'il n'ya pas de redirection automatique. 
+	- Correction du bug sur la mise à jour des topics - le validator et la requête de vérifiation sur le sameName étaient incorrects.
+	- Correction de bug : affichage de "false" dans une page vierge quand on annule la confirmation de suppression d'une annonce.
+	- Correction de bug : Possibilité d'ajouter plusieurs fois la même pièce jointe provenant d'une autre annonce, ce qui provoquait une erreur sql de "duplicate entry".
+	- Correction de bug : dans la page viewTopic.jsp les flêches up et upToTop pour ordonner les item ne fonctionnaient plus à cause d'un bug entre les lib displaytag et pluto (la conditionnelle de non affichage des flêche sur la première ligne des flêches au niveau du href sur une colonne displaytag en était la cause, la conditionnelle a été placé sur l'image, faisant que le href est toujours là mais non cliquable car il n'y a pas d'image).
+	- Correction de bug : dans la page itemEdit.jsp, le lien pour la suppression ne demandait pas de confirmation (code JS), cela était parceque le onclick js était sur le href et non sur la balise img, en fait cela vient d'un problème de comportement très étrange car selon les pages on peut mettre le onclick sur des href...
 
 ==== TODO ====
 	- Terminer les doc de la version.
@@ -65,6 +71,6 @@ Version initial de NewsPortlet en version 2.0.6
 	- Ajouter la possibilité de donner des accès (admin, editeur, contributeur) aux catégories, thèmes... à des groupes.
 	- Regarder le système d'ordre d'affichage des annonces, des thèmes et des catégories, système non optimisé demande beaucoup trop de requêtes sql pour les modifications.
 	- Modifier la gestion des clés primaires et suppression de la classe des séquences sur l'ancienne partie newsportlet. 
-	- Ajouter des contraintes "Foreign Key" de la base existante afin de mieux lier tables et contrôler les répercutions lors d'ajout ou de suppression...
+	- Ajouter des contraintes "Foreign Key" de la base existante (il n'y avait aucun contrainte dans newsPortlet) afin de mieux lier tables et contrôler les répercutions lors d'ajout ou de suppression...
 	- Ajouter des modes de recherche des utilisateurs, selection sur un attribut spécifique et non plus uniquement sur l'attribut de recherche.
 	- Voir pour définir un système de filtre LDAP (l'utilisateur défini le filtre via une interface adaptée, choix des conditions...)

@@ -38,7 +38,7 @@ import org.uhp.portlets.news.domain.Topic;
 @Repository("topicDao")
 public class SqlMapClientTopicDaoImpl extends SqlMapClientDaoSupport implements
 		TopicDao {
-	private static final Log log = LogFactory.getLog(SqlMapClientTopicDaoImpl.class);
+	private static final Log LOGGER = LogFactory.getLog(SqlMapClientTopicDaoImpl.class);
 	@Autowired private SequenceDao sequenceDao;
 
 	public void setSequenceDao(final SequenceDao sequenceDao) {
@@ -63,7 +63,7 @@ public class SqlMapClientTopicDaoImpl extends SqlMapClientDaoSupport implements
         try {
             topic = (Topic) getSqlMapClientTemplate().queryForObject("getTopicById", topicId);
             if(topic == null) {
-                log.error("getTopic:: topic null");
+                LOGGER.error("getTopic:: topic null");
                 throw new ObjectRetrievalFailureException(Topic.class, topicId);
             }
         } catch (Exception e) {
@@ -135,7 +135,7 @@ public class SqlMapClientTopicDaoImpl extends SqlMapClientDaoSupport implements
 		try {
 			getSqlMapClientTemplate().update("updateTopicOrderById", params);
 		} catch (DataAccessException e) {
-		    log.warn("SqlMapClientTopicDaoImpl:: updateTopicOrder : Error : "+ e.getMessage());		
+		    LOGGER.warn("SqlMapClientTopicDaoImpl:: updateTopicOrder : Error : "+ e.getMessage());		
 		}
 	}
 

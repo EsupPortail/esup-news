@@ -49,7 +49,7 @@ public class ItemDeleteController extends AbstractController implements Initiali
     @Autowired
     private AttachmentManager am;
 
-    private static final Log log = LogFactory.getLog(ItemDeleteController.class);
+    private static final Log LOGGER = LogFactory.getLog(ItemDeleteController.class);
 
     public void afterPropertiesSet() throws Exception {
         if ((this.im == null) || (this.um == null))
@@ -64,7 +64,7 @@ public class ItemDeleteController extends AbstractController implements Initiali
         final String fromStatus = request.getParameter(Constants.ATT_STATUS);
 
         if (!this.um.canEditItem(request.getRemoteUser(), this.im.getItemById(itemId))) {
-            log.warn("ItemDelete: user " + request.getRemoteUser() + " has no permission to delete this item [" + itemId + "]");
+            LOGGER.warn("ItemDelete: user " + request.getRemoteUser() + " has no permission to delete this item [" + itemId + "]");
             throw new PortletSecurityException(
                     getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));
         }
@@ -78,14 +78,14 @@ public class ItemDeleteController extends AbstractController implements Initiali
         this.am.deleteItemAttachments(itemId, entityId);
 
         if (deleteAll) {
-            if (log.isDebugEnabled()) {
-                log.debug("ItemDelete: delete item (itemid=" + itemId + ") for all topics");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("ItemDelete: delete item (itemid=" + itemId + ") for all topics");
             }
             this.im.deleteItemForAllTopics(itemId);
             this.im.deleteItem(itemId);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("ItemDelete:: delete item (itemid=" + itemId + ") for topic (topicId=" + topicId + ")");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("ItemDelete:: delete item (itemid=" + itemId + ") for topic (topicId=" + topicId + ")");
             }
             if (topicId != null) {
             	this.im.deleteItemForTopic(itemId, Long.valueOf(topicId));

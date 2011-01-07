@@ -3,6 +3,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fsc" uri="/WEB-INF/tags/fileSizeConverter.tld"%>
+
 <c:set var="ctxPath" value="${pageContext['request'].contextPath}" />
 <c:set var="portletName" value="Esup-News" />
 <c:set var="portletVersion" value="@NEWS_VERSION@" />
@@ -63,7 +65,7 @@
 								</a><br/> 
 								<fmt:formatDate type="date" dateStyle="long" value="${attachment.insertDate}"/>
 								<c:if test="${attachment.size != null}">
-									- <c:out value="${attachment.size}"/> Ko
+									- <fsc:format value="${attachment.size}"/>
 								</c:if><br/> 
 								<span style="font-style:italic;"><c:out value="${attachment.description}"/></span>
 							</p>

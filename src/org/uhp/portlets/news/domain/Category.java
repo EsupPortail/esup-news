@@ -34,7 +34,7 @@ public class Category extends AbstractDataSrcEdit implements Serializable {
 		super();
 	}
 
-	public Category(String name, String desc, String lang, String rssAllowed, String refreshPeriod, Integer refreshFrequency, String publicView, Long entityId) {
+	public Category(String name, String desc, String lang, String rssAllowed, String refreshPeriod, Integer refreshFrequency, String publicView, Long anEntityId) {
 		super();
 		setName(name);
 		setDesc(desc);
@@ -43,7 +43,7 @@ public class Category extends AbstractDataSrcEdit implements Serializable {
 		setRefreshPeriod(refreshPeriod);     
 		setRefreshFrequency(refreshFrequency);
 		setPublicView(publicView);
-		setEntityId(entityId);
+		setEntityId(anEntityId);
 	}
 
 

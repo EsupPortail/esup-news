@@ -36,20 +36,20 @@ public class ItemApprovalController extends AbstractController {
 	@Autowired private UserManager um=null;
 
 
-	private static final Log log = LogFactory.getLog(ItemApprovalController.class);
+	private static final Log LOGGER = LogFactory.getLog(ItemApprovalController.class);
 
 	public void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
 		final Long itemId = Long.valueOf(request.getParameter(Constants.ATT_ID));
 		final String topicId = StringUtils.defaultIfEmpty(request.getParameter(Constants.ATT_TOPIC_ID), null);
 		if (!this.um.canValidate(request.getRemoteUser(), this.im.getItemById(itemId))) {
-			log.warn("ItemApprovalController:: user " + request.getRemoteUser() + " has no role admin");
+			LOGGER.warn("ItemApprovalController:: user " + request.getRemoteUser() + " has no role admin");
 			throw new PortletSecurityException(
 			        getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
 		}
 	
 		this.im.updateItemStatus(itemId);
 		if (topicId != null) {
-		    log.debug("ItemApprovalController::handleActionRequestInternal:topicId=" + topicId 
+		    LOGGER.debug("ItemApprovalController::handleActionRequestInternal:topicId=" + topicId 
 		            + " itemId=" + itemId + " view=" + Constants.ACT_VIEW_TOPIC);
 		    response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_TOPIC);
 		    response.setRenderParameter(Constants.ATT_TOPIC_ID, topicId);

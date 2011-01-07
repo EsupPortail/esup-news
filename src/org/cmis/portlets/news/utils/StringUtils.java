@@ -9,7 +9,7 @@ import java.util.List;
  * 
  * 20 mai 2010
  */
-public class StringUtils {
+public final class StringUtils {
 
     /** index of the first character with accent. **/
     private static final int MIN = 192;
@@ -31,7 +31,7 @@ public class StringUtils {
 	List<String> result = new ArrayList<String>();
 	java.lang.String car = null;
 
-	car = new java.lang.String("A");
+	car = "A";
 	/* '\u00C0' À alt-0192 */
 	result.add(car); 
 	/* '\u00C1' Á alt-0193 */
@@ -44,13 +44,13 @@ public class StringUtils {
 	result.add(car);
 	/* '\u00C5' Å alt-0197 */
 	result.add(car); 
-	car = new java.lang.String("AE");
+	car = "AE";
 	/* '\u00C6' Æ alt-0198 */
 	result.add(car); 
-	car = new java.lang.String("C");
+	car = "C";
 	/* '\u00C7' Ç alt-0199 */
 	result.add(car); 
-	car = new java.lang.String("E");
+	car = "E";
 	/* '\u00C8' È alt-0200 */
 	result.add(car); 
 	/* '\u00C9' É alt-0201 */
@@ -59,7 +59,7 @@ public class StringUtils {
 	result.add(car); 
 	/* '\u00CB' Ë alt-0203 */
 	result.add(car); 
-	car = new java.lang.String("I");
+	car = "I";
 	/* '\u00CC' Ì alt-0204 */
 	result.add(car); 
 	/* '\u00CD' Í alt-0205 */
@@ -68,13 +68,13 @@ public class StringUtils {
 	result.add(car); 
 	/* '\u00CF' Ï alt-0207 */
 	result.add(car); 
-	car = new java.lang.String("D");
+	car = "D";
 	/* '\u00D0' Ð alt-0208 */
 	result.add(car); 
-	car = new java.lang.String("N");
+	car = "N";
 	/* '\u00D1' Ñ alt-0209 */
 	result.add(car); 
-	car = new java.lang.String("O");
+	car = "O";
 	/* '\u00D2' Ò alt-0210 */
 	result.add(car); 
 	/* '\u00D3' Ó alt-0211 */
@@ -85,13 +85,13 @@ public class StringUtils {
 	result.add(car); 
 	/* '\u00D6' Ö alt-0214 */
 	result.add(car); 
-	car = new java.lang.String("*");
+	car = "*";
 	/* '\u00D7' × alt-0215 */
 	result.add(car); 
-	car = new java.lang.String("0");
+	car = "0";
 	/* '\u00D8' Ø alt-0216 */
 	result.add(car); 
-	car = new java.lang.String("U");
+	car = "U";
 	 /* '\u00D9' Ù alt-0217 */
 	result.add(car);
 	/* '\u00DA' Ú alt-0218 */
@@ -100,16 +100,16 @@ public class StringUtils {
 	result.add(car); 
 	/* '\u00DC' Ü alt-0220 */
 	result.add(car); 
-	car = new java.lang.String("Y");
+	car = "Y";
 	/* '\u00DD' Ý alt-0221 */
 	result.add(car); 
-	car = new java.lang.String("Þ");
+	car = "Þ";
 	/* '\u00DE' Þ alt-0222 */
 	result.add(car); 
-	car = new java.lang.String("B");
+	car = "B";
 	/* '\u00DF' ß alt-0223 */
 	result.add(car); 
-	car = new java.lang.String("a");
+	car = "a";
 	/* '\u00E0' à alt-0224 */
 	result.add(car); 
 	/* '\u00E1' á alt-0225 */
@@ -122,13 +122,13 @@ public class StringUtils {
 	result.add(car); 
 	/* '\u00E5' å alt-0229 */
 	result.add(car); 
-	car = new java.lang.String("ae");
+	car = "ae";
 	/* '\u00E6' æ alt-0230 */
 	result.add(car); 
-	car = new java.lang.String("c");
+	car = "c";
 	/* '\u00E7' ç alt-0231 */
 	result.add(car); 
-	car = new java.lang.String("e");
+	car = "e";
 	/* '\u00E8' è alt-0232 */
 	result.add(car); 
 	/* '\u00E9' é alt-0233 */
@@ -137,7 +137,7 @@ public class StringUtils {
 	result.add(car); 
 	/* '\u00EB' ë alt-0235 */
 	result.add(car); 
-	car = new java.lang.String("i");
+	car = "i";
 	/* '\u00EC' ì alt-0236 */
 	result.add(car); 
 	/* '\u00ED' í alt-0237 */
@@ -146,13 +146,13 @@ public class StringUtils {
 	result.add(car); 
 	/* '\u00EF' ï alt-0239 */
 	result.add(car); 
-	car = new java.lang.String("d");
+	car = "d";
 	/* '\u00F0' ð alt-0240 */
 	result.add(car); 
-	car = new java.lang.String("n");
+	car = "n";
 	/* '\u00F1' ñ alt-0241 */
 	result.add(car); 
-	car = new java.lang.String("o");
+	car = "o";
 	/* '\u00F2' ò alt-0242 */
 	result.add(car); 
 	/* '\u00F3' ó alt-0243 */
@@ -163,13 +163,13 @@ public class StringUtils {
 	result.add(car); 
 	/* '\u00F6' ö alt-0246 */
 	result.add(car); 
-	car = new java.lang.String("/");
+	car = "/";
 	/* '\u00F7' ÷ alt-0247 */
 	result.add(car); 
-	car = new java.lang.String("0");
+	car = "0";
 	 /* '\u00F8' ø alt-0248 */
 	result.add(car);
-	car = new java.lang.String("u");
+	car = "u";
 	/* '\u00F9' ù alt-0249 */
 	result.add(car); 
 	/* '\u00FA' ú alt-0250 */
@@ -178,13 +178,13 @@ public class StringUtils {
 	result.add(car); 
 	/* '\u00FC' ü alt-0252 */
 	result.add(car); 
-	car = new java.lang.String("y");
+	car = "y";
 	/* '\u00FD' ý alt-0253 */
 	result.add(car); 
-	car = new java.lang.String("þ");
+	car = "þ";
 	/* '\u00FE' þ alt-0254 */
 	result.add(car); 
-	car = new java.lang.String("y");
+	car = "y";
 	 /* '\u00FF' ÿ alt-0255 */
 	result.add(car);
 	/* '\u00FF' alt-0255 */

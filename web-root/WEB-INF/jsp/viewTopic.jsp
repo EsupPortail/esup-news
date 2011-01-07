@@ -85,9 +85,9 @@
 		key="menu.items.print" /></a>]</div>
 </c:if> <d:table name="${itemList}" export="false" id="row" class="dataTable"
 	pagesize="${nbItemsToShow}" cellspacing="1">
+
 	<d:column property="itemId" title="ID" class="hidden"
 		headerClass="hidden" media="html" />
-
 	<c:choose>
 		<c:when test="${s=='1'}">
 			<d:column property="title" titleKey="item.label.title"
@@ -118,39 +118,29 @@
 				</c:when>
 				<c:otherwise>
 					<fmt:message key="news.label.userDetails.notFound">
-						<fmt:param><c:out value="${row.lastUpdatedBy}" /></fmt:param>
+						<fmt:param value="${row.lastUpdatedBy}" />
 					</fmt:message>
 				</c:otherwise>
 			</c:choose></d:column>
 			<d:column property="lastUpdatedDate"
 				titleKey="item.label.updated.time" format="{0,date,long}" />
 			<c:if test='${pMask ge rM}'>
-				<c:choose>
-					<c:when test="${!(row_rowNum eq 1)}"><d:column href="${upURL}" paramId="id" paramProperty="itemId">
-						<img
+				<d:column href="${upURL}" paramId="id" paramProperty="itemId" >
+					<c:if test="${not (row_rowNum eq 1)}"><img
 							title="<fmt:message key='news.img.title.increase.disp.order'/>"
-							src="<html:imagesPath/>up.gif" border=0 />
-					</d:column></c:when>
-					<c:otherwise>
-						<d:column></d:column>
-					</c:otherwise>
-				</c:choose>
-				<c:choose>
-					<c:when test="${!(row_rowNum eq 1)}"><d:column href="${upTopURL}" paramId="id" paramProperty="itemId">
-					<img
+							src="<html:imagesPath/>up.gif" border=0 /></c:if>
+				</d:column>
+				<d:column href="${upTopURL}" paramId="id" paramProperty="itemId">
+					<c:if test="${not (row_rowNum eq 1)}"><img
 						title="<fmt:message key='news.img.title.increase.disp.order'/>"
-						src="<html:imagesPath/>double_up.gif" border=0 />
-				</d:column></c:when>
-					<c:otherwise>
-						<d:column></d:column>
-					</c:otherwise>
-				</c:choose>
+						src="<html:imagesPath/>double_up.gif" border=0 /></c:if>
+				</d:column><
 				<c:choose>
 					<c:when test="${not (row_rowNum eq fn:length(itemList))}"><d:column href="${downURL}" paramId="id" paramProperty="itemId">
 					<img
 						title="<fmt:message key='news.img.title.decrease.disp.order'/>"
 						src="<html:imagesPath/>down.gif" border=0 />
-				</d:column></c:when>
+					</d:column></c:when>
 					<c:otherwise>
 						<d:column></d:column>
 					</c:otherwise>

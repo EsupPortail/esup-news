@@ -264,7 +264,6 @@ public class BasicFeedService implements FeedService, InitializingBean {
                 feed.setEntries(addEntry(items, urlEntry, path));
             } catch (final Exception ex) {
                 LOG.error("Error : " + ex.getLocalizedMessage());
-                System.err.print("Error :  " + ex.getMessage());
             }   
             return feed;
         } catch (DataAccessException e) {

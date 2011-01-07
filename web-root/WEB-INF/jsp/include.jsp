@@ -9,7 +9,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <%@ taglib prefix="html" tagdir="/WEB-INF/tags/html"%>
-
+<%@ taglib prefix="fsc" uri="/WEB-INF/tags/fileSizeConverter.tld"%>
 
 <portlet:defineObjects />
 <c:set var="datePattern">

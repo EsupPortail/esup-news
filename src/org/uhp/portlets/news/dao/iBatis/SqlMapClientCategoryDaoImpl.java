@@ -41,7 +41,7 @@ import org.uhp.portlets.news.domain.Category;
 @Repository("categoryDao")
 public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implements CategoryDao {
     
-	private static final Log log = LogFactory.getLog(SqlMapClientCategoryDaoImpl.class);
+	private static final Log LOGGER = LogFactory.getLog(SqlMapClientCategoryDaoImpl.class);
 
 	@Autowired private SequenceDao sequenceDao;
 	
@@ -74,7 +74,7 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
 		Category category = (Category) getSqlMapClientTemplate()
 		    .queryForObject("getCategoryById", categoryId);
 		if (category == null) {
-			log.error("category [" + categoryId + "] not found");
+			LOGGER.error("category [" + categoryId + "] not found");
 			throw new ObjectRetrievalFailureException(Category.class, categoryId);
 		} 
 		category.setTotalCount((Integer) getSqlMapClientTemplate()
@@ -180,7 +180,7 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
 		try {
 			getSqlMapClientTemplate().update("updateCategoryOrderById", params);
 		} catch (DataAccessException e) {
-		    log.warn("SqlMapClientCategoryDaoImpl:: updateCategoryOrder : Error : " + e.getMessage());		
+		    LOGGER.warn("SqlMapClientCategoryDaoImpl:: updateCategoryOrder : Error : " + e.getMessage());		
 		}
 	}
 
@@ -199,7 +199,7 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
             try {
                 getSqlMapClientTemplate().insert("insertOneTypeOfCategory", params);
             } catch (DataAccessException e) {
-                log.warn("SqlMapClientCategoryDaoImpl:: insertOneTypeOfCategory : Error : " + e.getMessage()); 
+                LOGGER.warn("SqlMapClientCategoryDaoImpl:: insertOneTypeOfCategory : Error : " + e.getMessage()); 
                 throw e;
             }
         }
@@ -222,7 +222,7 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
             try {
                 getSqlMapClientTemplate().delete("deleteOneTypeOfCategory", params);
             } catch (DataAccessException e) {
-                log.warn("SqlMapClientCategoryDaoImpl:: insertOneTypeOfCategory : Error : " + e.getMessage()); 
+                LOGGER.warn("SqlMapClientCategoryDaoImpl:: insertOneTypeOfCategory : Error : " + e.getMessage()); 
                 throw e;
             }
         }

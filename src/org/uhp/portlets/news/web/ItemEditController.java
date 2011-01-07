@@ -23,8 +23,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -85,7 +87,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 
 	private String temporaryStoragePath;
 
-	private static final Log log = LogFactory.getLog(ItemEditController.class);
+	private static final Log LOGGER = LogFactory.getLog(ItemEditController.class);
 
 	public ItemEditController() {
 		super();
@@ -100,7 +102,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 	public void afterPropertiesSet() throws Exception {
 		if ((this.im == null) || (this.tm == null) || (this.cm == null) || (this.um == null) || (em == null))
 			throw new IllegalArgumentException(
-					"A ItemManager, a TopicManager, a categoryManager, a entityManager and a userManager are required");
+			"A ItemManager, a TopicManager, a categoryManager, a entityManager and a userManager are required");
 	}
 
 	@Override
@@ -149,12 +151,12 @@ public class ItemEditController extends AbstractWizardFormController implements 
 			itemForm.setCategoryId((long) -1);
 			itemForm.setTopicId((long) -1);
 			itemForm.setItemId((long) -1);
-			
+
 			this.setPageRenderParameter(response, 0);
 			request.getPortletSession().setAttribute("_globalCancel", false);
-			
+
 			response.setRenderParameter(Constants.ATT_CAT_ID, request.getParameter(Constants.ATT_CAT_ID));
-			
+
 		} else {
 			request.getPortletSession().setAttribute("_globalCancel", true);
 			response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_TOPIC);
@@ -196,8 +198,8 @@ public class ItemEditController extends AbstractWizardFormController implements 
 			itemValidator.validate3rdPart(command, errors);
 			break;
 		case 3:
-		    	itemValidator.validate4rdPart(command, errors);
-		    	break;
+			itemValidator.validate4rdPart(command, errors);
+			break;
 		default:
 			break;
 		}
@@ -212,7 +214,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		try {
 			toRemove = PortletRequestUtils.getStringParameter(request, "removeAttachment");
 			toUpdate = PortletRequestUtils.getStringParameter(request, "updateAttachment");
-			    
+
 			if (StringUtils.isNotEmpty(toRemove)) {
 				int i = Integer.parseInt(toRemove);
 				if (i >= 0 && i < itemForm.getAttachments().size()) {
@@ -223,17 +225,17 @@ public class ItemEditController extends AbstractWizardFormController implements 
 					}
 					itemForm.getAttachments().remove(i);
 				}
-				
+
 			} else if (StringUtils.isNotEmpty(toUpdate)) {
-			    int aId = Integer.parseInt(toUpdate);
-			    // retrieve the attachement in the list
-			    if (aId >= 0 && aId < itemForm.getAttachments().size()) {
-				    Attachment attachment = itemForm.getAttachments().get(aId);
-				    // update the form
-				    String id = StringUtils.isNotEmpty(attachment.getId()) ? attachment.getId() : Integer.toString(aId); 
-				    itemForm.setAttachmentToUpdate(id, attachment.getTitle(), attachment.getDesc());
-			    }
-			    
+				int aId = Integer.parseInt(toUpdate);
+				// retrieve the attachement in the list
+				if (aId >= 0 && aId < itemForm.getAttachments().size()) {
+					Attachment attachment = itemForm.getAttachments().get(aId);
+					// update the form
+					String id = StringUtils.isNotEmpty(attachment.getId()) ? attachment.getId() : Integer.toString(aId); 
+					itemForm.setAttachmentToUpdate(id, attachment.getTitle(), attachment.getDesc());
+				}
+
 			} else {
 				if (errors.getErrorCount() == 0) {
 					if (page == 1) {
@@ -254,41 +256,49 @@ public class ItemEditController extends AbstractWizardFormController implements 
 							itemForm.setTopicId(topicId);
 						}
 
-						if (attachmentIds != null) {
+						if (attachmentIds != null && attachmentIds.length > 0) {
 							for (String id : attachmentIds) {
-								org.cmis.portlets.news.domain.Attachment attachment = am.getAttachmentById(Long
-										.parseLong(id));
-								itemForm.addInternalAttachment(attachment);
+								boolean attached = false;
+								for (Attachment att: itemForm.getAttachments()) {
+									if (att.getId() != null && att.getId().length() > 0 && Long.parseLong(att.getId()) == Long.parseLong(id)) {
+										attached=true;
+										break;
+									}
+								}
+								if (!attached) {
+									org.cmis.portlets.news.domain.Attachment attachment = am.getAttachmentById(Long.valueOf(id));
+									itemForm.addInternalAttachment(attachment);
+								}
 							}
 						}
-						
+
 					} else if (page == 3){
-					    	Attachment attachmentUpdated = itemForm.getAttachmentToUpdate();
-					    	String id = attachmentUpdated.getId();
-					    	boolean found=false;
-					    	for (Attachment attachmentToUpdate : itemForm.getAttachments()) {
-					    	    if (attachmentToUpdate.getId().equals(id)) {
-					    		attachmentToUpdate.setTitle(attachmentUpdated.getTitle());
-						    	attachmentToUpdate.setDesc(attachmentUpdated.getDesc());
-						    	
-						    	attachmentUpdated = null;
-						    	found = true;
-						    	break;
-					    	    }
-					    	}
-					    	if (!found && StringUtils.isNotEmpty(id)) {
-					    	    Attachment attachmentToUpdate = itemForm.getAttachments().get(Integer.parseInt(id));
-					    	    attachmentToUpdate.setTitle(attachmentUpdated.getTitle());
-					    	    attachmentToUpdate.setDesc(attachmentUpdated.getDesc());
-					    	    attachmentUpdated = null;
-					    	}
-					    	
+						Attachment attachmentUpdated = itemForm.getAttachmentToUpdate();
+						String id = attachmentUpdated.getId();
+						boolean found=false;
+						for (Attachment attachmentToUpdate : itemForm.getAttachments()) {
+							if (attachmentToUpdate.getId().equals(id)) {
+								attachmentToUpdate.setTitle(attachmentUpdated.getTitle());
+								attachmentToUpdate.setDesc(attachmentUpdated.getDesc());
+
+								attachmentUpdated = null;
+								found = true;
+								break;
+							}
+						}
+						if (!found && StringUtils.isNotEmpty(id)) {
+							Attachment attachmentToUpdate = itemForm.getAttachments().get(Integer.parseInt(id));
+							attachmentToUpdate.setTitle(attachmentUpdated.getTitle());
+							attachmentToUpdate.setDesc(attachmentUpdated.getDesc());
+							attachmentUpdated = null;
+						}
+
 					}
 				}
 			}
 		} catch (PortletRequestBindingException e) {
-			log.warn("An error occurs retrieving a request parameter.");
-			log.warn(e, e.fillInStackTrace());
+			LOGGER.warn("An error occurs retrieving a request parameter.");
+			LOGGER.warn(e, e.fillInStackTrace());
 		}
 	}
 
@@ -374,8 +384,8 @@ public class ItemEditController extends AbstractWizardFormController implements 
 	@Override
 	protected Map<String, Object> referenceData(PortletRequest request, Object command, Errors errors, int page)
 	throws Exception {
-		if (log.isDebugEnabled()) {
-			log.debug("ItemEditController: entering method referenceData...");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("ItemEditController: entering method referenceData...");
 		}
 		ItemForm itemForm = (ItemForm) command;
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -413,7 +423,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 
 		} else if (page == 1 || page == 3) {
 			// External File or update an attachment
-			
+
 			final Long cId = itemForm.getItem().getCategoryId();
 			final Long tId = ctxTopicId;
 			final String userUid = request.getRemoteUser();
@@ -437,7 +447,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 
 		} else if (page == 2) {
 			// Internal File
-			
+
 			final Long cId = itemForm.getItem().getCategoryId();
 			final Long tId = ctxTopicId;
 			final String userUid = request.getRemoteUser();

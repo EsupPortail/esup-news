@@ -48,7 +48,7 @@ public class UserDetailController extends AbstractController implements Initiali
     private UserManager um;
 
     /** */
-    private static final Log log = LogFactory.getLog(UserDetailController.class);
+    private static final Log LOGGER = LogFactory.getLog(UserDetailController.class);
 
     /**
      * @throws Exception
@@ -89,8 +89,8 @@ public class UserDetailController extends AbstractController implements Initiali
         //if(isSuperAdmin || isAdmin || request.getRemoteUser().equals(id)) {
         final IEscoUser user = this.um.findUserByUid(uid);
         if (user == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("user with id " + uid + " does not exist in database.");
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("user with id " + uid + " does not exist in database.");
             }
             return new ModelAndView("Errors", "message", 
                     getMessageSourceAccessor().getMessage("news.alert.userRightsDeleted"));
@@ -102,8 +102,8 @@ public class UserDetailController extends AbstractController implements Initiali
         list.remove(this.um.getUserDao().getDisplayName());
         list.remove(this.um.getUserDao().getMail());
         mav.addObject(Constants.ATT_LDAP_DISPLAY, list);
-        if (log.isTraceEnabled()) {
-            log.trace("User added to view : " + user);
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("User added to view : " + user);
         }
         if (this.um.isSuperAdmin(uid)) {
             mav.addObject(Constants.ATT_PU, RolePerm.ROLE_ADMIN.getMask());

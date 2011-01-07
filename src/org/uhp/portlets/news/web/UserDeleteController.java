@@ -37,7 +37,7 @@ public class UserDeleteController extends AbstractController implements Initiali
     private static final int DEFAULT_NB = 10;
     private static final String MSG_KEY = "news.user.deleted";
     @Autowired private UserManager um;
-    private String msgKey = new String();
+    private String msgKey = "";
     private  String userId;
 
     private boolean deleted;

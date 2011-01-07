@@ -63,7 +63,7 @@ public class TopicEditController extends SimpleFormController implements Initial
     private EntityManager em;
 	private Long topicId;
 
-	private static final Log log = LogFactory.getLog(TopicEditController.class);
+	private static final Log LOGGER = LogFactory.getLog(TopicEditController.class);
 
 	public TopicEditController() {
 		setCommandClass(Topic.class); 
@@ -113,7 +113,7 @@ public class TopicEditController extends SimpleFormController implements Initial
 		while(paramEnum.hasMoreElements()){
 			String paramName = (String)paramEnum.nextElement();
 			String paramValue = request.getParameter(paramName);
-			log.debug( paramName + " = " + paramValue);
+			LOGGER.debug( paramName + " = " + paramValue);
 		}
 		return (Topic) this.tm.getTopicById(topicId);
 	}

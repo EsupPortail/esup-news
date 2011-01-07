@@ -58,7 +58,7 @@ public class TopicAddController extends SimpleFormController implements Initiali
     @Autowired
     private EntityManager em;
 
-	private static final Log log = LogFactory.getLog(TopicAddController.class);
+	private static final Log LOGGER = LogFactory.getLog(TopicAddController.class);
 
 	public TopicAddController() {
 		super();
@@ -96,8 +96,8 @@ public class TopicAddController extends SimpleFormController implements Initiali
 	protected ModelAndView showForm(RenderRequest request, RenderResponse response, BindException errors) throws Exception {         
 		ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);       	
 		if(!this.um.isUserAdminInCtx(PortletRequestUtils.getLongParameter(request, Constants.ATT_CAT_ID), NewsConstants.CTX_C, request.getRemoteUser())) { 
-			if(log.isWarnEnabled()) {
-				log.warn("AddTopic:: user " + request.getRemoteUser() +" has no permission for this action");
+			if(LOGGER.isWarnEnabled()) {
+				LOGGER.warn("AddTopic:: user " + request.getRemoteUser() +" has no permission for this action");
 			}
 			mav.addObject(Constants.MSG_ERROR, "You are not authorized for this action");
 			throw new ModelAndViewDefiningException(mav);

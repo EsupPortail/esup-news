@@ -41,7 +41,7 @@ import org.uhp.portlets.news.service.exception.NoSuchTopicException;
 @Service("topicManager")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true) 
 public class TopicManagerImpl implements TopicManager {
-	private static final Log log = LogFactory.getLog(TopicManagerImpl.class);  
+	private static final Log LOGGER = LogFactory.getLog(TopicManagerImpl.class);  
 
 	@Autowired private TopicDao topicDao;	
 
@@ -75,7 +75,7 @@ public class TopicManagerImpl implements TopicManager {
 			}
 
 		} catch (DataAccessException e) {
-			log.error(" get Topic error : "+ e.getLocalizedMessage());
+			LOGGER.error(" get Topic error : "+ e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -103,7 +103,7 @@ public class TopicManagerImpl implements TopicManager {
 			}
 
 		} catch (DataAccessException e1) {
-			log.error("delete Topic error:" + e1.getLocalizedMessage());
+			LOGGER.error("delete Topic error:" + e1.getLocalizedMessage());
 		}
 		return false;
 	}
@@ -120,7 +120,7 @@ public class TopicManagerImpl implements TopicManager {
 		List<Topic> topics = this.topicDao.getTopicListByCategory(categoryId);		
 		int idx = getIdxForTopic(topicId, topics);
 		if ((idx == -1) || (!up && (idx == topics.size()-1)) || (up && (idx == 0)) ) {		
-			log.debug("updateTopicOrdering:: nothing to do ..." );
+			LOGGER.debug("updateTopicOrdering:: nothing to do ..." );
 		} else {
 		    if (up) {
                 idx--;
@@ -147,7 +147,7 @@ public class TopicManagerImpl implements TopicManager {
                 updateTopicOrdering(topicId, categoryId, up);
             }
 	    } catch (DataAccessException e) {
-            log.error("Update Topic Ordering To First Or Last error : " + e.getLocalizedMessage());
+            LOGGER.error("Update Topic Ordering To First Or Last error : " + e.getLocalizedMessage());
             throw e;
         }
     }
@@ -177,7 +177,7 @@ public class TopicManagerImpl implements TopicManager {
 				}
 			}
 		} catch (DataAccessException e) {
-			log.error("addTopic : " +e.getLocalizedMessage());
+			LOGGER.error("addTopic : " +e.getLocalizedMessage());
 		}
 	}
 

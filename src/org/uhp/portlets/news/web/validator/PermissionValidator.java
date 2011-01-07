@@ -27,7 +27,7 @@ import org.springframework.validation.ValidationUtils;
 import org.uhp.portlets.news.web.PermForm;
 
 public class PermissionValidator extends AbstractValidator {
-	private static final Log log = LogFactory.getLog(PermissionValidator.class);
+	private static final Log LOGGER = LogFactory.getLog(PermissionValidator.class);
 	@Autowired private UserManager userManager;
 
 	public void validateTokenAndRole(final PermForm permForm, final Errors errors) {
@@ -42,8 +42,8 @@ public class PermissionValidator extends AbstractValidator {
 	public void checkUserRoleExistInCtx(final PermForm permForm, final Errors errors) {
 		if (this.userManager.isUserRoleExistForContext(
 		        permForm.getCtxId(), permForm.getCtxType(), permForm.getUser().getUserId())) {
-		   if (log.isDebugEnabled()) {
-			log.debug("PermissionValdate::checkUserRoleExistInCtx : user exist in ctx");
+		   if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("PermissionValdate::checkUserRoleExistInCtx : user exist in ctx");
 		   }
 			errors.rejectValue("user.userId", "USER_EXIST_IN_CONTEXT_WITH_A_ROLE", 
 			        "User has yet a role in this context");

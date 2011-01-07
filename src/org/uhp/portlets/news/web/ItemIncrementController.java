@@ -35,7 +35,7 @@ import org.esco.portlets.news.services.UserManager;
 public class ItemIncrementController extends AbstractController implements InitializingBean {
 	@Autowired private UserManager um=null;
 	@Autowired private ItemManager im=null;
-	 private static final Log log = LogFactory.getLog(ItemIncrementController.class);
+	 private static final Log LOGGER = LogFactory.getLog(ItemIncrementController.class);
 	   
 	    public void afterPropertiesSet() throws Exception {
 	        if ((this.im == null) || (this.um == null))
@@ -49,7 +49,7 @@ public class ItemIncrementController extends AbstractController implements Initi
 	    String topicId = request.getParameter(Constants.ATT_TOPIC_ID);
 	  
 		 if(!this.um.isUserAdminInCtx(Long.valueOf(topicId), NewsConstants.CTX_T, request.getRemoteUser())) {
-	     		log.warn("ItemIncrementController :: user " + request.getRemoteUser() + " has no role admin");
+	     		LOGGER.warn("ItemIncrementController :: user " + request.getRemoteUser() + " has no role admin");
 	 			throw new PortletSecurityException(
 	 			       getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
 	    	 }	  

@@ -100,7 +100,7 @@ public class Type implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result;
-        if (name == null) {
+        if (name != null) {
             result += name.hashCode();
         }
         return result;

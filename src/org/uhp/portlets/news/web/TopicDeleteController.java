@@ -47,7 +47,7 @@ public class TopicDeleteController extends AbstractController implements Initial
 	@Autowired private UserManager um=null;
 	@Autowired private EntityManager em;
 
-	private static final Log log = LogFactory.getLog(TopicDeleteController.class);
+	private static final Log LOGGER = LogFactory.getLog(TopicDeleteController.class);
 	private boolean deleted;
 	private Long catId;
 	
@@ -62,19 +62,19 @@ public class TopicDeleteController extends AbstractController implements Initial
          catId = this.tm.getTopicById(topicId).getCategoryId();
          
          if(!this.um.isUserAdminInCtx(catId, NewsConstants.CTX_C, request.getRemoteUser())) {
-	     		log.warn("TopicDeleteController:: user " + request.getRemoteUser() + " has no role admin");
+	     		LOGGER.warn("TopicDeleteController:: user " + request.getRemoteUser() + " has no role admin");
 	 			throw new PortletSecurityException(
 	 			       getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
 	    	 }
          this.deleted=false;
 		if (!this.tm.deleteTopic(topicId)) {
-			if (log.isWarnEnabled()) {
-				log.warn("Warn : TopicDeleteController:: Not Empty topic : topicid [" + topicId + "] can not be deleted");
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn("Warn : TopicDeleteController:: Not Empty topic : topicid [" + topicId + "] can not be deleted");
 			}		
 		}
 		else { 
-			if (log.isDebugEnabled()) {
-				log.debug("DeleteTopic:: topicid [" + topicId + "] is removed");
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("DeleteTopic:: topicid [" + topicId + "] is removed");
 			}
 		    this.deleted = true;
 		}

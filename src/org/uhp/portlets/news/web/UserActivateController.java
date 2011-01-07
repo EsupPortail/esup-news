@@ -36,7 +36,7 @@ import org.uhp.portlets.news.web.support.Constants;
 public class UserActivateController extends AbstractController implements InitializingBean {      
 	@Autowired private UserManager um=null;
 
-	private static final Log log = LogFactory.getLog(UserActivateController.class);
+	private static final Log LOGGER = LogFactory.getLog(UserActivateController.class);
 
 	public void afterPropertiesSet() throws Exception {
 		if (this.um == null)
@@ -48,7 +48,7 @@ public class UserActivateController extends AbstractController implements Initia
 	protected void handleActionRequestInternal(final ActionRequest request, final ActionResponse response) throws Exception {
 
 		if (!this.um.isSuperAdmin(request.getRemoteUser())) {
-			log.warn("UserActivateController:: user " + request.getRemoteUser() + " has no superAdmin role");
+			LOGGER.warn("UserActivateController:: user " + request.getRemoteUser() + " has no superAdmin role");
  			throw new PortletSecurityException(
  			       getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
     	}

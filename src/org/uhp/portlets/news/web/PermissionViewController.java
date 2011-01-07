@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.swing.text.html.HTMLDocument.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -117,13 +118,14 @@ public class PermissionViewController extends AbstractController implements Init
 		}
 		// get uid List from users in role
 		Map<String, List<UserRole>> usersRoles = this.um.getUserRolesByCtxId(ctxId, this.getCtx());
-		for (String r : usersRoles.keySet()) {
-		    for (UserRole ur : usersRoles.get(r) ) {
-		        if (!usersUid.contains(ur.getPrincipal())) {
+		for (Map.Entry<String, List<UserRole>> lr : usersRoles.entrySet()) {
+			for (UserRole ur : lr.getValue()) {
+				if (!usersUid.contains(ur.getPrincipal())) {
 		            usersUid.add(ur.getPrincipal());
 		        }
-		    }
+			}
 		}
+		
 		mav.addObject(Constants.ATT_LIST, usersRoles);
 		// add the super admin user's uid to the uid list
 		List<IEscoUser> suser = this.um.getAllSuperUsers();

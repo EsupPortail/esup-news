@@ -19,6 +19,7 @@ package org.uhp.portlets.news.web;
  */
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ import org.uhp.portlets.news.domain.Category;
 import org.uhp.portlets.news.domain.RolePerm;
 import org.uhp.portlets.news.domain.Subscriber;
 import org.uhp.portlets.news.domain.Topic;
+import org.uhp.portlets.news.domain.UserRole;
 import org.uhp.portlets.news.service.CategoryManager;
 import org.uhp.portlets.news.service.SubscribeService;
 import org.uhp.portlets.news.service.TopicManager;
@@ -72,7 +74,7 @@ public class AudienceViewController extends AbstractController implements Initia
     /**
      * Constructeur de l'objet AudienceViewController.java.
      */
-    private AudienceViewController() {
+    public AudienceViewController() {
         super();
     }
     /**
@@ -121,13 +123,14 @@ public class AudienceViewController extends AbstractController implements Initia
 
         // get uid List from subscribers
         Map<String, List<Subscriber>> subcribers = this.getSubService().getSubscribersByCtxId(ctxId, this.getCtx());
-        for (String r : subcribers.keySet()) {
-            for (Subscriber s : subcribers.get(r) ) {
-                if (s.getIsGroup() == 0 && !usersUid.contains(s.getPrincipal())) {
-                    usersUid.add(s.getPrincipal());
-                }
-            }
-        }
+        for (Map.Entry<String, List<Subscriber>> ls : subcribers.entrySet()) {
+			for (Subscriber s : ls.getValue()) {
+				if (s.getIsGroup() == 0 && !usersUid.contains(s.getPrincipal())) {
+					usersUid.add(s.getPrincipal());
+				}
+			}
+		}
+        
         mav.addObject(Constants.ATT_LIST, subcribers);
         mav.addObject(Constants.ATT_PM, RolePerm.valueOf(
                 this.getUm().getUserRoleInCtx(ctxId, this.getCtx(), request.getRemoteUser())).getMask());

@@ -212,7 +212,7 @@ public class EntityEditController extends SimpleFormController implements Initia
             entityF.setTypesIds(tIds.toArray(new String[0]));
             return entityF;
         }
-        throw new ObjectRetrievalFailureException(Entity.class, eid);
+        throw new ObjectRetrievalFailureException(Entity.class, null);
     }
     
     /**

@@ -70,7 +70,7 @@ public class FilterEditController extends SimpleFormController implements Initia
      */
     @Override
     protected Object formBackingObject(final PortletRequest request) throws Exception {
-        Filter filter = new Filter();
+        Filter filter;
         if (LOG.isTraceEnabled()) {
             LOG.trace("Entering FormBackingObject.");
         }

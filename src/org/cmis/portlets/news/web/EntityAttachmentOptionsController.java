@@ -174,7 +174,7 @@ public class EntityAttachmentOptionsController extends SimpleFormController impl
 	}
 
 	long optionsId = aof.getOptionsId();
-	long appOptionsId = -1;
+	long appOptionsId = Long.valueOf(-1);
 	AttachmentOptions applicationAttachmentOptions = am.getApplicationAttachmentOptions();
 	if (applicationAttachmentOptions != null) {
 	    appOptionsId = applicationAttachmentOptions.getOptionId();

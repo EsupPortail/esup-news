@@ -30,7 +30,9 @@
 				<tr>
 					<td class="portlet-form-label"><fmt:message key="news.label.attachment.maxSize"/> :</td> 
     				<td class="portlet-font">
-    					<c:out value="${maxSize}"></c:out>
+    					<c:if test="${maxSize != null}">
+							<fsc:format value="${maxSize}"/> 
+						</c:if>
     				</td>
     			</tr>
     			<tr>

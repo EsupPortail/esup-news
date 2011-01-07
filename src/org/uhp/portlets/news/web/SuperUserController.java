@@ -49,7 +49,7 @@ import org.uhp.portlets.news.web.support.Constants;
 
 public class SuperUserController extends AbstractWizardFormController {
 
-	private static final Log log = LogFactory.getLog(SuperUserController.class);
+	private static final Log LOGGER = LogFactory.getLog(SuperUserController.class);
 	private static final int DEFAULT_NB = 10;
 
 	/** Liste des utilisateur obtenus par recherche. */
@@ -102,7 +102,7 @@ public class SuperUserController extends AbstractWizardFormController {
     		}
     		response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_M);
 	    } catch (Exception e) {
-	        log.error(e.getMessage(), e);
+	        LOGGER.error(e.getMessage(), e);
 	        response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_M);
 	    }
 		
@@ -139,7 +139,7 @@ public class SuperUserController extends AbstractWizardFormController {
 	protected Map referenceData(PortletRequest request, Object command, Errors errors, int page) throws Exception {
 	
 	    if (!this.um.isSuperAdmin(request.getRemoteUser())) {
-	        log.warn("AddSuperUser:: User " + request.getRemoteUser() 
+	        LOGGER.warn("AddSuperUser:: User " + request.getRemoteUser() 
 	                + " has no SuperUser role : not authorized for this action");
 	        throw new PortletSecurityException(
 	                getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
@@ -153,8 +153,8 @@ public class SuperUserController extends AbstractWizardFormController {
 			PermForm permForm = (PermForm) command;	
 			model.put(Constants.ATT_IS_GRP, permForm.getIsGroup());	
 	    	users = this.um.findPersonsByToken(permForm.getToken());
-	    	if (log.isDebugEnabled()) {
-	    	    log.debug("List of users found : " + users);
+	    	if (LOGGER.isDebugEnabled()) {
+	    	    LOGGER.debug("List of users found : " + users);
 	    	}
 			model.put(Constants.ATT_USER_LIST, users);			
 			model.put(Constants.ATT_LDAP_DISPLAY, um.getLdapUserService().getSearchDisplayedAttributes());
@@ -173,8 +173,8 @@ public class SuperUserController extends AbstractWizardFormController {
             }
 			model.put(Constants.OBJ_USER, u);
 			model.put(Constants.ATT_LDAP_DISPLAY, um.getLdapUserService().getSearchDisplayedAttributes());
-			if (log.isDebugEnabled()) {
-			    log.debug("PF page 2: " + pf);
+			if (LOGGER.isDebugEnabled()) {
+			    LOGGER.debug("PF page 2: " + pf);
 			}
 			return model;
 		}
@@ -191,7 +191,7 @@ public class SuperUserController extends AbstractWizardFormController {
 	@Override
 	protected void handleInvalidSubmit(ActionRequest request, ActionResponse response)
 	throws Exception {
-		log.warn("SuperUserController::  handleInvalidSubmit: goto home page");
+		LOGGER.warn("SuperUserController::  handleInvalidSubmit: goto home page");
 		response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_NEWSSTORE);
 
 	}
@@ -201,7 +201,7 @@ public class SuperUserController extends AbstractWizardFormController {
 	    //try {
 	        for (Enumeration params = request.getParameterNames(); params.hasMoreElements();) {
 	            String paramName = (String) params.nextElement();
-	            log.debug("Attribut Form : " + paramName);
+	            LOGGER.debug("Attribut Form : " + paramName);
 	            if (paramName.startsWith(PARAM_TARGET) 
 	                    || paramName.equals(PARAM_FINISH) 
 	                    || paramName.equals(PARAM_FINISH))   {

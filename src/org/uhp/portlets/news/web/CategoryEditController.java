@@ -201,7 +201,7 @@ public class CategoryEditController extends SimpleFormController implements Init
             return catF;
 		}
 		
-		throw new ObjectRetrievalFailureException(Category.class, categoryId);
+		throw new ObjectRetrievalFailureException(Category.class, null);
 	}
 	
 	/**

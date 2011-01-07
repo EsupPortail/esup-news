@@ -7,10 +7,10 @@
 	<div class="texteBasPage">
 <c:if test='${pMask ge rM}'>
 	[<a href='<portlet:actionURL>
-                                                <portlet:param name="action" value="apprItem"/>
-                                                <portlet:param name="id" value="${item.itemId}"/>
-                                                <portlet:param name="tId" value="${topic.topicId}"/>
-                                        </portlet:actionURL>'
+                       <portlet:param name="action" value="apprItem"/>
+                       <portlet:param name="id" value="${item.itemId}"/>
+                       <portlet:param name="tId" value="${topic.topicId}"/>
+               </portlet:actionURL>'
 		class="liensmenudroit"><c:choose>
 		<c:when test="${item.status eq 1}">
 			<img title='<fmt:message key="button.invalidate"/>' align="absMiddle"
@@ -26,17 +26,16 @@
 </c:if>
 
 <c:if test='${(pMask ge rM) or (pMask ge rC && userId eq item.postedBy)}'>
-	[<a
-		href='<portlet:actionURL>
-                                                <portlet:param name="action" value="deleteItem"/>
-                                                <portlet:param name="id" value="${item.itemId}"/>
-                                                <portlet:param name="tId" value="${topic.topicId}"/>
-                                                <portlet:param name="status" value="1"/>  
-                                                <portlet:param name="all" value="1"/>                                                 
-                                        </portlet:actionURL>'
-        onClick="return confirm('<fmt:message key="news.img.title.delete.item"/>');"
+	[<a	href='<portlet:actionURL>
+				<portlet:param name="action" value="deleteItem"/>
+                <portlet:param name="id" value="${item.itemId}"/>
+                <portlet:param name="tId" value="${topic.topicId}"/>
+                <portlet:param name="status" value="1"/>  
+                <portlet:param name="all" value="1"/>                                                 
+                </portlet:actionURL>'
 		class="liensmenudroit"> <img
-		title='<fmt:message key="news.img.title.delete.item"/>'
+		title='<fmt:message key="news.img.title.delete.item"/>' 
+		onClick="return confirm('<fmt:message key="news.img.title.delete.item"/>');"
 		align="absMiddle" src="<html:imagesPath/>delete.gif" border="0" /><fmt:message
 		key="button.delete" /> </a>]
 </c:if>
@@ -117,7 +116,7 @@
 							</a><br/> 
 							<fmt:formatDate type="date" dateStyle="long" value="${attachment.insertDate}"/>
 							<c:if test="${attachment.size != null}">
-								- <c:out value="${attachment.size}"/> Ko
+								- <fsc:format value="${attachment.size}"/> 
 							</c:if><br/> 
 							<span style="font-style:italic;"><c:out value="${attachment.description}"/></span>
 						</p>

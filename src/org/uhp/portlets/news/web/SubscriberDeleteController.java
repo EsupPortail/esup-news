@@ -37,7 +37,7 @@ public class SubscriberDeleteController extends AbstractController implements
 
 	@Autowired private SubscribeService subService = null;
 	@Autowired private UserManager um = null;
-	private static final Log log = LogFactory.getLog(SubscriberDeleteController.class);
+	private static final Log LOGGER = LogFactory.getLog(SubscriberDeleteController.class);
 
 	public SubscriberDeleteController() {
 		super();		
@@ -55,7 +55,7 @@ public class SubscriberDeleteController extends AbstractController implements
         Long id = Long.valueOf(request.getParameter(Constants.CMD_SUBSCRIBER));
         
         if (!this.um.isUserAdminInCtx(Long.valueOf(ctxId), ctx, request.getRemoteUser())) {
-     		log.warn("SubcribeController:: user " + request.getRemoteUser() + " has no role admin");
+     		LOGGER.warn("SubcribeController:: user " + request.getRemoteUser() + " has no role admin");
  			throw new PortletSecurityException(
  			       getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
     	 }

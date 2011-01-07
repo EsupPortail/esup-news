@@ -38,7 +38,7 @@ import org.uhp.portlets.news.service.exception.NoSuchItemException;
 
 @Repository("itemDao")
 public class SqlMapClientItemDaoImpl extends SqlMapClientDaoSupport implements ItemDao {
-    private static final Log log = LogFactory.getLog(SqlMapClientItemDaoImpl.class);
+    private static final Log LOGGER = LogFactory.getLog(SqlMapClientItemDaoImpl.class);
     @Autowired
     private SequenceDao sequenceDao;
 
@@ -117,9 +117,9 @@ public class SqlMapClientItemDaoImpl extends SqlMapClientDaoSupport implements I
 
     public void delete(final Long itemId) throws DataAccessException {
 	getSqlMapClientTemplate().delete("deleteItem", itemId);
-	if (log.isDebugEnabled())
+	if (LOGGER.isDebugEnabled())
 	{
-	    log.debug("ItemDao:: item [itemId=" + itemId + "] has been removed");
+	    LOGGER.debug("ItemDao:: item [itemId=" + itemId + "] has been removed");
 	}
     }
 
@@ -145,9 +145,9 @@ public class SqlMapClientItemDaoImpl extends SqlMapClientDaoSupport implements I
 	Item item = (Item) getSqlMapClientTemplate().queryForObject("getItemById", itemId);
 	if (item == null)
 	{
-	    if (log.isWarnEnabled())
+	    if (LOGGER.isWarnEnabled())
 	    {
-		log.warn("item [" + itemId + "] not found...");
+		LOGGER.warn("item [" + itemId + "] not found...");
 	    }
 	    throw new NoSuchItemException("Item not found error");
 	}
@@ -207,7 +207,7 @@ public class SqlMapClientItemDaoImpl extends SqlMapClientDaoSupport implements I
 	    getSqlMapClientTemplate().update("updateItemOrderInTopic", params);
 	} catch (DataAccessException e)
 	{
-	    log.error("SqlMapClientItemDaoImpl:: updateItemOrder : Error : " + e.getMessage());
+	    LOGGER.error("SqlMapClientItemDaoImpl:: updateItemOrder : Error : " + e.getMessage());
 
 	}
     }

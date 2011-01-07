@@ -90,7 +90,7 @@ public class NewsStoreController extends AbstractController implements Initializ
         boolean isSuperAdmin = false;
         PortletSession session;
         ModelAndView mav;
-        String msgKey = new String("");
+        String msgKey = "";
         boolean denied = false;
 
 

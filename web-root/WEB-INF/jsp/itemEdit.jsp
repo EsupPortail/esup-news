@@ -25,10 +25,6 @@
 			document.forms["${namespace}EditItem"].action = start + "&removeAttachment="+ index + end;
 			document.forms["${namespace}EditItem"].submit();
     	}
-    	else
-    	{
-			return false;
-    	}
 	}	
 	function updateAttachment(index){
 		var action = document.forms["${namespace}EditItem"].action;

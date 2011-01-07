@@ -44,7 +44,7 @@ public class ItemServlet extends BaseAppContext {
 	private static final String NO_ITEM_VIEW = "/WEB-INF/jsp/noitem.jsp";
 	private static final String UNAUTORIZED = "/WEB-INF/jsp/unauthorized.jsp";
 
-	private static final Log log = LogFactory.getLog(ItemServlet.class);
+	private static final Log LOGGER = LogFactory.getLog(ItemServlet.class);
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 	throws IOException, ServletException
@@ -55,8 +55,8 @@ public class ItemServlet extends BaseAppContext {
 		if (feedService == null)
 			throw new ServletException(new IllegalStateException("feedService == null"));
 		HttpSession session = request.getSession();
-        if (log.isDebugEnabled()) {
-            log.debug("doGet: sesion uid="+session.getAttribute("uid") + " remote user="+request.getRemoteUser());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("doGet: sesion uid="+session.getAttribute("uid") + " remote user="+request.getRemoteUser());
         }
 		final boolean isProtected = request.getServletPath().contains(Constants.PRIVATE_ACCESS) ? true : false;
 		String jspView=NO_ITEM_VIEW;
@@ -80,8 +80,8 @@ public class ItemServlet extends BaseAppContext {
 			break;
 		case Constants.VIEW_ITEMS :
 			final String uid = request.getRemoteUser();
-			if(log.isDebugEnabled()) {
-				log.debug("View list items: remote user="+request.getRemoteUser());
+			if(LOGGER.isDebugEnabled()) {
+				LOGGER.debug("View list items: remote user="+request.getRemoteUser());
 			}
 			if(!isProtected || uid == null) {
 				jspView = UNAUTORIZED;				

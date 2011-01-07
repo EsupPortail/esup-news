@@ -55,7 +55,7 @@ public class CategoryViewController extends AbstractController implements Initia
     @Autowired
     private EntityManager em;
 
-	private static final Log log = LogFactory.getLog(CategoryViewController.class);
+	private static final Log LOGGER = LogFactory.getLog(CategoryViewController.class);
 
 	public void afterPropertiesSet() throws Exception {
 		if ((this.cm == null) || (this.um==null) || (this.tm==null) || (this.em == null))
@@ -64,8 +64,8 @@ public class CategoryViewController extends AbstractController implements Initia
 
 	public ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
 		Long id = Long.valueOf(request.getParameter(Constants.ATT_CAT_ID));
-		if (log.isDebugEnabled()) {
-			log.debug("CategoryViewController:: entering method handleRenderRequestInternal: catId=" + id);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("CategoryViewController:: entering method handleRenderRequestInternal: catId=" + id);
 		} 
 			
 		Category category = this.cm.getCategoryById(id);

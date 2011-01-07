@@ -40,7 +40,7 @@ import org.uhp.portlets.news.service.exception.UserNotFoundException;
 
 @Repository("sqlUserDao")
 public class SqlMapClientUserDaoImpl extends SqlMapClientDaoSupport implements UserDao {
-	private  static final  Log log = LogFactory.getLog(SqlMapClientUserDaoImpl.class);	
+	private  static final  Log LOGGER = LogFactory.getLog(SqlMapClientUserDaoImpl.class);	
 
 	public void insert(final User user) throws DataAccessException {
 		getSqlMapClientTemplate().insert("insertUser", user);
@@ -70,8 +70,8 @@ public class SqlMapClientUserDaoImpl extends SqlMapClientDaoSupport implements U
 			removeAllRolesForUser(uid);
 		}
 		getSqlMapClientTemplate().delete("deleteUser", uid) ;
-		if(log.isDebugEnabled()) {
-			log.debug("user "+ uid + " is deleted");
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("user "+ uid + " is deleted");
 		}
 	}
 

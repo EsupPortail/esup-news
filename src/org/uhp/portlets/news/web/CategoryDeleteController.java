@@ -55,7 +55,7 @@ public class CategoryDeleteController extends AbstractController implements Init
     /** */
     private boolean deleted;
     /** */
-    private String msgKey = new String();
+    private String msgKey = "";
     /** */
     private Long entityId;
     

@@ -5,13 +5,11 @@
 */
 package org.esco.portlets.news.utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.esco.portlets.news.services.UserManagerImpl;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -25,7 +23,7 @@ import org.springframework.util.Assert;
 public class ListEditor implements FactoryBean, InitializingBean {
 
     /** Logger.*/
-    private static final Log LOG = LogFactory.getLog(UserManagerImpl.class);
+    private static final Log LOG = LogFactory.getLog(ListEditor.class);
     
     /** */
     private String property;
@@ -53,8 +51,7 @@ public class ListEditor implements FactoryBean, InitializingBean {
      * @see org.springframework.beans.propertyeditors.PropertiesEditor#setAsText(java.lang.String)
      */
     private void setAsText(final String arg0) throws IllegalArgumentException {
-        List<String> s = new ArrayList<String>();
-        s = Arrays.asList(arg0.replaceAll("\\s", "").split(","));
+        List<String> s = Arrays.asList(arg0.replaceAll("\\s", "").split(","));
         if (LOG.isDebugEnabled()) {
             LOG.debug("String in : " + arg0 + " List out : " + s.toString());
         }
@@ -75,8 +72,8 @@ public class ListEditor implements FactoryBean, InitializingBean {
      * @return <code>Class</code> The class name of the object returned.
      * @see org.springframework.beans.factory.FactoryBean#getObjectType()
      */
-    @SuppressWarnings("unchecked")
-    public Class getObjectType() {
+    @SuppressWarnings("rawtypes")
+	public Class getObjectType() {
         // TODO Auto-generated method stub
         return List.class;
     }

@@ -184,9 +184,7 @@ public class ItemValidator extends AbstractValidator {
      * @param errors
      */
     public void validate3rdPart(final Object obj, final Errors errors) {
-
         final ItemForm itemF = (ItemForm) obj;
-
     }
 
     // ---------------------------------------------------------------------------
