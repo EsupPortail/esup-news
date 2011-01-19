@@ -23,10 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -480,7 +478,17 @@ public class ItemEditController extends AbstractWizardFormController implements 
 				Item selectedItem = im.getItemById(selectedItemId);
 				Topic selectedTopic = tm.getTopicById(topicId);
 				Category selectedCat = cm.getCategoryById(selectedTopic.getCategoryId());
-
+				
+				// existing attachments
+				List<Attachment> attachments = itemForm.getAttachments();
+				Map<String, String> mapIds = new HashMap<String, String>();
+				for(Attachment existingAtt : attachments) {
+				    if(StringUtils.isNotEmpty(existingAtt.getId())) {
+					mapIds.put(existingAtt.getId(), existingAtt.getId());	
+				    }
+				}
+				model.put("existingIdsMap", mapIds);
+				
 				List<org.cmis.portlets.news.domain.Attachment> attachmentsListByItem = am
 				.getAttachmentsListByItem(selectedItem.getItemId());
 				model.put("attachments", attachmentsListByItem);

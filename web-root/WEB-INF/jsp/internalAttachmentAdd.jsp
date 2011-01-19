@@ -125,6 +125,7 @@
 	</c:if>
 			
 	<c:if test="${fn:length(attachments) > 0}">
+		<c:set var="alreadyAttached"><fmt:message key="add.attachment.alreadyAttachedFile"/></c:set>
 		<table class="internal_attachment_table">
 			<thead>
 				<tr>
@@ -140,7 +141,13 @@
 			<tbody>
 			<c:forEach items="${attachments}" var="attEntry" varStatus="status">
 			<tr>
-				<td class="internal_attachment_check"><input type="checkbox" name="attachmentIds" value="${attEntry.attachmentId}"/><!-- empty --></td>
+				<td class="internal_attachment_check">
+				<c:set var="id"><c:out value="${attEntry.attachmentId}"/></c:set>
+				<c:choose>
+					<c:when test="${not empty existingIdsMap[id]}"><img src="<html:imagesPath/>OK.gif" title="${alreadyAttached}"/><!-- empty --></c:when>
+					<c:otherwise><input type="checkbox" name="attachmentIds" value="${attEntry.attachmentId}"/><!-- empty --></c:otherwise>
+				</c:choose>
+				</td>
 				<td class="internal_attachment_type"><img src="<html:imagesPath/>types/${fn:substring(attEntry.fileName, fn:indexOf(attEntry.fileName, '.')+1, fn:length(attEntry.fileName))}.png"/></td>
 				<td class="internal_attachment_name"><c:out value="${attEntry.title} (${attEntry.fileName})"/></td>
 				<td class="internal_attachment_desc"><c:out value="${attEntry.description}"/></td>

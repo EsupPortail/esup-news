@@ -51,7 +51,8 @@
 
 <span Style="PADDING-LEFT: 20px;"><img
 	src="<html:imagesPath/>ft.gif" alt="" /> <fmt:message
-	key="news.label.otherRoles" /></span>
+	key="news.label.otherRoles" /> <a href="${viewRolesRenderUrl}" ><img
+		src="<html:imagesPath/>help_t.gif" align="absmiddle" title='<fmt:message key="news.label.roles.goToDetails" />' /></a></span>
 <p />
 <table class="cat">
 	<thead>

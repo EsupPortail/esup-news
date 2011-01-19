@@ -51,7 +51,8 @@
 </DL>
 <span class="portlet-font" Style="PADDING-LEFT: 20px;"><img
 	src="<html:imagesPath/>fe.gif" alt="" /> <fmt:message
-	key="news.label.otherRoles" /></span>
+	key="news.label.otherRoles" /> <a href="${viewRolesRenderUrl}" ><img
+		src="<html:imagesPath/>help_e.gif" align="absmiddle" title='<fmt:message key="news.label.roles.goToDetails" />' /></a></span>
 <table class="cat">
 	<thead>
 		<tr>

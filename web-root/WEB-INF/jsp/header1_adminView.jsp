@@ -1,7 +1,4 @@
 <c:if test='${pMask eq rS}'>
-	<portlet:renderURL var="viewRolesRenderUrl">
-		<portlet:param name="action" value="viewRoles" />
-	</portlet:renderURL>
 	<portlet:renderURL var="viewManagersRenderUrl">
 		<portlet:param name="action" value="viewManagers" />
 	</portlet:renderURL>
@@ -62,6 +59,9 @@
 
 </c:if>
 <c:if test='${pMask ge rM}'>
+	<portlet:renderURL var="viewRolesRenderUrl">
+		<portlet:param name="action" value="viewRoles" />
+	</portlet:renderURL>
 	<portlet:actionURL var="editCategoryActionUrl">
 		<portlet:param name="action" value="editCategory" />
 	</portlet:actionURL>
