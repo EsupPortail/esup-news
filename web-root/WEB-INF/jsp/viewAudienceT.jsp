@@ -52,7 +52,7 @@
 										<p><c:out value="${listItem.principal}" /></p>
 										</span></c:when>
 									<c:when test="${listItem.isGroup==1}">
-										<<img
+										<img
 											title="<fmt:message key="news.img.group"/>" align="absmiddle"
 											src="<html:imagesPath/>personnes.gif" border=0 /> <fmt:message
 											key="news.label.groupDetails.notFound">
