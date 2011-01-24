@@ -59,9 +59,10 @@ public class CmisPathfinderHelperImpl implements CmisPathFinderHelper {
 	    String entityId = ((Long) properties.get(CmisPathFinderHelper.ENTITY_ID)).toString();
 	    // use entityId as validName
 	    String entityValidName = entityId;
-
+	    String entityPath = "/" + entityValidName;
+	    
 	    try {
-		entityFolder = (Folder) openCmisSession.getObjectByPath("/" + entityValidName);
+		entityFolder = (Folder) openCmisSession.getObjectByPath(entityPath);
 	    } catch (CmisObjectNotFoundException nfe0) {
 		// nothing
 	    }
@@ -70,61 +71,53 @@ public class CmisPathfinderHelperImpl implements CmisPathFinderHelper {
 	    }
 
 	    // Checks if the year folder exists, create it if not
+	    String yearPath = entityPath + "/" + String.valueOf(year);
 	    try {
-		yearFolder = (Folder) openCmisSession.getObjectByPath("/" + entityValidName + "/"
-			+ String.valueOf(year));
+		yearFolder = (Folder) openCmisSession.getObjectByPath(yearPath);
 	    } catch (CmisObjectNotFoundException nfe0) {
 		// nothing
 	    }
 	    if (yearFolder == null) {
 		// create folder for the year if don't exits
-		yearFolder = createFolder(openCmisSession, entityFolder, "/" + entityValidName + "/", String
+		yearFolder = createFolder(openCmisSession, entityFolder, entityPath + "/", String
 			.valueOf(year));
 
 		// then create the month folder
-		monthFolder = createFolder(openCmisSession, yearFolder, "/" + entityValidName + "/"
-			+ String.valueOf(year), String.valueOf(month));
+		monthFolder = createFolder(openCmisSession, yearFolder, yearPath, String.valueOf(month));
 
 		// return directly the file path
 		String validName = StringUtils.getValidFileName(fileName);
-		return "/" + entityValidName + "/" + String.valueOf(year) + "/" + String.valueOf(month) + "/"
-			+ validName;
+		return yearPath + "/" + String.valueOf(month) + "/" + validName;
 
 	    } else {
 		// search for the month folder
+		String monthPath = yearPath + "/" + String.valueOf(month);
 		try {
-		    monthFolder = (Folder) openCmisSession.getObjectByPath("/" + entityValidName + "/"
-			    + String.valueOf(year) + "/" + String.valueOf(month));
+		    monthFolder = (Folder) openCmisSession.getObjectByPath(monthPath);
 		} catch (CmisObjectNotFoundException nfe) {
 		    // nothing
 		}
 		if (monthFolder == null) {
-		    // create folder for the month if don't exits*
-		    monthFolder = createFolder(openCmisSession, yearFolder, "/" + entityValidName + "/"
-			    + String.valueOf(year), String.valueOf(month));
+		    // create folder for the month if don't exits
+		    monthFolder = createFolder(openCmisSession, yearFolder, yearPath, String.valueOf(month));
 
 		    // return directly the file path
 		    String validName = StringUtils.getValidFileName(fileName);
-		    return "/" + entityValidName + "/" + String.valueOf(year) + "/" + String.valueOf(month) + "/"
-			    + validName;
+		    return monthPath + "/" + validName;
 		} else {
 		    // Search for unexisting filename
 		    String validName = StringUtils.getValidFileName(fileName);
 		    Document file = null;
 		    try {
-			file = (Document) openCmisSession.getObjectByPath("/" + entityValidName + "/"
-				+ String.valueOf(year) + "/" + String.valueOf(month) + "/" + validName);
+			file = (Document) openCmisSession.getObjectByPath(monthPath + "/" + validName);
 		    } catch (CmisObjectNotFoundException nfe2) {
 			// nothing
 		    }
 		    if (file == null) {
-			return "/" + entityValidName + "/" + String.valueOf(year) + "/" + String.valueOf(month) + "/"
-				+ validName;
+			return monthPath + "/" + validName;
 		    } else {
-			String name = findFileName(openCmisSession, "/" + String.valueOf(year) + "/"
-				+ String.valueOf(month), validName);
-			return "/" + entityValidName + "/" + String.valueOf(year) + "/" + String.valueOf(month) + "/"
-				+ name;
+			String name = findFileName(openCmisSession, monthPath, validName);
+			return monthPath + "/" + name;
 		    }
 		}
 	    }
@@ -140,8 +133,8 @@ public class CmisPathfinderHelperImpl implements CmisPathFinderHelper {
 	String start;
 	String end;
 	if (name.indexOf(".") > 0) {
-	    start = name.substring(0, name.indexOf("."));
-	    end = name.substring(name.indexOf("."), name.length());
+	    start = name.substring(0, name.lastIndexOf("."));
+	    end = name.substring(name.lastIndexOf("."), name.length());
 	} else {
 	    start = name;
 	    end = "";

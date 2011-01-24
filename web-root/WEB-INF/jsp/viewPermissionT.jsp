@@ -12,7 +12,7 @@
 	align="absmiddle" border="0" /> <fmt:message
 	key="add.permission.page.title" /> </a>]</div>
 	
-<div class="portlet-msg-error"><c:out value="${msg}" /></div>
+<c:if test="${fn:length(msg) > 0}"><div class="portlet-msg-error"><c:out value="${msg}" /></div></c:if>
 	
 <DL id="news_showhide">
 	<DT onClick="slide('news_showhide_superUser')"><img src="<html:imagesPath/>ft.gif" alt="" /> <fmt:message key="news.label.superUsers" />
@@ -132,7 +132,7 @@
 						<td align="right">
 						<a href="<portlet:renderURL>
 										<portlet:param name="action" value="userDetails" />
-										<portlet:param name="uid" value="${listItem.principal}"/>
+										<portlet:param name="userId" value="${listItem.principal}"/>
 								 </portlet:renderURL>">
 							<img title="<fmt:message key="news.img.title.view.userDetail"/>"
 							src="<html:imagesPath/>search.gif" border=0 /></a>&nbsp;&nbsp;

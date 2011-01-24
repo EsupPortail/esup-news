@@ -106,7 +106,7 @@ public class ItemViewController extends AbstractController implements Initializi
     @Override
     protected ModelAndView handleRenderRequestInternal(final RenderRequest request, 
             final RenderResponse response) throws Exception {
-        final Long id = PortletRequestUtils.getLongParameter(request, Constants.ATT_ID);
+        final Long id = PortletRequestUtils.getLongParameter(request, Constants.ATT_ITEM_ID);
         final Item item = this.im.getItemById(id);
         final Long tIdFrom = PortletRequestUtils.getLongParameter(request, Constants.ATT_TOPIC_ID);
         final String uid = request.getRemoteUser();

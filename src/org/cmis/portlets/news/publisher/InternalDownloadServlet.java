@@ -23,6 +23,7 @@ import org.cmis.portlets.news.domain.AttachmentD;
 import org.cmis.portlets.news.services.exceptions.DownloadException;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.context.ApplicationContext;
+import org.uhp.portlets.news.NewsConstants;
 import org.uhp.portlets.news.dao.CategoryDao;
 import org.uhp.portlets.news.domain.Category;
 import org.uhp.portlets.news.domain.Item;
@@ -102,10 +103,10 @@ public class InternalDownloadServlet extends BaseAppContext {
 
 	HttpSession session = request.getSession();
 	if (LOG.isDebugEnabled()) {
-	    LOG.debug("doGet: sesion uid=" + session.getAttribute("uid"));
+	    LOG.debug("doGet: sesion uid=" + session.getAttribute(NewsConstants.UID));
 	}
 
-	String userUid = (String) session.getAttribute("uid");
+	String userUid = (String) session.getAttribute(NewsConstants.UID);
 	if (userUid == null) {
 	    throw new ServletException(new PortletSecurityException("you are not authorized for this action"));
 	}

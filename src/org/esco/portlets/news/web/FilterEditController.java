@@ -74,7 +74,7 @@ public class FilterEditController extends SimpleFormController implements Initia
         if (LOG.isTraceEnabled()) {
             LOG.trace("Entering FormBackingObject.");
         }
-        Long filterId = PortletRequestUtils.getLongParameter(request, Constants.ATT_ID); 
+        Long filterId = PortletRequestUtils.getLongParameter(request, Constants.ATT_FILTER_ID); 
         filter = this.getEm().getFilter(filterId);
         return filter;
     }

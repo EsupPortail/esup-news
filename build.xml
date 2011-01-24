@@ -81,8 +81,15 @@
 			</then>
 		</if>
 			
-
 		<copy file="web-root/web.xml" todir="${build.home}/WEB-INF" overwrite="yes" />
+		<if>
+			<equals arg1="${app.compatibility_3_2}" arg2="true" />
+			<then>
+				<echo message="Deploying uPortal 3.2 compatibility !" />
+				<copy file="web-root/web.up3.2.xml" overwrite="yes" tofile="${build.home}/WEB-INF/web.xml"/>
+			</then>
+		</if>
+		
 		<replace file="${build.home}/WEB-INF/web.xml" token="[CAS_URL_LOGIN]" value="${cas.url.login}" />
 		<replace file="${build.home}/WEB-INF/web.xml" token="[CAS_URL_VALIDATE]" value="${cas.url.validate}" />
 		<replace file="${build.home}/WEB-INF/web.xml" token="[APP_URL_CAS_PROXY_VALIDATE]" value="${app.url.cas_proxy_validate}" />
@@ -113,6 +120,8 @@
 		<replace file="${build.home}/WEB-INF/jsp/items.jsp" token="@NEWS_VERSION@" value="${app.version}" />
 		
 		<replace file="${build.home}/WEB-INF/jsp/include.jsp" token="@NEWS_ATTACHMENTS_ACTIVATION@" value="${attachments.activate}" />		
+		
+		<replace file="${build.home}/WEB-INF/jsp/include.jsp" token="@NEWS_PORTLET_PARAMS_COMPATIBILITY@" value="${app.compatibility_3_2}" />
 
 		<copy file="properties/news.properties" todir="${build.home}/WEB-INF/context" overwrite="yes" />
 		<replace file="${build.home}/WEB-INF/context/sql-map-config.xml" token="@db_type@" value="${db.type}" />

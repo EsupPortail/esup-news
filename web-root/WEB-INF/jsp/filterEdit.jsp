@@ -46,7 +46,7 @@
 							key="news.label.filter.attribute.groupName" /></option>
 					</select>
 				</c:if>
-				<span class="portlet-msg-error">${status.errorMessage}</span>
+				<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 			</spring:bind></td>
 		</tr>
 		<tr>
@@ -61,7 +61,7 @@
 					</option>
 				</c:forEach>
 			</select>
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 			</spring:bind></td>
 		</tr>
 		<tr>

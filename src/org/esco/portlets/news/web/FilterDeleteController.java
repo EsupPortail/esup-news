@@ -70,7 +70,7 @@ public class FilterDeleteController extends AbstractController implements Initia
     @Override
     public void handleActionRequest(final ActionRequest request,
             final ActionResponse response) throws Exception {
-        Long filterId = Long.valueOf(request.getParameter(Constants.ATT_ID));
+        Long filterId = Long.valueOf(request.getParameter(Constants.ATT_FILTER_ID));
         entityId = Long.valueOf(request.getParameter(Constants.ATT_ENTITY_ID));
         if (!this.um.isSuperAdmin(request.getRemoteUser())) {
             msgKey = "news.alert.superUserOnly";

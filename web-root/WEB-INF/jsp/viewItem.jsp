@@ -8,7 +8,7 @@
 <c:if test='${pMask ge rM}'>
 	[<a href='<portlet:actionURL>
                        <portlet:param name="action" value="apprItem"/>
-                       <portlet:param name="id" value="${item.itemId}"/>
+                       <portlet:param name="iId" value="${item.itemId}"/>
                        <portlet:param name="tId" value="${topic.topicId}"/>
                </portlet:actionURL>'
 		class="liensmenudroit"><c:choose>
@@ -28,7 +28,7 @@
 <c:if test='${(pMask ge rM) or (pMask ge rC && userId eq item.postedBy)}'>
 	[<a	href='<portlet:actionURL>
 				<portlet:param name="action" value="deleteItem"/>
-                <portlet:param name="id" value="${item.itemId}"/>
+                <portlet:param name="iId" value="${item.itemId}"/>
                 <portlet:param name="tId" value="${topic.topicId}"/>
                 <portlet:param name="status" value="1"/>  
                 <portlet:param name="all" value="1"/>                                                 
@@ -53,7 +53,7 @@
 	class="lien"
 	href="<portlet:renderURL>
      						<portlet:param name="action" value="userDetails"/>
-     						<portlet:param name="uid" value="${item.postedBy}"/>
+     						<portlet:param name="userId" value="${item.postedBy}"/>
 					</portlet:renderURL>">
 <c:choose>
 	<c:when

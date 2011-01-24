@@ -122,7 +122,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 			this.am.updateItemAttachment(itemForm, item.getItemId(), entityId);
 
 			response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_ITEM);
-			response.setRenderParameter(Constants.ATT_ID, String.valueOf(itemForm.getItem().getItemId()));
+			response.setRenderParameter(Constants.ATT_ITEM_ID, String.valueOf(itemForm.getItem().getItemId()));
 			final Long tId = ctxTopicId;
 			if (tId != null) {
 				response.setRenderParameter(Constants.ATT_TOPIC_ID, String.valueOf(tId));
@@ -189,8 +189,9 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		case 1:
 			Category category = this.cm.getCategoryById(itemForm.getItem().getCategoryId());
 			Entity entity = this.em.getEntityById(category.getEntityId());
-
-			itemValidator.validate2ndPart(entity.getEntityId().toString(), command, errors);
+			String path = this.getPortletContext().getRealPath(temporaryStoragePath);
+			
+			itemValidator.validate2ndPart(path, entity.getEntityId().toString(), command, errors);
 			break;
 		case 2:
 			itemValidator.validate3rdPart(command, errors);
@@ -340,7 +341,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 	@Override
 	protected Object formBackingObject(PortletRequest request) throws Exception {
 		ItemForm itemForm = new ItemForm();
-		itemId = PortletRequestUtils.getLongParameter(request, Constants.ATT_ID);
+		itemId = PortletRequestUtils.getLongParameter(request, Constants.ATT_ITEM_ID);
 		Item item = this.im.getItemById(itemId);
 		itemForm.setItem(item);
 		List<Topic> topics = this.im.getTopicListByItem(itemId);

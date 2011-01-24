@@ -145,13 +145,15 @@ public class ItemForm implements Serializable {
 					dir.mkdir();
 				}
 				tmp = new File(temporaryStoragePath + "/" + external.getFile().getOriginalFilename());
+				
 				outputStream = new FileOutputStream(tmp);
 				inputStream = external.getFile().getInputStream();
-				byte[] buf = new byte[(int) external.getFile().getSize()];
-				int len;
-				while ((len = inputStream.read(buf)) > 0)
-				{
-					outputStream.write(buf, 0, len);
+				if(!tmp.exists()){
+    					byte[] buf = new byte[(int) external.getFile().getSize()];
+    					int len;
+    					while ((len = inputStream.read(buf)) > 0){
+    					    outputStream.write(buf, 0, len);
+    					}
 				}
 			} catch (Exception e)
 			{

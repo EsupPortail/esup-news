@@ -120,7 +120,7 @@ public class ItemAddController extends AbstractWizardFormController implements I
 		this.am.addAttachmentToItem(itemForm, pkey, entityId);
 
 		response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_ITEM);
-		response.setRenderParameter(Constants.ATT_ID, String.valueOf(itemForm.getItem().getItemId()));
+		response.setRenderParameter(Constants.ATT_ITEM_ID, String.valueOf(itemForm.getItem().getItemId()));
 		final Long tId = ctxTopicId;
 		if (tId != null) {
 			response.setRenderParameter(Constants.ATT_TOPIC_ID, String.valueOf(tId));
@@ -183,8 +183,9 @@ public class ItemAddController extends AbstractWizardFormController implements I
 		case 1:
 			Category category = this.cm.getCategoryById(itemForm.getItem().getCategoryId());
 			Entity entity = this.em.getEntityById(category.getEntityId());
+			String path = this.getPortletContext().getRealPath(temporaryStoragePath);
 
-			itemValidator.validate2ndPart(entity.getEntityId().toString(), command, errors);
+			itemValidator.validate2ndPart(path, entity.getEntityId().toString(), command, errors);
 			break;
 		case 2:
 			itemValidator.validate3rdPart(command, errors);

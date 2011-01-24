@@ -62,7 +62,7 @@ public class UserDetailController extends AbstractController implements Initiali
     protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
         boolean isSuperAdmin = false;
         //boolean isAdmin = false;
-        final String uid = request.getParameter(NewsConstants.UID);
+        final String uid = request.getParameter(Constants.ATT_USER_ID);
         //final Long cid = PortletRequestUtils.getLongParameter(request, Constants.CATID);
         //final Long tid = PortletRequestUtils.getLongParameter(request, Constants.TID);
         // Difficile avec l'item id.

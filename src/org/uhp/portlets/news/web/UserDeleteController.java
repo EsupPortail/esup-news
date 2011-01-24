@@ -55,7 +55,7 @@ public class UserDeleteController extends AbstractController implements Initiali
     @Override
     protected void handleActionRequestInternal(final ActionRequest request, final ActionResponse response) 
     throws Exception {
-        userId = request.getParameter(NewsConstants.UID);
+        userId = request.getParameter(Constants.ATT_USER_ID);
         this.deleted = false;
         if (!this.um.isSuperAdmin(request.getRemoteUser())) {
             msgKey = "news.alert.superUserOnly";

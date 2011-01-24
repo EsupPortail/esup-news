@@ -41,7 +41,7 @@
 					key="langue.french" /></option>
 				<option value="en"><fmt:message key="langue.english" /></option>
 			</select>
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 		</spring:bind></td>
 	</tr>
 	<tr>
@@ -68,7 +68,7 @@
 					<option value="<c:out value='${p}'/>"><fmt:message
 						key="news.label.${p}" /></option>
 				</c:forTokens>
-			</select> <span class="portlet-msg-error">${status.errorMessage}</span>
+			</select> <c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 		</spring:bind></td>
 	</tr>
 	<tr>

@@ -48,7 +48,7 @@
 	<form name="${namespace}EditItem" method="post"
 		action="<portlet:actionURL>
                         <portlet:param name="action" value="editItem"/>
-                        <portlet:param name="id" value="${itemForm.item.itemId}"/>
+                        <portlet:param name="iId" value="${itemForm.item.itemId}"/>
                         <portlet:param name="tId" value="${topic.topicId}"/>
                         <portlet:param name="_page" value="${page}"/>
                 </portlet:actionURL>">
@@ -88,7 +88,7 @@
 									<TR>
 									</c:if>
 								</c:forEach>
-								<div><span class="portlet-msg-error">${status.errorMessage}</span></div>
+								<div><c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if></div>
 						</table>
 					</spring:bind>
 				</c:when>

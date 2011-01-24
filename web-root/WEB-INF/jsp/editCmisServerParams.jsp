@@ -47,7 +47,7 @@
     			</tr>
     			<tr>
     				<td class="portlet-form-label">
-	    				<label for="serverLogin" style="width:150px;float:left;"><fmt:message key="news.label.cmisserver.login"/> : </label>
+	    				<label for="serverLogin" style="width:160px;float:left;"><fmt:message key="news.label.cmisserver.login"/> : </label>
 	    			</td>
 					<td class="portlet-form-field-label">
     					<html:input type="text" id="serverLogin" size="30" path="serverLogin"/>
@@ -55,7 +55,7 @@
     			</tr>
     			<tr>
     				<td class="portlet-form-label">
-    					<label for="serverPwd" style="width:150px;float:left;"><fmt:message key="news.label.cmisserver.pwd"/> : </label>
+    					<label for="serverPwd" style="width:160px;float:left;"><fmt:message key="news.label.cmisserver.pwd"/> : </label>
     				</td>
 					<td class="portlet-form-field-label">
     					<html:input type="password" id="serverPwd" size="30" path="serverPwd"/>
@@ -63,7 +63,7 @@
     			</tr>
     			<tr>
     				<td class="portlet-form-label">
-    					<label for="serverPwd" style="width:150px;float:left;"><fmt:message key="news.label.cmisserver.pwd2"/> : </label>
+    					<label for="serverPwd" style="width:160px;float:left;"><fmt:message key="news.label.cmisserver.pwd2"/> : </label>
     				</td>
 					<td class="portlet-form-field-label">
     					<html:input type="password" id="serverPwd2" path="serverPwd2" size="30"/>
@@ -71,7 +71,7 @@
     			</tr>
     			<tr>
 					<td class="portlet-form-label">
-    					<label for="repositoryId" style="width:150px;float:left;"><fmt:message key="news.label.cmisserver.repo.id"/> :</label>
+    					<label for="repositoryId" style="width:160px;float:left;"><fmt:message key="news.label.cmisserver.repo.id"/> :</label>
     				</td>
 					<td class="portlet-form-field-label"> 
     					<html:input type="text" id="repositoryId" size="30" path="repositoryId"/>

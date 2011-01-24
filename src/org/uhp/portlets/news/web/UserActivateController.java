@@ -52,7 +52,7 @@ public class UserActivateController extends AbstractController implements Initia
  			throw new PortletSecurityException(
  			       getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
     	}
-		final String userId = StringUtils.defaultIfEmpty(request.getParameter(NewsConstants.UID), null);
+		final String userId = StringUtils.defaultIfEmpty(request.getParameter(Constants.ATT_USER_ID), null);
 
 		String status  = (Constants.ATT_T.equals(this.um.findUserByUid(userId).getEnabled())) ? Constants.ATT_F: Constants.ATT_T;
 		this.um.updateUserStatus(userId, status);					

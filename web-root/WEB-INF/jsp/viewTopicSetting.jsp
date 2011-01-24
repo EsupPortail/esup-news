@@ -32,7 +32,7 @@
 					<td class="portlet-font"><a class="lien"
 						href="<portlet:renderURL>
      <portlet:param name="action" value="userDetails"/>
-     <portlet:param name="uid" value="${topic.createdBy}"/>
+     <portlet:param name="userId" value="${topic.createdBy}"/>
      <portlet:param name="tId" value="${topic.topicId}"/>
      <portlet:param name="cId" value="${topic.categoryId}"/>     
 </portlet:renderURL>"><c:choose>

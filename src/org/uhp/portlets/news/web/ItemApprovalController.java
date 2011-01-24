@@ -39,7 +39,7 @@ public class ItemApprovalController extends AbstractController {
 	private static final Log LOGGER = LogFactory.getLog(ItemApprovalController.class);
 
 	public void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
-		final Long itemId = Long.valueOf(request.getParameter(Constants.ATT_ID));
+		final Long itemId = Long.valueOf(request.getParameter(Constants.ATT_ITEM_ID));
 		final String topicId = StringUtils.defaultIfEmpty(request.getParameter(Constants.ATT_TOPIC_ID), null);
 		if (!this.um.canValidate(request.getRemoteUser(), this.im.getItemById(itemId))) {
 			LOGGER.warn("ItemApprovalController:: user " + request.getRemoteUser() + " has no role admin");
@@ -57,7 +57,7 @@ public class ItemApprovalController extends AbstractController {
 		            this.im.getItemById(itemId).getStatus().endsWith("1")? "0" : "1");
 		} else {
 			response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_ITEM);
-			response.setRenderParameter(Constants.ATT_ID, String.valueOf(itemId));
+			response.setRenderParameter(Constants.ATT_ITEM_ID, String.valueOf(itemId));
 		}
 	}
 

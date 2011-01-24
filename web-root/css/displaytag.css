@@ -1,11 +1,11 @@
-.dataTable {
+.esup-news .dataTable {
 	background-color: white;
 	border: 1px solid #666666;
 	font-size: 1.0em;
 	width: 95%;
 }
 
-.dataTable th {
+.esup-news .dataTable th {
 	border-right: 1px solid #c8c8ff;
 	font-family: arial, helvetica, sans-serif;
 	font-weight: bold;
@@ -16,72 +16,72 @@
 	border-bottom: 1px dashed #808080;
 }
 
-.dataTable  td {
+.esup-news .dataTable  td {
 	font-family: verdana, arial, helvetica, sans-serif;
 	padding-left: 4px;
 	padding-right: 4px;
 }
 
-.dataTable td.hidden {
+.esup-news .dataTable td.hidden {
 	display: none;
 }
 
-.dataTable th.hidden {
+.esup-news .dataTable th.hidden {
 	display: none;
 }
 
-.dataTable  tr.odd {
+.esup-news .dataTable  tr.odd {
 	background-color: whitesmoke;
 	font-size: 1em;
 }
 
-.dataTable tr.even {
+.esup-news .dataTable tr.even {
 	background-color: #dcdcdc;
 	font-size: 1em;
 }
 
-.dataTable th a    ,.dataTable th a:visited {
+.esup-news .dataTable th a ,.esup-news .dataTable th a:visited {
 	text-align: left;
 	color: white;
 	border-bottom: DASHED #c0c0c0 1px;
 }
 
-.dataTable th a:hover {
+.esup-news .dataTable th a:hover {
 	color: #ffcc00;
 	background-color: transparent;
 }
 
-.dataTable th.sorted {
+.esup-news .dataTable th.sorted {
 	text-decoration: underline;
 }
 
-.dataTable TH.sortable a {
+.esup-news .dataTable TH.sortable a {
 	display: block;
 	background: url(../images/arrow_off.png) no-repeat right;
 	text-decoration: none;
 }
 
-.dataTable TH.order1 a {
+.esup-news .dataTable TH.order1 a {
 	background-image: url(../images/arrow_down.png);
 }
 
-.dataTable TH.order2 a {
+.esup-news .dataTable TH.order2 a {
 	background-image: url(../images/arrow_up.png);
 }
 
-a {
+.esup-news a {
 	text-decoration: none;
 }
 
-a:link {
+.esup-news a:link {
 	color: #333333;
 }
 
-a:hover {
+.esup-news a:hover {
 	color: #111111;
 }
 
-span.pagebanner {
+.esup-news span.pagebanner {
 	display: block;
 	font-size: .95em;
 	margin: 10px 0px 0px 10px;
@@ -89,7 +89,7 @@ span.pagebanner {
 	width: 100%;
 }
 
-span.pagelinks {
+.esup-news span.pagelinks {
 	display: block;
 	font-size: .95em;
 	margin-bottom: 5px;

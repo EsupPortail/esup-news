@@ -69,7 +69,7 @@ public class TypeSettingViewController extends AbstractController implements Ini
     @Override
     public ModelAndView handleRenderRequest(final RenderRequest request,
             final RenderResponse response) throws Exception {
-        Long id = Long.valueOf(request.getParameter(Constants.ATT_ID));
+        Long id = Long.valueOf(request.getParameter(Constants.ATT_TYPE_ID));
         if (LOG.isDebugEnabled()) {
             LOG.debug("TypeSettingViewController:: entering method handleRenderRequestInternal: type Id=" + id);
         }

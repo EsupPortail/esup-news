@@ -57,7 +57,7 @@
 		<td class="portlet-font"><a class="lien"
 			href="<portlet:renderURL>
      <portlet:param name="action" value="userDetails"/>
-     <portlet:param name="uid" value="${category.createdBy}"/>
+     <portlet:param name="userId" value="${category.createdBy}"/>
      <portlet:param name="cId" value="${category.categoryId}"/>     
 </portlet:renderURL>"><c:choose>
 			<c:when

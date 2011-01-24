@@ -43,7 +43,7 @@
 				class="portlet-font"><a class="lien"
 				href="<portlet:renderURL>
      						<portlet:param name="action" value="userDetails"/>
-     						<portlet:param name="uid" value="${item.postedBy}"/>
+     						<portlet:param name="userId" value="${item.postedBy}"/>
      						<portlet:param name="iId" value="${item.itemId}"/>
                				<portlet:param name="cId" value="${item.categoryId}"/>     
 					</portlet:renderURL>">

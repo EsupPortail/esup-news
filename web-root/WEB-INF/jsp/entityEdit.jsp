@@ -57,7 +57,7 @@
 							</c:forEach>
 						</tr>
 					</table>
-					<span class="portlet-msg-error">${status.errorMessage}</span>
+					<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 				</spring:bind></td>
 			</tr>
 		</c:if>
@@ -86,7 +86,7 @@
 					</c:forEach>
 				</tr>
 			</table>
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 			</spring:bind>
 		</td>
 	</tr>

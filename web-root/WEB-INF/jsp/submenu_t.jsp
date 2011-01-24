@@ -23,7 +23,7 @@
 </portlet:renderURL>
 <portlet:renderURL var="validateItemRenderUrl">
 	<portlet:param name="action" value="validateItem" />
-	<portlet:param name="id" value="${itemId}" />
+	<portlet:param name="iId" value="${itemId}" />
 </portlet:renderURL>
 <portlet:renderURL var="editTopicRenderUrl">
 	<portlet:param name="action" value="editTopic" />

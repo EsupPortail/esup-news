@@ -45,7 +45,7 @@ public class ItemIncrementController extends AbstractController implements Initi
 		@Override
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
 
-	    Long itemId = Long.valueOf(request.getParameter(Constants.ATT_ID));
+	    Long itemId = Long.valueOf(request.getParameter(Constants.ATT_ITEM_ID));
 	    String topicId = request.getParameter(Constants.ATT_TOPIC_ID);
 	  
 		 if(!this.um.isUserAdminInCtx(Long.valueOf(topicId), NewsConstants.CTX_T, request.getRemoteUser())) {

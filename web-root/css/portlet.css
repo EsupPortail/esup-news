@@ -33,6 +33,9 @@
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	color: #990000;
 	font-style: italic;
+	background : none;
+	border : none;
+	padding : 3px;
 }  /*  uPortal equivalent style =3D  " uportal-channel-warning"  */
 .esup-news .portlet-msg-success {
 	font-size: normal;
@@ -162,7 +165,7 @@ with class uportal-background-selected"  */
 
 /*##  Section 10.6.5 Tables ##*/
 .esup-news .portlet-form-label {
-	width: 20em;
+	width: 160px;
 	text-align: left;
 	color: Black;
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;

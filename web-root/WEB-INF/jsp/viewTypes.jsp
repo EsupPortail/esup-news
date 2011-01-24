@@ -28,17 +28,17 @@
 			pagesize="${nbItemsToShow}" cellspacing="1" defaultorder="ascending" defaultsort="2">
 			<d:column property="typeId" title="ID" class="hidden"
 				headerClass="hidden" media="html" />
-			<d:column href="${typeDetailsRenderURL}" paramId="id"
+			<d:column href="${typeDetailsRenderURL}" paramId="${portletParamPrefixe}${pltc_target}typId"
 				paramProperty="typeId" property="name"
 				titleKey="news.label.type.name" sortable="true" />
 			<d:column property="description" titleKey="news.label.type.description"
 				sortable="true" />
-			<d:column href="${editTypeRenderURL}" paramId="id"
+			<d:column href="${editTypeRenderURL}" paramId="${portletParamPrefixe}${pltc_target}typId"
 				paramProperty="typeId">
 				<img title="<fmt:message key="news.img.title.view.typeDetail"/>"
 					src="<html:imagesPath/>edit.gif" border=0 />
 			</d:column>
-			<d:column href="${delTypeActionURL}" paramId="id" paramProperty="typeId">
+			<d:column href="${delTypeActionURL}" paramId="${portletParamPrefixe}${pltc_target}typId" paramProperty="typeId">
 				<img title="<fmt:message key="news.alert.delete.type"/>"
 					src="<html:imagesPath/>delete.gif" border=0 
 					onClick="return confirm('<fmt:message key="news.alert.delete.type"/>');"/>

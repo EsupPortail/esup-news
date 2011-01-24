@@ -140,7 +140,7 @@
 
 			</c:forEach>
 			<tr>
-				<td colspan="11"><span class="portlet-msg-alert">${status.errorMessage}</span>
+				<td colspan="11"><c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if></td>
 			</tr>
 		</c:when>
 		<c:otherwise>

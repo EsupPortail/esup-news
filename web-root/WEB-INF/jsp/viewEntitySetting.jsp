@@ -35,7 +35,7 @@
 				<td class="portlet-font"><a class="lien"
 					href="<portlet:renderURL>
 							     <portlet:param name="action" value="userDetails"/>
-							     <portlet:param name="uid" value="${entity.createdBy}"/>
+							     <portlet:param name="userId" value="${entity.createdBy}"/>
 							     <portlet:param name="eId" value="${entity.entityId}"/>     
 							</portlet:renderURL>">
 				<c:out value="${userList[entity.createdBy].displayName}" /> </a>

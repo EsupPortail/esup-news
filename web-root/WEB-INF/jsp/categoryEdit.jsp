@@ -20,7 +20,7 @@
 		<td class="portlet-form-label"><fmt:message
 			key="news.label.category.name" /><span class="portlet-msg-alert">*</span></td>
 		<td class="portlet-font"><html:input path="category.name"
-			size="30" maxlength="80" /> <span class="portlet-msg-error">${status.errorMessage}</span></td>
+			size="30" maxlength="80" /> <c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if></td>
 	</tr>
 	<tr>
 		<td valign="top" class="portlet-form-label"><fmt:message
@@ -49,7 +49,7 @@
 					<c:if test="${status.value == 'en'}">selected</c:if>><fmt:message
 					key="langue.english" /></option>
 			</select>
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 		</spring:bind></td>
 	</tr>
 	
@@ -86,7 +86,7 @@
 						</c:forEach>
 					</tr>
 				</table>
-				<span class="portlet-msg-error">${status.errorMessage}</span>
+				<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 			</spring:bind></td>
 		</tr>
 	</c:if>	
@@ -106,7 +106,7 @@
 				name="<c:out value='${status.expression}'/>" value="0"
 				<c:if test="${status.value == '0'}">checked</c:if>>
 			<label class="portlet-font" for="rssAllowed"><fmt:message key="news.label.no" /></label>
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 		</spring:bind></td>
 	</tr>
 	<tr>
@@ -135,7 +135,7 @@
 						key="news.label.${p}" /></option>
 				</c:forTokens>
 			</select>
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 		</spring:bind></td>
 	</tr>
 	<tr>
@@ -168,7 +168,7 @@
 				name="<c:out value='${status.expression}'/>" value="0"
 				<c:if test="${status.value == '0'}">checked</c:if>>
 			<fmt:message key="news.label.private" />
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 		</spring:bind></td>
 	</tr>
 	<tr>

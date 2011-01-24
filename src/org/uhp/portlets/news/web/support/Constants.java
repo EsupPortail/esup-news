@@ -115,11 +115,13 @@ public final class Constants {
     public static final String ATT_CTX = "ctx";
 
     public static final String ATT_USER_ID = "userId";
+    public static final String ATT_ITEM_ID = "iId";
     public static final String ATT_CAT_ID = "cId";
     public static final String ATT_TOPIC_ID = "tId";
+    public static final String ATT_TYPE_ID = "typId";
     public static final String ATT_CTX_ID = "ctxId";
-    public static final String ATT_ID = "id";
     public static final String ATT_ENTITY_ID = "eId";
+    public static final String ATT_FILTER_ID = "typId";
 
     public static final String OBJ_USER = "user";
     public static final String OBJ_ITEM = "item";

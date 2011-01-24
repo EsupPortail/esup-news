@@ -6,7 +6,7 @@
 <%@ include file="/WEB-INF/jsp/header1_adminView.jsp"%>
 <portlet:renderURL var="editTypeURL">
 	<portlet:param name="action" value="editType" />
-	<portlet:param name="id" value="${typeForm.type.typeId}" />
+	<portlet:param name="typId" value="${typeForm.type.typeId}" />
 </portlet:renderURL>
 <div id="news_headerA"> <IMG align="absmiddle" alt="" src="<html:imagesPath/>icone_admin.gif" border="0"/> 
 <SPAN class="newsTitle"><fmt:message key="menu.admin"/> </SPAN>

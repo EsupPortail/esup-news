@@ -68,7 +68,7 @@ public class TypeDeleteController extends AbstractController implements Initiali
     @Override
     public void handleActionRequest(final ActionRequest request,
             final ActionResponse response) throws Exception {
-        Long typeId = Long.valueOf(request.getParameter(Constants.ATT_ID));
+        Long typeId = Long.valueOf(request.getParameter(Constants.ATT_TYPE_ID));
         if (!this.um.isSuperAdmin(request.getRemoteUser())) {
             msgKey = "news.alert.superUserOnly";
         } else if (this.tm.deleteType(typeId)) {

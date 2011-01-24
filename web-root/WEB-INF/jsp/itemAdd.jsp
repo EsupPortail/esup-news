@@ -29,10 +29,6 @@
 			document.forms["${namespace}AddItem"].action = start + "&removeAttachment="+ index + end;
 			document.forms["${namespace}AddItem"].submit();
     	}
-    	else
-    	{
-			return false;
-    	}
     }
     
 	function updateAttachment(index){
@@ -119,7 +115,7 @@
 								<TR>
 									</c:if>
 									</c:forEach>
-									<span class="portlet-msg-error">${status.errorMessage}</span>
+									<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 									
 							</table>
 							</spring:bind>

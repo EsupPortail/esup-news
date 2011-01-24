@@ -44,7 +44,7 @@
 							<option value="0" selected><fmt:message
 								key="news.label.person" /></option>
 						</select>
-						<span class="portlet-msg-error">${status.errorMessage}</span>
+						<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 					</spring:bind></td>
 					<td align="right" class="portlet-form-label"><fmt:message
 						key="news.lable.contains" /></td>
@@ -59,7 +59,7 @@
 							<option value="${role}"><fmt:message key="${role}" /></option>
 
 						</select>
-						<span class="portlet-msg-error">${status.errorMessage}</span>
+						<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 					</spring:bind></td>
 					<td></td>
 					<td></td>
@@ -100,7 +100,7 @@
 										</d:table></td>
 									</tr>
 									<tr>
-										<td><span class="portlet-msg-info">${status.errorMessage}</span>
+										<td><c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 										</td>
 									</tr>
 								</table>

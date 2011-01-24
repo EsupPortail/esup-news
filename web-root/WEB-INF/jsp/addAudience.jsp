@@ -58,7 +58,7 @@
 		<portlet:param name="action" value="addAudience" />
 		<portlet:param name="_page" value="${page}" />
 	</portlet:actionURL>
-	<form name="${namespace}AddAud" method="get"
+	<form name="${namespace}AddAud" method="post" <%--method="get"--%>
 		action="${submitAudience }" id="${namespace}AddAud">
 	<table width="90%" cellpadding="5">
 
@@ -107,7 +107,7 @@
 								<c:if test="${status.value == 0}">selected</c:if>><fmt:message
 								key="news.label.person" /></option>
 						</select>
-						<span class="portlet-msg-error">${status.errorMessage}</span>
+						<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 					</spring:bind></td>
 					<td class="portlet-form-label" align="right"><fmt:message
 						key="news.lable.contains" /></td>
@@ -136,7 +136,7 @@
 							</c:choose>
 							<fmt:message key="${subTypeEntry}" /> &nbsp; &nbsp;
                                    </c:forEach>
-						<span class="portlet-msg-error">${status.errorMessage}</span>
+						<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 					</spring:bind> <input type="hidden" name="subscriber.ctxId"
 						value="${subForm.subscriber.ctxId}" /></td>
 				</tr>
@@ -160,7 +160,7 @@
 
 				</tr>
 				<tr>
-					<td colspan="4"><c:set var="checkAll">
+					<td colspan="4"><%--<c:set var="checkAll">
 						<input type="checkbox" name="allbox"
 							onclick="checkAll(document.forms['${namespace}AddAud'])" />
 					</c:set> <jsp:scriptlet>
@@ -169,14 +169,14 @@
 									        decorator.setFieldName("subKey");
 									        pageContext.setAttribute("checkboxDecorator", decorator);
 									            ]]>
-									</jsp:scriptlet> <c:choose>
+									</jsp:scriptlet>--%> <c:choose>
 						<c:when test="${subForm.subscriber.isGroup==1}">
 							<c:choose>
 								<c:when test="${fn:length(grps) > 0}">
 									<spring:bind path="subKey">
 										<table border="0" cellpadding="5" width="100%" align="center">
 											<tr>
-												<td><d:table name="${grps}" id="grp" sort="list"
+												<td><%--<d:table name="${grps}" id="grp" sort="list"
 													requestURI="${submitAudience}" keepStatus="true"
 													export="false" class="dataTable" defaultsort="2"
 													defaultorder="ascending" cellspacing="1"
@@ -187,6 +187,25 @@
 														value="${grp.id}" />
 													<d:column property="id" titleKey="news.label.group.key" sortable="true"
 														headerClass="sortable" />
+														--%>
+													
+													<d:table name="${grps}" id="grp" export="false"
+													class="dataTable" pagesize="${nbItemsToShow}"
+													cellspacing="1" sort="list" requestURI="${submitAudience}"
+													defaultsort="2" defaultorder="ascending"
+													decorator="org.displaytag.decorator.TotalTableDecorator">
+													<d:column title="Select">
+
+														<input type="checkbox" name="subKey" value="${grp.id}" />
+
+													</d:column>
+
+													<d:column property="id" title="GrpKey" sortable="true" headerClass="sortable">
+														<input type="checkbox" name="${status.expression}"
+															value="<c:out value='${grp.id}'/>" />
+														<input type="hidden" name="_${status.expression}"
+															value="${name}" />
+													</d:column>
 													<d:column property="name" titleKey="news.label.group.name"
 														sortable="true" headerClass="sortable" />
 
@@ -195,15 +214,15 @@
 													<d:setProperty name="paging.banner.items_name"
 														value="${tit}s" />
 
-												</d:table><span id="news_displaytable_checkboxReset"><a
+												</d:table><%--<span id="news_displaytable_checkboxReset"><a
 													href="javascript:document.forms['${namespace}AddAud'].submit();"
 													onclick="removeInput('subKey');" 
 													title="<fmt:message key='link.remove.all.checked.title' />">
-													<fmt:message key="link.remove.all.checked" /></a></span> 
+													<fmt:message key="link.remove.all.checked" /></a></span> --%>
 													</td>
 											</tr>
 											<tr>
-												<td><span class="portlet-msg-error">${status.errorMessage}</span>
+												<td><c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 												</spring:bind></td>
 											</tr>
 										</table>
@@ -221,7 +240,7 @@
 									<spring:bind path="subKey">
 										<table border=0 cellpadding=5 width="90%" align="center">
 											<tr>
-												<td><d:table name="${userList}" id="user" sort="list"
+												<td><%--<d:table name="${userList}" id="user" sort="list"
 													requestURI="${submitAudience}" keepStatus="true"
 													export="false" class="dataTable" defaultsort="2"
 													defaultorder="ascending" cellspacing="1"
@@ -229,7 +248,17 @@
 													decorator="checkboxDecorator">
 
 													<d:column title="${checkAll}" property="checkbox"
-														value="${user.userId}" />
+														value="${user.userId}" />--%>
+													
+													<d:table name="${userList}" id="user" sort="list" requestURI="${submitAudience}"
+													export="false" class="dataTable" defaultsort="2" defaultorder="ascending" cellspacing="1"
+													pagesize="${nbItemsToShow}"	decorator="org.displaytag.decorator.TotalTableDecorator">
+
+													<d:column title="Select">
+														<input type="checkbox" name="subKey"
+															value="${user.userId}" />
+													</d:column>
+													
 													<c:forEach items="${attrDisplay}" var="displayAttr">
 														<d:column titleKey="news.label.${displayAttr}"
 															sortable="true" headerClass="sortable">
@@ -245,15 +274,15 @@
 													<d:setProperty name="paging.banner.items_name"
 														value="${tit}s" />
 
-												</d:table><span id="news_displaytable_checkboxReset"><a
+												</d:table><%--<span id="news_displaytable_checkboxReset"><a
 													href="javascript:document.forms['${namespace}AddAud'].submit();"
 													onclick="removeInput('subKey');" 
 													title="<fmt:message key='link.remove.all.checked.title' />">
-													<fmt:message key="link.remove.all.checked" /></a></span>
+													<fmt:message key="link.remove.all.checked" /></a></span>--%>
 													</td>
 											</tr>
 											<tr>
-												<td><span class="portlet-msg-error">${status.errorMessage}</span></td>
+												<td><c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if></td>
 											</tr>
 										</table>
 									</spring:bind>
@@ -406,16 +435,16 @@
 				${empty
 				nextPage ? "disabled" : ""} 
 				value="<fmt:message key="button.next" />"
-				onclick="document.forms['${namespace}AddAud'].method='post';" /> <input
+				<%--onclick="document.forms['${namespace}AddAud'].method='post';"--%> /> <input
 				type="submit" name="_finish" ${page !=2
 				? "disabled" : ""} value=" <fmt:message key="button.finish" />"
-				onclick="document.forms['${namespace}AddAud'].method='post';" /> <input
+				<%--onclick="document.forms['${namespace}AddAud'].method='post';" --%> /> <input
 				type="submit" name="_target${prevPage}" ${empty
 				prevPage ? "disabled" : ""} value="<fmt:message key="button.previous" />"
-				onclick="document.forms['${namespace}AddAud'].method='post';" /> <input
+				<%--onclick="document.forms['${namespace}AddAud'].method='post';" --%>/> <input
 				type="submit" name="_cancel"
 				value="<fmt:message key="button.cancel" />"
-				onclick="document.forms['${namespace}AddAud'].method='post';" /></th>
+				<%--onclick="document.forms['${namespace}AddAud'].method='post';" --%>/></th>
 		</tr>
 	</table>
 	</form>

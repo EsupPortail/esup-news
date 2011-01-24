@@ -42,7 +42,7 @@
 					<c:if test="${status.value == 'en'}">selected</c:if>><fmt:message
 					key="langue.english" /></option>
 			</select>
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 		</spring:bind></td>
 	</tr>
 	<c:if test="${fn:length(typeList) > 0}">
@@ -71,7 +71,7 @@
 					</c:forEach>
 				</tr>
 			</table>
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 			</spring:bind>
 		</td>
 	</tr>
@@ -100,7 +100,7 @@
 						key="news.label.${p}" /></option>
 				</c:forTokens>
 			</select>
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 		</spring:bind></td>
 	</tr>
 	<tr>

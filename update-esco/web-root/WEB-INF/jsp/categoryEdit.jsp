@@ -22,7 +22,7 @@
 		<td class="portlet-form-label"><fmt:message
 			key="news.label.category.name" /><span class="portlet-msg-alert">*</span></td>
 		<td class="portlet-font"><html:input path="category.name"
-			size="30" maxlength="80" /> <span class="portlet-msg-error">${status.errorMessage}</span></td>
+			size="30" maxlength="80" /> <c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if></td>
 	</tr>
 	<tr>
 		<td valign="top" class="portlet-form-label"><fmt:message
@@ -51,7 +51,7 @@
 					<c:if test="${status.value == 'en'}">selected</c:if>><fmt:message
 					key="langue.english" /></option>
 			</select>
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 		</spring:bind></td>
 	</tr>
 	<c:if test="${fn:length(typeList) > 0}">
@@ -87,7 +87,7 @@
 							</c:forEach>
 						</tr>
 					</table>
-					<span class="portlet-msg-error">${status.errorMessage}</span>
+					<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 				</spring:bind></td>
 			</tr>
 		</c:if>	
@@ -118,7 +118,7 @@
 						key="news.label.${p}" /></option>
 				</c:forTokens>
 			</select>
-			<span class="portlet-msg-error">${status.errorMessage}</span>
+			<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 		</spring:bind></td>
 	</tr>
 	<tr>

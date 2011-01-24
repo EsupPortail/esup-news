@@ -11,6 +11,8 @@
 <%@ taglib prefix="html" tagdir="/WEB-INF/tags/html"%>
 <%@ taglib prefix="fsc" uri="/WEB-INF/tags/fileSizeConverter.tld"%>
 
+<%@ taglib prefix="rx" uri="http://jakarta.apache.org/taglibs/regexp-1.0"%>
+
 <portlet:defineObjects />
 <c:set var="datePattern">
 	<fmt:message key="date.format" />
@@ -30,6 +32,18 @@
 <c:set var="portletVersion" value="@NEWS_VERSION@" />
 <c:set var="namespace"><portlet:namespace /></c:set>
 <c:set var="attActivate" value="@NEWS_ATTACHMENTS_ACTIVATION@" />
+<c:set var="compatibility3_2" value="@NEWS_PORTLET_PARAMS_COMPATIBILITY@" />
+<c:set var="portletParamPrefixe" value="" />
+
+<c:if test="${compatibility3_2}">
+<rx:text id="queryString"> <%=request.getQueryString()%>
+</rx:text> <rx:regexp id="pltc_target_regexp">s/(.*)pltc_target=([^&]*)(.*)/$2_/gmi</rx:regexp>
+
+<c:set var="pltc_target">
+<rx:substitute regexp="pltc_target_regexp" text="queryString"/>
+</c:set>
+<c:set var="portletParamPrefixe" value="pltp_" />
+</c:if>
 
 <link rel="stylesheet" href="${ctxPath}/css/news.css" type="text/css" media="screen"/>
 <link rel="stylesheet" href="${ctxPath}/css/portlet.css" type="text/css"/>
@@ -134,8 +148,10 @@
 </portlet:renderURL>
 <portlet:renderURL var="viewItemRenderUrl">
 	<portlet:param name="action" value="viewItem" />
-	<c:if test="${not empty item}"><portlet:param name="id" value="${item.itemId}" /></c:if>
-	<c:if test="${not empty itemForm}"><portlet:param name="id" value="${itemForm.item.itemId}" /></c:if>
+	<c:if test="${not empty item}"><portlet:param name="iId" value="${item.itemId}" /></c:if>
+	<c:if test="${not empty itemForm}"><portlet:param name="iId" value="${itemForm.item.itemId}" /></c:if>
 	<c:if test="${not empty category}"><portlet:param name="cId" value="${category.categoryId}" /></c:if>
 	<c:if test="${not empty topic}"><portlet:param name="tId" value="${topic.topicId}" /></c:if>
 </portlet:renderURL>
+
+<div class="esup-news">

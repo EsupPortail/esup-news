@@ -32,6 +32,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
+import org.uhp.portlets.news.NewsConstants;
 import org.uhp.portlets.news.domain.ItemV;
 import org.uhp.portlets.news.service.FeedService;
 
@@ -56,7 +57,7 @@ public class ItemServlet extends BaseAppContext {
 			throw new ServletException(new IllegalStateException("feedService == null"));
 		HttpSession session = request.getSession();
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("doGet: sesion uid="+session.getAttribute("uid") + " remote user="+request.getRemoteUser());
+            LOGGER.debug("doGet: sesion uid="+session.getAttribute(NewsConstants.UID) + " remote user="+request.getRemoteUser());
         }
 		final boolean isProtected = request.getServletPath().contains(Constants.PRIVATE_ACCESS) ? true : false;
 		String jspView=NO_ITEM_VIEW;

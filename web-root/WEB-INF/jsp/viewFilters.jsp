@@ -64,14 +64,14 @@
 								<td align="right">
 								<a href="<portlet:renderURL>
                                    <portlet:param name="action" value="editFilter"/>
-                                   <portlet:param name="id" value="${listItem.filterId}"/>
+                                   <portlet:param name="fId" value="${listItem.filterId}"/>
                                    <portlet:param name="eId" value="${entity.entityId}"/>
                                    </portlet:renderURL>"><img
 									title="<fmt:message key="news.img.title.edit.filter"/>"
 									src="<html:imagesPath/>edit.gif" border=0 /></a>	
 								<a href="<portlet:actionURL>
                                    <portlet:param name="action" value="deleteFilter"/>
-                                   <portlet:param name="id" value="${listItem.filterId}"/>
+                                   <portlet:param name="fId" value="${listItem.filterId}"/>
                                    <portlet:param name="eId" value="${entity.entityId}"/>
                                    </portlet:actionURL>"
 									onClick="return confirm('<fmt:message key="news.alert.delete.filter"/>');"><img

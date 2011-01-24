@@ -49,7 +49,8 @@
 
 			</c:forEach>
 			<tr>
-				<td colspan="3"><span class="portlet-msg-alert">${status.errorMessage}</span>
+				<td colspan="3"><c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-alert">${status.errorMessage}</span></c:if></td>
+			</tr>
 			</tr>
 			</table>
 			<br/>

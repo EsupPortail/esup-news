@@ -96,7 +96,7 @@
 							<option value="0" selected><fmt:message
 								key="news.label.person" /></option>
 						</select>
-						<span class="portlet-msg-error">${status.errorMessage}</span>
+						<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 					</spring:bind></td>
 					<td align="right" class="portlet-form-label"><fmt:message
 						key="news.lable.contains" /></td>
@@ -112,7 +112,7 @@
 									key="${roleEntry}" /></option>
 							</c:forEach>
 						</select>
-						<span class="portlet-msg-error">${status.errorMessage}</span>
+						<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 					</spring:bind></td>
 					<td><input type="hidden" name="ctxId" value="${ctxId}" /></td>
 					<td></td>
@@ -132,7 +132,7 @@
 					<td colspan="4"><c:choose>
 						<c:when test="${fn:length(userList) > 0}">
 							<spring:bind path="user">
-								<table border=0 cellpadding=5 width="90%">
+								<table border=0 cellpadding=5 width="100%">
 									<tr>
 										<td><d:table name="${userList}" id="user" export="false" sort="list" cellspacing="1"
 											class="dataTable" pagesize="${nbItemsToShow}" defaultsort="2" defaultorder="ascending">
@@ -154,7 +154,7 @@
 										</d:table></td>
 									</tr>
 									<tr>
-										<td><span class="portlet-msg-info">${status.errorMessage}</span>
+										<td><c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 										</td>
 									</tr>
 								</table>
@@ -232,7 +232,7 @@
 			</c:when>
 		</c:choose>
 		<tr>
-			<th colspan="2"><input type="submit" name="_target${nextPage}"
+			<th colspan="4"><input type="submit" name="_target${nextPage}"
 				${empty nextPage ? "disabled" : ""} value="<fmt:message key="button.next" />" />
 				<input type="submit" name="_finish" ${page !=2 ? "disabled" : ""} value=" <fmt:message key="button.finish" />" />
 			<input type="submit" name="_target${prevPage}" ${empty prevPage ? "disabled" : ""} value="<fmt:message key="button.previous" />" />

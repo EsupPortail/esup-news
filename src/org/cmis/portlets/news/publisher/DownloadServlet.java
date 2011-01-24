@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.cmis.portlets.news.domain.AttachmentD;
 import org.cmis.portlets.news.services.exceptions.DownloadException;
 import org.springframework.context.ApplicationContext;
+import org.uhp.portlets.news.NewsConstants;
 import org.uhp.portlets.news.publisher.BaseAppContext;
 import org.uhp.portlets.news.publisher.Constants;
 import org.uhp.portlets.news.service.FeedService;
@@ -87,7 +88,7 @@ public class DownloadServlet extends BaseAppContext {
 	HttpSession session = request.getSession();
 	if (LOG.isDebugEnabled()) {
 	    LOG
-		    .debug("doGet: sesion uid=" + session.getAttribute("uid") + " remote user="
+		    .debug("doGet: sesion uid=" + session.getAttribute(NewsConstants.UID) + " remote user="
 			    + request.getRemoteUser());
 	}
 

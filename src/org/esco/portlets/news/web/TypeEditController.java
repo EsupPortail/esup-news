@@ -167,7 +167,7 @@ public class TypeEditController extends SimpleFormController implements Initiali
         if (LOG.isTraceEnabled()) {
             LOG.trace("Entering FormBackingObject of " + this.getClass().getName());
         }
-        Long tid = PortletRequestUtils.getLongParameter(request, Constants.ATT_ID);
+        Long tid = PortletRequestUtils.getLongParameter(request, Constants.ATT_TYPE_ID);
         TypeForm typeF = new TypeForm();
         typeF.setType(new Type());
         

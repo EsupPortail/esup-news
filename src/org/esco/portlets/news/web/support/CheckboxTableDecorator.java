@@ -27,7 +27,7 @@ import org.uhp.portlets.news.web.SubForm;
 public class CheckboxTableDecorator extends TableDecorator {
 
     /** id of the input. */
-    private String id = "id";
+    private String id = "attId";
 
     /** List of input's id checked. */
     private List<String> checkedIds;

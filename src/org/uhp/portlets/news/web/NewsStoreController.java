@@ -119,7 +119,7 @@ public class NewsStoreController extends AbstractController implements Initializ
         }
 
         session = request.getPortletSession(true);
-        session.setAttribute("uid", request.getRemoteUser(), PortletSession.APPLICATION_SCOPE);
+        session.setAttribute(NewsConstants.UID, request.getRemoteUser(), PortletSession.APPLICATION_SCOPE);
 
        
         List<Entity> listEntity = this.getEntityManager().getEntitiesByUser(uid);

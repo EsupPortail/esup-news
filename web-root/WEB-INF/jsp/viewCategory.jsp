@@ -117,7 +117,9 @@
 					<td colspan="9" class="pointilles"></td>
 				</tr>
 			</c:forEach>
-
+			<tr>
+				<td colspan="9"><c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if></td>
+			</tr>
 		</c:when>
 		<c:otherwise>
 			<div>

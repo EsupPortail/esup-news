@@ -58,7 +58,7 @@ public class ItemDeleteController extends AbstractController implements Initiali
 
     @Override
     public void handleActionRequestInternal(final ActionRequest request, final ActionResponse response) throws Exception {
-        final Long itemId = PortletRequestUtils.getLongParameter(request, Constants.ATT_ID);
+        final Long itemId = PortletRequestUtils.getLongParameter(request, Constants.ATT_ITEM_ID);
         //final Long topicId = Long.valueOf(request.getParameter(Constants.ATT_TOPIC_ID));
         final String topicId = StringUtils.defaultIfEmpty(request.getParameter(Constants.ATT_TOPIC_ID), null);
         final String fromStatus = request.getParameter(Constants.ATT_STATUS);

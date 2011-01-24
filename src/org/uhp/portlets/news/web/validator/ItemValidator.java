@@ -18,6 +18,7 @@ package org.uhp.portlets.news.web.validator;
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+import java.io.File;
 import java.util.Calendar;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +29,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.uhp.portlets.news.web.ItemForm;
+import org.uhp.portlets.news.web.ItemForm.Attachment;
 
 public class ItemValidator extends AbstractValidator {
 
@@ -108,11 +110,12 @@ public class ItemValidator extends AbstractValidator {
     
     /**
      * Validate page2 of the item form.
+     * @param temporaryStoragePath
      * @param entityID 
      * @param obj
      * @param errors
      */
-    public void validate2ndPart(final String entityID, final Object obj, final Errors errors) {
+    public void validate2ndPart(final String temporaryStoragePath, final String entityID, final Object obj, final Errors errors) {
 
         final ItemForm itemF = (ItemForm) obj;
 
@@ -125,6 +128,7 @@ public class ItemValidator extends AbstractValidator {
             validateFileType(options, itemF, errors);
         }
         validateFileTitle(itemF, errors);
+        validateFileAlreadyExists(temporaryStoragePath, itemF, errors);
     }
 
     public void validateFileSize(final long maxSize, final ItemForm itemForm, final Errors errors) {
@@ -170,6 +174,15 @@ public class ItemValidator extends AbstractValidator {
     public void validateFileTitle(final ItemForm itemForm, final Errors errors) {
         if (StringUtils.isEmpty(itemForm.getExternal().getTitle())) {
             errors.rejectValue("external.title", "ITEM_FILE_TITLE_REQUIRED", "Title is required.");
+        }
+    }
+    
+    public void validateFileAlreadyExists(final String temporaryStoragePath, final ItemForm itemForm, final Errors errors) {
+        Attachment external = itemForm.getExternal();
+        File tmp = new File(temporaryStoragePath + "/" + external.getFile().getOriginalFilename());
+        if (tmp.exists())
+        {
+            errors.rejectValue("external.file", "ITEM_FILE_ALREADY_UPLOADED", "This file has already been uploaded.");
         }
     }
 

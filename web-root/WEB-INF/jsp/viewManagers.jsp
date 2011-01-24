@@ -37,7 +37,7 @@
 			pagesize="${nbItemsToShow}" cellspacing="1" defaultorder="ascending" defaultsort="2">
 			<d:column property="userId" title="ID" class="hidden"
 				headerClass="hidden" media="html" />
-			<d:column href="${userDetailsURL}" paramId="uid"
+			<d:column href="${userDetailsURL}" paramId="${portletParamPrefixe}${pltc_target}userId"
 				paramProperty="userId"
 				titleKey="news.label.displayName" sortable="true">
 				<c:choose>
@@ -70,7 +70,7 @@
 					</c:otherwise>
 				</c:choose>
 			</d:column>
-			<d:column href="${activateUserURL}" paramId="uid"
+			<d:column href="${activateUserURL}" paramId="${portletParamPrefixe}${pltc_target}userId"
 				paramProperty="userId" titleKey="news.label.activateAccount"
 				sortable="true">
 				<c:choose>
@@ -84,11 +84,11 @@
 					</c:otherwise>
 				</c:choose>
 			</d:column>
-			<d:column href="${userDetailsURL}" paramId="uid" paramProperty="userId">
+			<d:column href="${userDetailsURL}" paramId="${portletParamPrefixe}${pltc_target}userId" paramProperty="userId">
 				<img title="<fmt:message key="news.img.title.view.userDetail"/>"
 					src="<html:imagesPath/>search.gif" border=0 />
 			</d:column>
-			<d:column href="${delUserURL}" paramId="uid" paramProperty="userId">
+			<d:column href="${delUserURL}" paramId="${portletParamPrefixe}${pltc_target}userId" paramProperty="userId">
 				<img title="<fmt:message key="news.alert.delete.user"/>"
 					src="<html:imagesPath/>delete.gif" border=0 
 					onClick="return confirm('<fmt:message key="news.alert.delete.user"/>');"/>

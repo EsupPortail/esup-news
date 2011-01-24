@@ -51,7 +51,8 @@ Version initial de NewsPortlet en version 2.0.6
 	- Corrections de bug mineurs sur les pièces jointes
 	- Ajout de quelques documentations
 	
-==== Pré Version 0.2.1 ====
+==== Version 0.2.1 ====
+	- Mise à jour pour la compatibilité avec uPortal 3.2, ajout d'une option de déploiement pour le mode de compatibilité.
 	- Ajout d'une option pour les accès LDAP en anonyme, dans properties/news.properties il s'agit de l'option ldap.anonymousReadOnly=true or false.
 	- Ajout d'une target ant init effectuant un ant clean et portlet-init.
 	- Convertion automatique de la taille des fichiers en octets,Ko,Mo,Go
@@ -61,9 +62,11 @@ Version initial de NewsPortlet en version 2.0.6
 	- Correction de bug : Possibilité d'ajouter plusieurs fois la même pièce jointe provenant d'une autre annonce, ce qui provoquait une erreur sql de "duplicate entry".
 	- Correction de bug : dans la page viewTopic.jsp les flêches up et upToTop pour ordonner les item ne fonctionnaient plus à cause d'un bug entre les lib displaytag et pluto (la conditionnelle de non affichage des flêche sur la première ligne des flêches au niveau du href sur une colonne displaytag en était la cause, la conditionnelle a été placé sur l'image, faisant que le href est toujours là mais non cliquable car il n'y a pas d'image).
 	- Correction de bug : dans la page itemEdit.jsp, le lien pour la suppression ne demandait pas de confirmation (code JS), cela était parceque le onclick js était sur le href et non sur la balise img, en fait cela vient d'un problème de comportement très étrange car selon les pages on peut mettre le onclick sur des href...
+	- Correction de bug : lors de l'ajout de pièces jointes le fait d'ajouter plusieurs fois la même pièce jointe avant enregistrement cela provoquait une erreur, le problème est corrigé et en plus il est devenu impossible d'ajouter plusieurs fois la même piéce jointe avant l'enregistrement de l'annonce.
+	- Correction de bug : lors de l'ajout de pièces jointes le fait d'ajouter plus de deux fois la même pièce jointe avec un enregsitrement entre chaque ajout cela provoquait une erreur.
 
 ==== TODO ====
-	- Terminer les doc de la version.
+	- Terminer les docs de la version.
 	- Ajouter la notion de priorité d'affichage des annonces des entités (ordre de priorité entre les entités). Est-ce bien nécessaire avec la notion de type sur les entités/catégories ?
 	- Effectuer une meilleur gestion de certaines erreurs et de leur affichage dans les jsp (noDelete.jsp, noitem.jsp par exemple)
 	- Voir pour afficher plus de messages lors de certaines opérations (confirmation d'ajout d'un utilisateur, Ajax ?)
