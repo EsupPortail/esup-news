@@ -232,12 +232,11 @@
 			</c:when>
 		</c:choose>
 		<tr>
-			<th colspan="4"><input type="submit" name="_target${nextPage}"
-				${empty nextPage ? "disabled" : ""} value="<fmt:message key="button.next" />" />
-				<input type="submit" name="_finish" ${page !=2 ? "disabled" : ""} value=" <fmt:message key="button.finish" />" />
-			<input type="submit" name="_target${prevPage}" ${empty prevPage ? "disabled" : ""} value="<fmt:message key="button.previous" />" />
-			<input type="submit" name="_cancel"
-				value="<fmt:message key="button.cancel" />" /></th>
+			<td colspan="4" align="center"><c:if test="${page !=2}"><input 
+				type="submit" name="_target${nextPage}"	${empty nextPage ? "disabled" : ""} value="<fmt:message key="button.next" />" /></c:if>
+				<c:if test="${page ==2}"><input type="submit" name="_finish" ${page !=2 ? "disabled" : ""} value=" <fmt:message key="button.finish" />" /></c:if>
+				<c:if test="${page !=0}"><input type="submit" name="_target${prevPage}" ${empty prevPage ? "disabled" : ""} value="<fmt:message key="button.previous" />" /></c:if>
+				<input type="submit" name="_cancel" value="<fmt:message key="button.cancel" />" /></td>
 		</tr>
 	</table>
 	</form>

@@ -80,4 +80,8 @@
 	</form>
 </spring:nestedPath>
 </fieldset>
+<p/><div class="news_legende"> 
+<p class="portlet-font"><fmt:message key="news.label.legende"/> :<br/>
+<span class="portlet-msg-alert">* <fmt:message key="news.legend.field_required"/></span>
+</div></p>
 <%@ include file="/WEB-INF/jsp/footer.jsp"%>

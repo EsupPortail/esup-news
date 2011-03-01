@@ -138,7 +138,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
 	 */
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void addAttachmentToItem(final ItemForm itemForm, final Long itemId, final Long entityId)
+	public void addAttachmentToItem(final ItemForm itemForm, final Long itemId, final Long entityId, final String userID)
 	throws DataAccessException, CmisException {
 		List<org.uhp.portlets.news.web.ItemForm.Attachment> attachments = itemForm.getAttachments();
 		for (org.uhp.portlets.news.web.ItemForm.Attachment att : attachments) {
@@ -151,6 +151,14 @@ public class AttachmentManagerImpl implements AttachmentManager {
 				Date insertDate = att.getInsertDate();
 				String originalFilename = att.getTempDiskStoredFile().getName();
 
+				String userPrefix = "user_" + userID + "_";
+				if (originalFilename.startsWith(userPrefix)) {
+				    // remove the user id prefix
+				    originalFilename = originalFilename.substring(userPrefix.length());
+				}
+				// remove the postfix
+				originalFilename = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+				
 				Map<String, Object> prop = new HashMap<String, Object>();
 				prop.put(CmisPathFinderHelper.FILE_NAME, originalFilename);
 				prop.put(CmisPathFinderHelper.INSERT_DATE, insertDate);
@@ -160,12 +168,14 @@ public class AttachmentManagerImpl implements AttachmentManager {
 
 				Attachment sqlAtt = cmisDao.insertAttachment(att, entityId, prop);
 
-				try {
-					// link this file to the news
-					long sqlId = attachmentDao.insertAttachment(sqlAtt);
-					attachmentDao.addAttachmentToItem(sqlId, itemId);
-				} catch (Exception e) {
-					LOG.error(e, e.fillInStackTrace());
+				if(sqlAtt != null) {
+        				try {
+        					// link this file to the news
+        					long sqlId = attachmentDao.insertAttachment(sqlAtt);
+        					attachmentDao.addAttachmentToItem(sqlId, itemId);
+        				} catch (Exception e) {
+        					LOG.error(e, e.fillInStackTrace());
+        				}
 				}
 			}
 		}
@@ -220,7 +230,15 @@ public class AttachmentManagerImpl implements AttachmentManager {
 				String[] topicIds = itemForm.getTopicIds();
 				Date insertDate = formAtt.getInsertDate();
 				String originalFilename = formAtt.getTempDiskStoredFile().getName();
-
+				
+				String prefix = String.valueOf(itemId) + "_";
+				if (originalFilename.startsWith(prefix)) {
+				    // remove the item id prefix
+				    originalFilename = originalFilename.substring(prefix.length());
+				}
+				// remove the postfix
+				originalFilename = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+				
 				Map<String, Object> prop = new HashMap<String, Object>();
 				prop.put(CmisPathFinderHelper.FILE_NAME, originalFilename);
 				prop.put(CmisPathFinderHelper.INSERT_DATE, insertDate);
@@ -304,22 +322,38 @@ public class AttachmentManagerImpl implements AttachmentManager {
 	}
 
 	public void cleanTempStorageDirectory(final String path) {
+	    cleanTempStorageDirectory(path, null);
+	}
+	
+	public void cleanTempStorageDirectory(final String path, String prefix) {
 		try {
-			long now = Calendar.getInstance().getTimeInMillis();
-			File dir = new File(path);
-			if (dir.exists() && dir.isDirectory()) {
-				File[] listFiles = dir.listFiles();
+		    	if(prefix != null){
+		    	    File dir = new File(path);
+		    	    if (dir.exists() && dir.isDirectory()) {
+		    		File[] listFiles = dir.listFiles();
 				for (File file : listFiles) {
-					long lastModified = file.lastModified();
-					// Test if this file has been added more than 2 hours ago
-					if (((now - lastModified) / 1000) > 7200) {
-						file.delete();
-					}
+				    if(file.getName().startsWith(prefix)) {
+					file.delete();
+				    }
 				}
-			}
+		    	    }
+		    	} else {
+        			long now = Calendar.getInstance().getTimeInMillis();
+        			File dir = new File(path);
+        			if (dir.exists() && dir.isDirectory()) {
+        				File[] listFiles = dir.listFiles();
+        				for (File file : listFiles) {
+        					long lastModified = file.lastModified();
+        					// Test if this file has been added more than 30 min ago
+        					if (((now - lastModified) / 1000) > 1800) {
+        						file.delete();
+        					}
+        				}
+        			}
+		    	}
 		} catch (Exception e) {
 			LOG.error("Unable to delete temporary files from " + path, e);
 		}
-
 	}
+	
 }

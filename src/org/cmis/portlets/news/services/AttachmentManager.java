@@ -43,10 +43,12 @@ public interface AttachmentManager {
      * @param itemForm
      * @param itemId
      * @param entityId
+     * @param userID
      * @throws DataAccessException
      * @throws CmisException
      */
-    void addAttachmentToItem(ItemForm itemForm, Long itemId, Long entityId) throws DataAccessException, CmisException;
+    void addAttachmentToItem(ItemForm itemForm, Long itemId, Long entityId, String userID) 
+    	throws DataAccessException, CmisException;
 
     /**
      * Update an attachement.
@@ -189,4 +191,11 @@ public interface AttachmentManager {
      */
     void cleanTempStorageDirectory(String path);
 
+    /**
+     * Clean the temporary directory : delete all olders files.
+     * 
+     * @param path
+     * @param prefix
+     */
+    void cleanTempStorageDirectory(String path, String prefix);
 }

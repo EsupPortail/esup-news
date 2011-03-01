@@ -19,6 +19,7 @@ package org.uhp.portlets.news.web;
  */
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,7 +81,7 @@ public class ItemAddController extends AbstractWizardFormController implements I
 
 	@Autowired
 	private AttachmentManager am;
-
+	
 	private String temporaryStoragePath;
 	private Long ctxTopicId;
 
@@ -117,7 +118,7 @@ public class ItemAddController extends AbstractWizardFormController implements I
 		final Long entityId = category.getEntityId();
 
 		// save attachments
-		this.am.addAttachmentToItem(itemForm, pkey, entityId);
+		this.am.addAttachmentToItem(itemForm, pkey, entityId, request.getRemoteUser());
 
 		response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_ITEM);
 		response.setRenderParameter(Constants.ATT_ITEM_ID, String.valueOf(itemForm.getItem().getItemId()));
@@ -125,9 +126,6 @@ public class ItemAddController extends AbstractWizardFormController implements I
 		if (tId != null) {
 			response.setRenderParameter(Constants.ATT_TOPIC_ID, String.valueOf(tId));
 		}
-
-		// clean temporary directory
-		this.am.cleanTempStorageDirectory(this.getPortletContext().getRealPath(temporaryStoragePath));
 
 		ctxTopicId = null;
 	}
@@ -151,8 +149,28 @@ public class ItemAddController extends AbstractWizardFormController implements I
 			response.setRenderParameter(Constants.ATT_CAT_ID, request.getParameter(Constants.ATT_CAT_ID));
 
 		} else {
-			request.getPortletSession().setAttribute("_globalCancel", true);
-			response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_TOPIC);
+		    	ItemForm itemForm = (ItemForm) command;
+		    	final Long tId = ctxTopicId;
+			if (tId != null) {
+			    response.setRenderParameter(Constants.ATT_TOPIC_ID, String.valueOf(tId));
+			    ctxTopicId = null;
+			    String status = itemForm.getItem().getStatus();
+			    if (status == null) {
+				response.setRenderParameter(Constants.ATT_STATUS, "1");
+			    } else {
+				response.setRenderParameter(Constants.ATT_STATUS, status);
+			    }
+			    response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_TOPIC);
+			} else {
+			    Long cId = itemForm.getItem().getCategoryId();
+			    response.setRenderParameter(Constants.ATT_CAT_ID, String.valueOf(cId));
+			    response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_CAT);
+			}
+		    	request.getPortletSession().setAttribute("_globalCancel", true);
+			
+			// clean temporary directory
+			String prefix = "user_" + request.getRemoteUser() + "_";
+			this.am.cleanTempStorageDirectory(this.getPortletContext().getRealPath(temporaryStoragePath), prefix);
 		}
 	}
 
@@ -241,8 +259,8 @@ public class ItemAddController extends AbstractWizardFormController implements I
 			} else {
 				if (errors.getErrorCount() == 0) {
 					if (page == 1) {
-
-						itemForm.addExternalAttachment(this.getPortletContext().getRealPath(temporaryStoragePath));
+					    	String prefix = "user_" + request.getRemoteUser() + "_";
+						itemForm.addExternalAttachment(this.getPortletContext().getRealPath(temporaryStoragePath), prefix);
 
 					} else if (page == 2) {
 						Long categoryId = PortletRequestUtils.getLongParameter(request, "categoryId");
@@ -315,7 +333,11 @@ public class ItemAddController extends AbstractWizardFormController implements I
 	@Override
 	protected ModelAndView showForm(RenderRequest request, RenderResponse response, BindException errors)
 	throws Exception {
-		int currentPage = 0;
+		
+		// clean temporary directory
+		this.am.cleanTempStorageDirectory(this.getPortletContext().getRealPath(temporaryStoragePath));
+
+	    	int currentPage = 0;
 
 		try {
 			currentPage = getCurrentPage(request);
@@ -462,8 +484,21 @@ public class ItemAddController extends AbstractWizardFormController implements I
 					perm = permTmp;
 				}
 			}
+			
 			model.put(Constants.ATT_USER_ID, userUid);
 			model.put(Constants.ATT_PM, perm);
+			
+			File directory = new File(this.getPortletContext().getRealPath(temporaryStoragePath));
+			String prefix = "user_" + userUid + "_";
+			File[] listFiles = directory.listFiles(new PrefixFilter(prefix));
+			String filesNames = "";
+			for (File file : listFiles) {
+			    String filename = file.getName();
+			    filename = filename.substring(prefix.length(), filename.lastIndexOf("."));
+			    filesNames += filename + ",";
+			}
+			model.put("existingFileNames", filesNames);
+			
 			return model;
 
 		} else {
@@ -510,8 +545,8 @@ public class ItemAddController extends AbstractWizardFormController implements I
 				// existing attachments
 				List<Attachment> attachments = itemForm.getAttachments();
 				Map<String, String> mapIds = new HashMap<String, String>();
-				for(Attachment existingAtt : attachments) {
-				    if(StringUtils.isNotEmpty(existingAtt.getId())) {
+				for (Attachment existingAtt : attachments) {
+				    if (StringUtils.isNotEmpty(existingAtt.getId())) {
 					mapIds.put(existingAtt.getId(), existingAtt.getId());	
 				    }
 				}
@@ -606,6 +641,27 @@ public class ItemAddController extends AbstractWizardFormController implements I
 	 */
 	public String getTemporaryStoragePath() {
 		return temporaryStoragePath;
+	}
+	
+	
+       /**
+	* 
+	* Implementation of FilenameFilter 
+	* 
+	*/
+	public class PrefixFilter implements FilenameFilter { 
+		String prefix; 
+		/** 
+		 * Constructor 
+		 * @param prefix a file prefix
+		 */
+		@SuppressWarnings("hiding")
+		public PrefixFilter(String prefix) { 
+		    this.prefix = prefix; 
+		} 
+		public boolean accept(File dir, String name) { 
+		    return name.startsWith(prefix); 
+		} 
 	}
 
 }

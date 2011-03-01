@@ -18,7 +18,6 @@ package org.uhp.portlets.news.web.validator;
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import java.io.File;
 import java.util.Calendar;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +28,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.uhp.portlets.news.web.ItemForm;
-import org.uhp.portlets.news.web.ItemForm.Attachment;
 
 public class ItemValidator extends AbstractValidator {
 
@@ -128,7 +126,6 @@ public class ItemValidator extends AbstractValidator {
             validateFileType(options, itemF, errors);
         }
         validateFileTitle(itemF, errors);
-        validateFileAlreadyExists(temporaryStoragePath, itemF, errors);
     }
 
     public void validateFileSize(final long maxSize, final ItemForm itemForm, final Errors errors) {
@@ -177,14 +174,6 @@ public class ItemValidator extends AbstractValidator {
         }
     }
     
-    public void validateFileAlreadyExists(final String temporaryStoragePath, final ItemForm itemForm, final Errors errors) {
-        Attachment external = itemForm.getExternal();
-        File tmp = new File(temporaryStoragePath + "/" + external.getFile().getOriginalFilename());
-        if (tmp.exists())
-        {
-            errors.rejectValue("external.file", "ITEM_FILE_ALREADY_UPLOADED", "This file has already been uploaded.");
-        }
-    }
 
     // ---------------------------------------------------------------------------
     // -- internal attachment page validation
@@ -230,5 +219,7 @@ public class ItemValidator extends AbstractValidator {
     protected Class getValidatorSupportClass() {
         return ItemForm.class;
     }
+    
+
 
 }

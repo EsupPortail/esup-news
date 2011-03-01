@@ -19,7 +19,7 @@
 <div class='entry'>
 <p class="portlet-msg-error">
 <div class="error">&nbsp; &nbsp; <fmt:message bundle="${msg}"
-	key="news.alert.noAccessToSecureItem" /></div>
+	key="${msgError}" /></div>
 </p>
 <div class='line_c'></div>
 </div>

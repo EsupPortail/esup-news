@@ -173,12 +173,12 @@
 }
 
 .esup-news table.cat th,table.news_TabWb th, table.entity th {
-	border-right: 1px solid #c8c8ff;
+	border-collapse: separate !important;
+    border-color: background;
 	padding-left: 4px;
 	padding-right: 12px;
 	font-weight: bold;
-	color: white ;
-	background-color: #cccccc;
+	background-color: #cccccc !important;
 	margin-right: 15px;
 	white-space: nowrap;
 }

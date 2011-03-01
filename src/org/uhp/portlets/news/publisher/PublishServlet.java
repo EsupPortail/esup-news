@@ -121,6 +121,10 @@ public class PublishServlet extends BaseAppContext {
                 return;
             }
 			final String s = feedService.getTopicFeedNotAvailableMsg(Long.valueOf(topicId), isProtected);
+			if (s == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "The topic with id " + topicId + " doesn't exist.");
+				return;
+			}
 			if (!"".equals(s)) {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN, s);
 				return;
@@ -142,6 +146,10 @@ public class PublishServlet extends BaseAppContext {
 		case Constants.EXPORT_CAT_FEED :
 	        if (!isStringNullOrEmpty(cId))  {       
 	            final String msg = feedService.getFeedNotAvailableMsg(Long.valueOf(cId), isProtected);
+	            if (msg == null) {
+					response.sendError(HttpServletResponse.SC_NOT_FOUND, "The category with id " + cId + " doesn't exist.");
+					return;
+				}
 	            if (!"".equals(msg)) {
 	                response.sendError(HttpServletResponse.SC_FORBIDDEN, msg);
 	                return;

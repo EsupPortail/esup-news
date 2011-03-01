@@ -92,7 +92,9 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
        </bean> 
        <bean id="itemApprovalController" class="org.uhp.portlets.news.web.ItemApprovalController" />    
        <bean id="itemIncrementController" class="org.uhp.portlets.news.web.ItemIncrementController" />     
-       <bean id="itemViewController" class="org.uhp.portlets.news.web.ItemViewController" />   
+       <bean id="itemViewController" class="org.uhp.portlets.news.web.ItemViewController" >
+       		<property name="temporaryStoragePath" value="WEB-INF/upload"/>
+       </bean> 
        <bean id="itemDeleteController" class="org.uhp.portlets.news.web.ItemDeleteController" />   
        
        <bean id="userDeleteController" class="org.uhp.portlets.news.web.UserDeleteController" />

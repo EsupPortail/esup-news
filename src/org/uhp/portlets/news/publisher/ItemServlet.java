@@ -43,7 +43,6 @@ public class ItemServlet extends BaseAppContext {
 	private static final String VIEW_ITEM = "/WEB-INF/jsp/item.jsp";
 	private static final String VIEW_ITEMS = "/WEB-INF/jsp/items.jsp";
 	private static final String NO_ITEM_VIEW = "/WEB-INF/jsp/noitem.jsp";
-	private static final String UNAUTORIZED = "/WEB-INF/jsp/unauthorized.jsp";
 
 	private static final Log LOGGER = LogFactory.getLog(ItemServlet.class);
 
@@ -61,6 +60,7 @@ public class ItemServlet extends BaseAppContext {
         }
 		final boolean isProtected = request.getServletPath().contains(Constants.PRIVATE_ACCESS) ? true : false;
 		String jspView=NO_ITEM_VIEW;
+		String msgKey="";
 		switch (Integer.parseInt(request.getParameter("c"))) {
 		case Constants.VIEW_ITEM : 
 			String itemId = request.getParameter("itemID");
@@ -76,7 +76,11 @@ public class ItemServlet extends BaseAppContext {
 					        org.uhp.portlets.news.web.support.Constants.ATT_USER_LIST, 
 					        feedService.getUsersByListUid(usersUid));
 					jspView = VIEW_ITEM;
-				}			     			      
+				} else {
+					LOGGER.debug("Item with id " + itemId + " not found !");
+					//response.sendError(HttpServletResponse.SC_NOT_FOUND, "Item doesn't exist");
+					msgKey="news.alert.notFoundItem";
+				}
 			}
 			break;
 		case Constants.VIEW_ITEMS :
@@ -85,18 +89,21 @@ public class ItemServlet extends BaseAppContext {
 				LOGGER.debug("View list items: remote user="+request.getRemoteUser());
 			}
 			if(!isProtected || uid == null) {
-				jspView = UNAUTORIZED;				
+				jspView = NO_ITEM_VIEW;	
+				msgKey="news.alert.noAccessToSecureItem";
 			}
 			else {		
 				request.setAttribute("itemsS", feedService.getItems(Long.valueOf(request.getParameter("tID")), Integer.parseInt(request.getParameter("s")), uid));
 				jspView = VIEW_ITEMS;
 			}
 			break;
-		default : response.sendError(HttpServletResponse.SC_FORBIDDEN, "Parameter not authorized");
-		break;
+		default : msgKey="news.alert.notAuthorizedAction";break;
 		}    
 		final ServletContext app = getServletContext();
-		final RequestDispatcher dispatcher = app.getRequestDispatcher(jspView); 
+		final RequestDispatcher dispatcher = app.getRequestDispatcher(jspView);
+		if (!msgKey.equals("")) {
+			request.setAttribute(org.uhp.portlets.news.web.support.Constants.MSG_ERROR, msgKey);
+		}
 		dispatcher.forward(request,response);
 	}
 }

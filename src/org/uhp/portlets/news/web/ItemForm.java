@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -105,8 +106,7 @@ public class ItemForm implements Serializable {
 	}
 
 	public List<Attachment> getAttachments() {
-		if (attachments == null)
-		{
+		if (attachments == null) {
 			attachments = new ArrayList<Attachment>();
 		}
 		return attachments;
@@ -128,56 +128,59 @@ public class ItemForm implements Serializable {
 
 		getAttachments().add(att);
 	}
-
-	public void addExternalAttachment(String temporaryStoragePath) {
-		if (getExternal().getTitle().length() > 1)
-		{
+	
+	public void addExternalAttachment(final String temporaryStoragePath) {
+	    addExternalAttachment(temporaryStoragePath, null);
+	}
+	
+	public void addExternalAttachment(final String temporaryStoragePath, final String userPrefix) {
+		if (getExternal().getTitle().length() > 1) {
 			Attachment external = getExternal();
-
+			
+			String postfix = "." + String.valueOf(Calendar.getInstance().getTimeInMillis());
+			String prefix = "";
+			if (userPrefix != null) {
+			    prefix = userPrefix;
+			} else if (item.getItemId() != null) {
+			    // Get the item id to prefix the filename
+			    prefix = String.valueOf(item.getItemId()) + "_";
+			}
+			
 			File tmp = null;
 			FileOutputStream outputStream = null;
 			InputStream inputStream = null;
-			try
-			{
+			try {
 				File dir = new File(temporaryStoragePath);
-				if (!dir.exists())
-				{
+				if (!dir.exists()) {
 					dir.mkdir();
 				}
-				tmp = new File(temporaryStoragePath + "/" + external.getFile().getOriginalFilename());
 				
+				tmp = new File(temporaryStoragePath + "/" + prefix 
+					+ external.getFile().getOriginalFilename() + postfix);
+
 				outputStream = new FileOutputStream(tmp);
 				inputStream = external.getFile().getInputStream();
-				if(!tmp.exists()){
-    					byte[] buf = new byte[(int) external.getFile().getSize()];
-    					int len;
-    					while ((len = inputStream.read(buf)) > 0){
-    					    outputStream.write(buf, 0, len);
-    					}
-				}
-			} catch (Exception e)
-			{
+				byte[] buf = new byte[(int) external.getFile().getSize()];
+    				int len;
+    				while ((len = inputStream.read(buf)) > 0) {
+    				    outputStream.write(buf, 0, len);
+    				}
+				
+			} catch (Exception e) {
 				LOGGER.error(e, e.fillInStackTrace());
-			} finally
-			{
-				try
-				{
-					if (outputStream != null)
-					{
+			} finally {
+				try {
+					if (outputStream != null) {
 						outputStream.close();
 					}
-					if (inputStream != null)
-					{
+					if (inputStream != null) {
 						inputStream.close();
 					}
-
-				} catch (IOException e)
-				{
+				} catch (IOException e) {
 					LOGGER.error(e, e.fillInStackTrace());
 				}
 			}
-			if (tmp != null)
-			{
+			if (tmp != null) {
 				external.setTempDiskStoredFile(tmp);
 				external.setMimeType(external.getFile().getContentType());
 				getAttachments().add(external);

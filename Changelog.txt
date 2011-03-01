@@ -19,7 +19,7 @@ Version initial de NewsPortlet en version 2.0.6
 	- Traitement de l'erreur en cas de retour du nombre de recherche LDAP trop importante.
 	- Modification FCKEditor et maj en 2.5 java et 2.6.5 javascript (upload de fichiers désactivé).
 	- Modification de l'agenda javascript et mise à jour pour le problème des caratères UTF-8
-	- Problème du modePortlet help et view, en allant en mode help on ne pouvait plus revenir sur le mode view.
+	- Problème du mode Portlet help et view, en allant en mode help on ne pouvait plus revenir sur le mode view.
 	- Ajout de la confirmation de suppression utilisateur ou groupe ou annonce ou catégorie, là ou cela manquait.
 	
 ==== Version 2.1.3 ====
@@ -45,7 +45,7 @@ Version initial de NewsPortlet en version 2.0.6
 	- Définition d'une population ciblée par défaut au niveau de l'entité si pour une catégorie et un ou des thèmes de la catégorie il n'y a aucune population ciblée de définie.
 	- Définition des liens xml pour une entité (vue des propriétés de la catégorie), et un par type de contexte (vue admin des types).
 	- Prise en compte PostgreSQL, script d'init et de MAJ (manque la contrainte not null dans news_category.entity_id pour l'update, mais possible uniquement quand toutes les catégories seront associées à un entité).
-		Révision de la façon dont sont adaptés les fichier de mapping, il n'y a plus besoin de modifier les sources pour que ce soit compatible, cela se fait par rapport à la variable définie dans le fichier build.properties. Par contre il faudra maintenir plusieurs versions des fichiers hbm.
+		Révision de la façon dont sont adaptés les fichiers de mapping, il n'y a plus besoin de modifier les sources pour que ce soit compatible, cela se fait par rapport à la variable définie dans le fichier build.properties. Par contre il faudra maintenir plusieurs versions des fichiers hbm.
 	- Révision du mode de définition des permissions avec incidence sur entité/category/thème.
 	- Passage en version RC
 	- Corrections de bug mineurs sur les pièces jointes
@@ -55,6 +55,8 @@ Version initial de NewsPortlet en version 2.0.6
 	- Mise à jour pour la compatibilité avec uPortal 3.2, ajout d'une option de déploiement pour le mode de compatibilité.
 	- Ajout d'une option pour les accès LDAP en anonyme, dans properties/news.properties il s'agit de l'option ldap.anonymousReadOnly=true or false.
 	- Ajout d'une target ant init effectuant un ant clean et portlet-init.
+	- Ajout de légendes pour les vues de création et d'édition, cela n'était pas forcément clair pour certains utilisateurs.
+	- Adaptation des ttl (correction de l'unité du ttl qui était considéré en minutes et non en secondes ttl 60 passe à 3600) et des timeout pour le flux xml fourni à esup-lecture, ajout de la propriété access.feed.timeout dans news.properties.
 	- Convertion automatique de la taille des fichiers en octets,Ko,Mo,Go
 	- Correction du problème de connexion à Nuxeo, par contre les liens avec openCMIS devront contenir /atom à la fin s'il n'ya pas de redirection automatique. 
 	- Correction du bug sur la mise à jour des topics - le validator et la requête de vérifiation sur le sameName étaient incorrects.
@@ -62,18 +64,20 @@ Version initial de NewsPortlet en version 2.0.6
 	- Correction de bug : Possibilité d'ajouter plusieurs fois la même pièce jointe provenant d'une autre annonce, ce qui provoquait une erreur sql de "duplicate entry".
 	- Correction de bug : dans la page viewTopic.jsp les flêches up et upToTop pour ordonner les item ne fonctionnaient plus à cause d'un bug entre les lib displaytag et pluto (la conditionnelle de non affichage des flêche sur la première ligne des flêches au niveau du href sur une colonne displaytag en était la cause, la conditionnelle a été placé sur l'image, faisant que le href est toujours là mais non cliquable car il n'y a pas d'image).
 	- Correction de bug : dans la page itemEdit.jsp, le lien pour la suppression ne demandait pas de confirmation (code JS), cela était parceque le onclick js était sur le href et non sur la balise img, en fait cela vient d'un problème de comportement très étrange car selon les pages on peut mettre le onclick sur des href...
-	- Correction de bug : lors de l'ajout de pièces jointes le fait d'ajouter plusieurs fois la même pièce jointe avant enregistrement cela provoquait une erreur, le problème est corrigé et en plus il est devenu impossible d'ajouter plusieurs fois la même piéce jointe avant l'enregistrement de l'annonce.
-	- Correction de bug : lors de l'ajout de pièces jointes le fait d'ajouter plus de deux fois la même pièce jointe avec un enregsitrement entre chaque ajout cela provoquait une erreur.
+	- Correction de bug : lors de l'ajout de pièces jointes le fait d'ajouter plusieurs fois la même pièce jointe avant enregistrement cela provoquait une erreur, le problème est corrigé et en plus un message de confirmation est affiché à l'utilisateur s'il essaie d'ajouter plusieurs fois la même piéce jointe dans la session courant et avant l'enregistrement de l'annonce.
+	- Correction de bug : lors de l'ajout de pièces jointes le fait d'ajouter plus de deux fois la même pièce jointe avec un enregistrement entre chaque ajout cela provoquait une erreur.
+	- Suite à la màj de compatibilité uPortal 3.2 la sélection multiple sur les différentes pages paginées pour la recherche de population(s) cible(s) n'est plus valide, il s'agit d'une régression, cela est dû aux fonctions javascript avec displayTag où les noms d'attributs ne sont pas modifiés avec le préfixe "ptlp_"
 
 ==== TODO ====
 	- Terminer les docs de la version.
 	- Ajouter la notion de priorité d'affichage des annonces des entités (ordre de priorité entre les entités). Est-ce bien nécessaire avec la notion de type sur les entités/catégories ?
 	- Effectuer une meilleur gestion de certaines erreurs et de leur affichage dans les jsp (noDelete.jsp, noitem.jsp par exemple)
 	- Voir pour afficher plus de messages lors de certaines opérations (confirmation d'ajout d'un utilisateur, Ajax ?)
-	- Vérifier le fonctionnement avec une BD PostgreSQL
+	- Vérifier le bon fonctionnement avec une BD PostgreSQL
 	- Ajouter la possibilité de donner des accès (admin, editeur, contributeur) aux catégories, thèmes... à des groupes.
 	- Regarder le système d'ordre d'affichage des annonces, des thèmes et des catégories, système non optimisé demande beaucoup trop de requêtes sql pour les modifications.
 	- Modifier la gestion des clés primaires et suppression de la classe des séquences sur l'ancienne partie newsportlet. 
 	- Ajouter des contraintes "Foreign Key" de la base existante (il n'y avait aucun contrainte dans newsPortlet) afin de mieux lier tables et contrôler les répercutions lors d'ajout ou de suppression...
 	- Ajouter des modes de recherche des utilisateurs, selection sur un attribut spécifique et non plus uniquement sur l'attribut de recherche.
 	- Voir pour définir un système de filtre LDAP (l'utilisateur défini le filtre via une interface adaptée, choix des conditions...)
+	- Changer displayTag pour une autre lib !

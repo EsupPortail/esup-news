@@ -431,20 +431,15 @@
 
 		</c:choose>
 		<tr>
-			<th colspan="4"><input type="submit" name="_target${nextPage}"
-				${empty
-				nextPage ? "disabled" : ""} 
-				value="<fmt:message key="button.next" />"
-				<%--onclick="document.forms['${namespace}AddAud'].method='post';"--%> /> <input
-				type="submit" name="_finish" ${page !=2
-				? "disabled" : ""} value=" <fmt:message key="button.finish" />"
-				<%--onclick="document.forms['${namespace}AddAud'].method='post';" --%> /> <input
-				type="submit" name="_target${prevPage}" ${empty
-				prevPage ? "disabled" : ""} value="<fmt:message key="button.previous" />"
-				<%--onclick="document.forms['${namespace}AddAud'].method='post';" --%>/> <input
-				type="submit" name="_cancel"
-				value="<fmt:message key="button.cancel" />"
-				<%--onclick="document.forms['${namespace}AddAud'].method='post';" --%>/></th>
+			<td colspan="4" align="center"><c:if test="${page !=2}"><input 
+				type="submit" name="_target${nextPage}" ${empty nextPage ? "disabled" : ""} value="<fmt:message key="button.next" />"
+				<%--onclick="document.forms['${namespace}AddAud'].method='post';"--%> /></c:if> <c:if test="${page ==2}"><input
+				type="submit" name="_finish"  ${page !=2 ? 'disabled' : ''} value="<fmt:message key="button.finish" />"
+				<%--onclick="document.forms['${namespace}AddAud'].method='post';" --%> /></c:if> <c:if test="${page !=0}"><input
+				type="submit" name="_target${prevPage}" ${empty	prevPage ? "disabled" : ""} value="<fmt:message key="button.previous" />"
+				<%--onclick="document.forms['${namespace}AddAud'].method='post';" --%>/></c:if> <input
+				type="submit" name="_cancel" value="<fmt:message key="button.cancel" />"
+				<%--onclick="document.forms['${namespace}AddAud'].method='post';" --%>/></td>
 		</tr>
 	</table>
 	</form>

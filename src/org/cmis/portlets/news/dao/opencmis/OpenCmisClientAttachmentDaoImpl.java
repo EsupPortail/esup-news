@@ -80,69 +80,81 @@ public class OpenCmisClientAttachmentDaoImpl implements CmisAttachmentDao {
 	try {
 	    session = sessionFactory.getSession(entityId);
 	} catch (CmisException e) {
-	    throw new CmisException(e.getMessage(), e.fillInStackTrace());
-	}
+	    // Delete the temporary file
+	    File file = attachment.getTempDiskStoredFile();
+	    file.delete();
+	    
+	    throw new CmisException(e.getMessage(), e.fillInStackTrace()); 
+	} 
 
 	Date insertDate = attachment.getInsertDate();
 
 	// Find a valid path and filename:
 	String validPath = pathHelper.getPathForAttachment(session, prop);
-
-	// Save the file
-	String folderPath = validPath.substring(0, validPath.lastIndexOf("/"));
-	String filename = validPath.substring(validPath.lastIndexOf("/") + 1, validPath.length());
-
-	CmisObject folder = session.getObjectByPath(folderPath);
-
-	Map<String, Object> properties = new HashMap<String, Object>();
-	properties.put(PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value());
-	properties.put(PropertyIds.NAME, filename);
-	properties.put(PropertyIds.CREATION_DATE, insertDate);
-
-	File file = attachment.getTempDiskStoredFile();
-
-	long size = file.length();
-
-	ContentStream stream = null;
-	ObjectId oid = null;
-	FileInputStream fis = null;
-	try {
-	    // Store the file
-	    fis = new FileInputStream(file);
-	    stream = new ContentStreamImpl(filename, BigInteger.valueOf(file.length()), attachment.getMimeType(), fis);
-	    oid = session.createDocument(properties, new ObjectIdImpl(folder.getId()), stream, VersioningState.NONE,
-		    null, null, null);
-
-	} catch (Exception e) {
-	    LOG.error(e, e.fillInStackTrace());
-	    throw new CmisException("Impossible de lire le contenu du fichier.", e.fillInStackTrace());
-
-	} finally {
-	    try {
-		if (fis != null) {
-		    fis.close();
-		}
-	    } catch (IOException e) {
-		LOG.error(e, e.fillInStackTrace());
-		throw new CmisException(e.getMessage(), e.fillInStackTrace());
-	    }
-	    // Delete the temporary file
+	if(validPath == null)
+	{
+	    // if the path is null, an error occurs, delete the temporary file
+	    File file = attachment.getTempDiskStoredFile();
 	    file.delete();
+	
+	} else {
+        	// Save the file
+        	String folderPath = validPath.substring(0, validPath.lastIndexOf("/"));
+        	String filename = validPath.substring(validPath.lastIndexOf("/") + 1, validPath.length());
+        
+        	CmisObject folder = session.getObjectByPath(folderPath);
+        
+        	Map<String, Object> properties = new HashMap<String, Object>();
+        	properties.put(PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value());
+        	properties.put(PropertyIds.NAME, filename);
+        	properties.put(PropertyIds.CREATION_DATE, insertDate);
+        
+        	File file = attachment.getTempDiskStoredFile();
+        
+        	long size = file.length();
+        
+        	ContentStream stream = null;
+        	ObjectId oid = null;
+        	FileInputStream fis = null;
+        	try {
+        	    // Store the file
+        	    fis = new FileInputStream(file);
+        	    stream = new ContentStreamImpl(filename, BigInteger.valueOf(file.length()), attachment.getMimeType(), fis);
+        	    oid = session.createDocument(properties, new ObjectIdImpl(folder.getId()), stream, VersioningState.NONE,
+        		    null, null, null);
+        
+        	} catch (Exception e) {
+        	    LOG.error(e, e.fillInStackTrace());
+        	    throw new CmisException("Impossible de lire le contenu du fichier.", e.fillInStackTrace());
+        
+        	} finally {
+        	    try {
+        		if (fis != null) {
+        		    fis.close();
+        		}
+        	    } catch (IOException e) {
+        		LOG.error(e, e.fillInStackTrace());
+        		throw new CmisException(e.getMessage(), e.fillInStackTrace());
+        	    }
+        	    // Delete the temporary file
+        	    file.delete();
+        	}
+        
+        	Attachment sqlAtt = null;
+        	if (oid != null) {
+        	    // build the sqlMap object
+        	    sqlAtt = new Attachment();
+        	    sqlAtt.setCmisUid(oid.getId());
+        	    sqlAtt.setTitle(attachment.getTitle());
+        	    sqlAtt.setDescription(attachment.getDesc());
+        	    sqlAtt.setFileName(filename);
+        	    sqlAtt.setPath(folderPath);
+        	    sqlAtt.setInsertDate(insertDate);
+        	    sqlAtt.setSize(size);
+        	}
+        	return sqlAtt;
 	}
-
-	Attachment sqlAtt = null;
-	if (oid != null) {
-	    // build the sqlMap object
-	    sqlAtt = new Attachment();
-	    sqlAtt.setCmisUid(oid.getId());
-	    sqlAtt.setTitle(attachment.getTitle());
-	    sqlAtt.setDescription(attachment.getDesc());
-	    sqlAtt.setFileName(filename);
-	    sqlAtt.setPath(folderPath);
-	    sqlAtt.setInsertDate(insertDate);
-	    sqlAtt.setSize(size);
-	}
-	return sqlAtt;
+	return null;
     }
 
 }

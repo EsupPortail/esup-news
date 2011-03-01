@@ -121,8 +121,10 @@
 		where cat_id = #categoryId#
 	</delete>
 	
-	<select id="getCategoryByTypeOfEntity" resultMap="result" parameterClass="map">
-		select c.cat_id, c.name, c.description, rss_allowed, public_view, display_order
+	<select id="getCategoryByTypeOfEntity" resultMap="resultDetail" parameterClass="map">
+		select c.cat_id, c.name, c.description, created_by, creation_date,
+			last_update_date, lang, refresh_period,	refresh_frequency,
+			display_order,public_view, rss_allowed, entity_id
 		from news_category c, news_category_type ct
 		where c.entity_id=#entityId# and c.cat_id=ct.cat_id and ct.type_id=#typeId#
 		order by c.name asc

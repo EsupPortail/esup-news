@@ -54,4 +54,6 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 <bean id="groupService" class="org.esco.portlets.news.services.group.GroupServiceImpl" p:portalService-ref="portalService"/>
 
+<bean id="feedService" class="org.uhp.portlets.news.service.BasicFeedService" p:timeout="${access.feeds.timeout}"/>
+
 </beans>

@@ -46,3 +46,6 @@ feed.type=rss_2.0
 
 # export Category latest news feed from last n days
 feed.dayCount=5
+
+# timeout to access on feeds, property given for esup-lecture timeout access on category and sourceprofile, in milliseconds
+access.feeds.timeout=3000

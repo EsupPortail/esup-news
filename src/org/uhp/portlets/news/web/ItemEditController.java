@@ -19,6 +19,7 @@ package org.uhp.portlets.news.web;
  */
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -82,7 +83,6 @@ public class ItemEditController extends AbstractWizardFormController implements 
 
 	private Long itemId;
 	private Long ctxTopicId;
-
 	private String temporaryStoragePath;
 
 	private static final Log LOGGER = LogFactory.getLog(ItemEditController.class);
@@ -127,8 +127,6 @@ public class ItemEditController extends AbstractWizardFormController implements 
 			if (tId != null) {
 				response.setRenderParameter(Constants.ATT_TOPIC_ID, String.valueOf(tId));
 			}
-			// clean temporary directory
-			this.am.cleanTempStorageDirectory(this.getPortletContext().getRealPath(temporaryStoragePath));
 
 			ctxTopicId = null;
 		} else {
@@ -156,8 +154,23 @@ public class ItemEditController extends AbstractWizardFormController implements 
 			response.setRenderParameter(Constants.ATT_CAT_ID, request.getParameter(Constants.ATT_CAT_ID));
 
 		} else {
-			request.getPortletSession().setAttribute("_globalCancel", true);
+		    	final Long tId = ctxTopicId;
+			if (tId != null) {
+				response.setRenderParameter(Constants.ATT_TOPIC_ID, String.valueOf(tId));
+				ctxTopicId = null;
+			}
+			ItemForm itemForm = (ItemForm) command;
+			Long cId = itemForm.getItem().getCategoryId();
+			response.setRenderParameter(Constants.ATT_CAT_ID, String.valueOf(cId));
+			
+			response.setRenderParameter(Constants.ATT_STATUS, itemForm.getItem().getStatus());
 			response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_TOPIC);
+			
+			request.getPortletSession().setAttribute("_globalCancel", true);
+			
+			// clean temporary directory
+			String prefix = itemForm.getItem().getItemId() + "_";
+			this.am.cleanTempStorageDirectory(this.getPortletContext().getRealPath(temporaryStoragePath), prefix);
 		}
 	}
 
@@ -313,6 +326,9 @@ public class ItemEditController extends AbstractWizardFormController implements 
 	@Override
 	protected ModelAndView showForm(RenderRequest request, RenderResponse response, BindException errors)
 	throws Exception {
+		// clean temporary directory
+		this.am.cleanTempStorageDirectory(this.getPortletContext().getRealPath(temporaryStoragePath));
+	    
 		int currentPage = 0;
 		try {
 			currentPage = getCurrentPage(request);
@@ -343,6 +359,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		ItemForm itemForm = new ItemForm();
 		itemId = PortletRequestUtils.getLongParameter(request, Constants.ATT_ITEM_ID);
 		Item item = this.im.getItemById(itemId);
+				
 		itemForm.setItem(item);
 		List<Topic> topics = this.im.getTopicListByItem(itemId);
 		String[] topicIds = new String[topics.size()];
@@ -442,6 +459,17 @@ public class ItemEditController extends AbstractWizardFormController implements 
 			}
 			model.put(Constants.ATT_USER_ID, userUid);
 			model.put(Constants.ATT_PM, perm);
+			
+			File directory = new File(this.getPortletContext().getRealPath(temporaryStoragePath));
+			String prefix = itemForm.getItem().getItemId() + "_";
+			File[] listFiles = directory.listFiles(new PrefixFilter(prefix));
+			String filesNames = "";
+			for (File file : listFiles){
+			    String filename = file.getName();
+			    filename = filename.substring(prefix.length(), filename.lastIndexOf("."));
+			    filesNames += filename + ",";
+			}
+			model.put("existingFileNames", filesNames);
 			return model;
 
 		} else if (page == 2) {
@@ -589,4 +617,24 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		return temporaryStoragePath;
 	}
 
+	
+       /**
+	* 
+	* Implementation of FilenameFilter 
+	* 
+	*/
+	public class PrefixFilter implements FilenameFilter { 
+		String prefix; 
+		/** 
+		 * Constructor 
+		 * @param prefix a file prefix
+		 */
+		@SuppressWarnings("hiding")
+		public PrefixFilter(String prefix) { 
+		    this.prefix = prefix; 
+		} 
+		public boolean accept(File dir, String name) { 
+		    return name.startsWith(prefix); 
+		} 
+	}
 }

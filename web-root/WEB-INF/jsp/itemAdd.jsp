@@ -26,7 +26,7 @@
 			var start = action.substring(0, action.indexOf("_page")+7);
 			var end = action.substring(action.indexOf("_page")+7, action.length);
 			
-			document.forms["${namespace}AddItem"].action = start + "&removeAttachment="+ index + end;
+			document.forms["${namespace}AddItem"].action = start + "&${portletParamPrefixe}${pltc_target}removeAttachment="+ index + end;
 			document.forms["${namespace}AddItem"].submit();
     	}
     }
@@ -35,7 +35,7 @@
 		var action = document.forms["${namespace}AddItem"].action;
 		var start = action.substring(0, action.indexOf("_page")+7);
 		var end = action.substring(action.indexOf("_page")+7, action.length);
-		document.forms["${namespace}AddItem"].action = start + "&updateAttachment="+ index + end;
+		document.forms["${namespace}AddItem"].action = start + "&${portletParamPrefixe}${pltc_target}updateAttachment="+ index + end;
 		
 		document.getElementById("${namespace}updateAttachementButton").click();
 	}	
@@ -274,7 +274,8 @@
 									<c:set var="url" value="${viewCatRenderUrl}" />
 								</c:otherwise>
 							</c:choose> 
-							<input type="button" value="<fmt:message key="button.cancel"/>" onclick="window.location.href='${url}';" />
+							<input type="submit" value="<fmt:message key="button.cancel"/>" name="_cancel" />
+							<!--input type="button" value="<fmt:message key="button.cancel"/>" onclick="window.location.href='${url}';" /-->
 						</td>
 					</tr>
 				</table>
@@ -289,6 +290,10 @@
 </script></form>
 				</fieldset>
 			</spring:nestedPath>
+			<p/><div class="news_legende"> 
+<p class="portlet-font"><fmt:message key="news.label.legende"/> :<br/>
+<span class="portlet-msg-alert">* <fmt:message key="news.legend.field_required"/></span>
+</div></p>
 		</c:otherwise>
 	</c:choose>
 	<%@ include file="/WEB-INF/jsp/footer.jsp"%>

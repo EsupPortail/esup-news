@@ -22,7 +22,7 @@
 			var start = action.substring(0, action.indexOf("_page")+7);
 			var end = action.substring(action.indexOf("_page")+7, action.length);
 			
-			document.forms["${namespace}EditItem"].action = start + "&removeAttachment="+ index + end;
+			document.forms["${namespace}EditItem"].action = start + "&${portletParamPrefixe}${pltc_target}removeAttachment="+ index + end;
 			document.forms["${namespace}EditItem"].submit();
     	}
 	}	
@@ -30,7 +30,7 @@
 		var action = document.forms["${namespace}EditItem"].action;
 		var start = action.substring(0, action.indexOf("_page")+7);
 		var end = action.substring(action.indexOf("_page")+7, action.length);
-		document.forms["${namespace}EditItem"].action = start + "&updateAttachment="+ index + end;
+		document.forms["${namespace}EditItem"].action = start + "&${portletParamPrefixe}${pltc_target}updateAttachment="+ index + end;
 		
 		document.getElementById("${namespace}updateAttachementButton").click();
 	}		
@@ -251,12 +251,16 @@
 			<td colspan="2" class="pointilles"></td>
 		</tr>
 		<tr>
-			<th colspan="2">
+			<td colspan="2" align="center">
 				<input type="submit" name="_finish" value='<fmt:message key="button.save" />' />
-			</th>
+				<input type="submit" name="_cancel" value="<fmt:message key="button.cancel" />" />
+			</td>
 		</tr>
 	</table>
 	</form>
 </spring:nestedPath></fieldset>
-<p />
+<p/><div class="news_legende"> 
+<p class="portlet-font"><fmt:message key="news.label.legende"/> :<br/>
+<span class="portlet-msg-alert">* <fmt:message key="news.legend.field_required"/></span>
+</div></p>
 <%@ include file="/WEB-INF/jsp/footer.jsp"%>

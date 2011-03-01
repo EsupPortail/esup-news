@@ -1,5 +1,23 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-
+<script type="text/javascript">
+	function checkFileName(){
+		var list = "<c:out value="${existingFileNames}"/>";
+		if(list == ""){
+			document.getElementById("${namespace}okButton").click();
+		} else {
+			var current = document.getElementById("${namespace}file").value;
+			var regexp = "^(.*)(,)?"+ current +"(,)?(.*)$";
+			if(list.search(regexp) > -1)	{
+				if(confirm("<fmt:message key="ITEM_FILE_ALREADY_UPLOADED"/>")){
+					document.getElementById("${namespace}okButton").click();
+				}
+			} else {
+				document.getElementById("${namespace}okButton").click();
+			}
+			return false;
+		}
+	}
+</script>
 <c:set var="currentMainMenu" value="home"/>
 <%@ include file="/WEB-INF/jsp/header1_adminView.jsp"%>
 <div id="news_headerC">
@@ -39,13 +57,14 @@
 		<tr>
 			<td class="portlet-form-label"><fmt:message key="news.label.attachment.file"/><span class="portlet-msg-alert">*</span> : </td>
 			<td class="portlet-form-field-label">
-				<html:input path="external.file"  type="file" class="input" size="69"/>
+				<html:input path="external.file" id="${namespace}file" type="file" class="input" size="69"/>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2" align="center">
 				<!-- Buttons -->
-				<input type="submit" name="_target0" value="<fmt:message key="button.add"/>"/>
+				<input type="button" value="<fmt:message key="button.add"/>" onclick="checkFileName()"/> 
+				<input type="submit" id="${namespace}okButton" name="_target0" value="<fmt:message key="button.add"/>" style="display:none;"/>
 				<input type="submit" name="_cancel" value="<fmt:message key="button.cancel"/>"/>			
 			</td>
 		</tr>

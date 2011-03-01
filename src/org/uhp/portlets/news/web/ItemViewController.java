@@ -67,7 +67,10 @@ public class ItemViewController extends AbstractController implements Initializi
     /** Manager of an Entity. */
     @Autowired
     private EntityManager em;
+    /** */
+    private String temporaryStoragePath;
     
+	
     /**
      * Constructeur de l'objet ItemViewController.java.
      */
@@ -106,7 +109,11 @@ public class ItemViewController extends AbstractController implements Initializi
     @Override
     protected ModelAndView handleRenderRequestInternal(final RenderRequest request, 
             final RenderResponse response) throws Exception {
-        final Long id = PortletRequestUtils.getLongParameter(request, Constants.ATT_ITEM_ID);
+        
+	// clean attachments temporary directory
+	this.am.cleanTempStorageDirectory(this.getPortletContext().getRealPath(temporaryStoragePath));
+	
+	final Long id = PortletRequestUtils.getLongParameter(request, Constants.ATT_ITEM_ID);
         final Item item = this.im.getItemById(id);
         final Long tIdFrom = PortletRequestUtils.getLongParameter(request, Constants.ATT_TOPIC_ID);
         final String uid = request.getRemoteUser();
@@ -243,6 +250,21 @@ public class ItemViewController extends AbstractController implements Initializi
      */
     public void setEm(final EntityManager em) {
         this.em = em;
+    }
+    
+    /**
+     * @param temporaryStoragePath
+     *            the temporaryStoragePath to set
+     */
+    public void setTemporaryStoragePath(String temporaryStoragePath) {
+	this.temporaryStoragePath = temporaryStoragePath;
+    }
+
+    /**
+     * @return the temporaryStoragePath
+     */
+    public String getTemporaryStoragePath() {
+	return temporaryStoragePath;
     }
 
 }
