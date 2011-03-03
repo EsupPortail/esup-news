@@ -97,7 +97,7 @@
 				</tr>
 				<tr>
 					<td class="portlet-form-label" align="right"><fmt:message
-						key="news.lable.research" /></td>
+						key="news.label.research" /></td>
 					<td align="left"><spring:bind path="subForm.subscriber.isGroup">
 						<select name="${status.expression}" size="1">
 							<option value="1"
@@ -110,7 +110,7 @@
 						<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 					</spring:bind></td>
 					<td class="portlet-form-label" align="right"><fmt:message
-						key="news.lable.contains" /></td>
+						key="news.label.contains" /></td>
 					<td align="left"><html:input path="token" size="15"
 						maxlength="30" /></td>
 				</tr>
@@ -409,7 +409,7 @@
 																src="<html:imagesPath/>personne.gif" border=0 />
 														</c:when>
 														<c:otherwise>
-															<td>
+															<td class="portlet-font">
 														</c:otherwise>
 													</c:choose>
 													<c:forEach items="${user.attributes[displayAttr]}"

@@ -129,6 +129,5 @@
 			</c:if>
 		</div>
 	</div>
-</div>
 </fieldset>
 <%@ include file="/WEB-INF/jsp/footer.jsp"%>
