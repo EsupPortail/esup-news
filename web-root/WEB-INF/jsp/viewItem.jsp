@@ -33,10 +33,10 @@
                 <portlet:param name="status" value="1"/>  
                 <portlet:param name="all" value="1"/>                                                 
                 </portlet:actionURL>'
-		class="liensmenudroit"> <img
-		title='<fmt:message key="news.img.title.delete.item"/>' 
-		onClick="return confirm('<fmt:message key="news.img.title.delete.item"/>');"
-		align="absMiddle" src="<html:imagesPath/>delete.gif" border="0" /><fmt:message
+        onClick="return confirm('<fmt:message key="news.alert.delete.item"/>');"
+		class="liensmenudroit" >
+		<img title="<fmt:message key='news.img.title.delete.item'/>" 
+		align="absMiddle" src="<html:imagesPath/>delete.gif" border="0" /> <fmt:message
 		key="button.delete" /> </a>]
 </c:if>
 </div>
