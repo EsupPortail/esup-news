@@ -223,7 +223,18 @@ public class AttachmentManagerImpl implements AttachmentManager {
 		for (org.uhp.portlets.news.web.ItemForm.Attachment formAtt : attachments) {
 			if (StringUtils.isNotEmpty(formAtt.getId())) {
 				attachmentDao.addAttachmentToItem(Long.valueOf(formAtt.getId()), itemId);
-
+				// update the title and the descr, if needed
+				Attachment oldAtt = getAttachmentById(Long.valueOf(formAtt.getId()));
+				if (!oldAtt.getTitle().equalsIgnoreCase(formAtt.getTitle())
+					|| !oldAtt.getDescription().equalsIgnoreCase(formAtt.getDesc())) {
+				    	// update the attachment
+					Map<String, Object> params = new HashMap<String, Object>();
+					params.put("attachmentId", Long.valueOf(formAtt.getId()));
+					params.put("title", formAtt.getTitle());
+					params.put("description", formAtt.getDesc());
+					attachmentDao.updateAttachment(params);
+				}
+				
 			} else {
 				// save the new file and get the sqlMap object
 				Long categoryId = itemForm.getCategoryId();
