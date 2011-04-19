@@ -14,7 +14,8 @@
 	<property name="extlib.home" value="extLib" />
 	<property name="build.home" value="build" />
 	<property name="dist.home" value="dist" />
-	<property name="update.dir" value="update-esco" />
+	<property name="custom.dir" value="custom" />
+	<property name="source.tmp" value="sources_tmp" />
 	<property name="classes.home" value="${build.home}/WEB-INF/classes" />
 	<property name="attachement.temporary.upload.home" value="${build.home}/WEB-INF/upload" />
 
@@ -38,14 +39,14 @@
 		<echo message="clean ..." />
 		<delete dir="${build.home}" />
 	</target>
-	
+
 
 	<target name="portlet-init">
 		<echo message="Init ..." />
 		<mkdir dir="${build.home}" />
 		<mkdir dir="${classes.home}" />
 		<mkdir dir="${attachement.temporary.upload.home}" />
-		
+
 		<copy todir="${build.home}/css">
 			<fileset dir="web-root/css" />
 		</copy>
@@ -70,17 +71,17 @@
 				<exclude name="servlet-api.jar" />
 			</fileset>
 		</copy>
-		
+
 		<if>
-			<equals arg1="${deploy.update-esco}" arg2="true" />
+			<equals arg1="${deploy.custom}" arg2="true" />
 			<then>
 				<echo message="Deploying update directory !" />
 				<copy todir="${build.home}" overwrite="yes">
-					<fileset dir="${update.dir}/web-root" />
+					<fileset dir="${custom.dir}/web-root" />
 				</copy>
 			</then>
 		</if>
-			
+
 		<copy file="web-root/web.xml" todir="${build.home}/WEB-INF" overwrite="yes" />
 		<if>
 			<equals arg1="${app.compatibility_3_2}" arg2="true" />
@@ -89,7 +90,7 @@
 				<copy file="web-root/web.up3.2.xml" overwrite="yes" tofile="${build.home}/WEB-INF/web.xml"/>
 			</then>
 		</if>
-		
+
 		<replace file="${build.home}/WEB-INF/web.xml" token="[CAS_URL_LOGIN]" value="${cas.url.login}" />
 		<replace file="${build.home}/WEB-INF/web.xml" token="[CAS_URL_VALIDATE]" value="${cas.url.validate}" />
 		<replace file="${build.home}/WEB-INF/web.xml" token="[APP_URL_CAS_PROXY_VALIDATE]" value="${app.url.cas_proxy_validate}" />
@@ -118,14 +119,14 @@
 		<replace file="${build.home}/WEB-INF/jsp/include.jsp" token="@NEWS_VERSION@" value="${app.version}" />
 		<replace file="${build.home}/WEB-INF/jsp/item.jsp" token="@NEWS_VERSION@" value="${app.version}" />
 		<replace file="${build.home}/WEB-INF/jsp/items.jsp" token="@NEWS_VERSION@" value="${app.version}" />
-		
-		<replace file="${build.home}/WEB-INF/jsp/include.jsp" token="@NEWS_ATTACHMENTS_ACTIVATION@" value="${attachments.activate}" />		
-		
+
+		<replace file="${build.home}/WEB-INF/jsp/include.jsp" token="@NEWS_ATTACHMENTS_ACTIVATION@" value="${attachments.activate}" />
+
 		<replace file="${build.home}/WEB-INF/jsp/include.jsp" token="@NEWS_PORTLET_PARAMS_COMPATIBILITY@" value="${app.compatibility_3_2}" />
 
 		<copy file="properties/news.properties" todir="${build.home}/WEB-INF/context" overwrite="yes" />
 		<replace file="${build.home}/WEB-INF/context/sql-map-config.xml" token="@db_type@" value="${db.type}" />
-		
+
 		<copy file="properties/log4j.properties" todir="${build.home}/WEB-INF/classes" overwrite="yes" />
 		<copy todir="${build.home}/WEB-INF/classes" overwrite="yes">
 			<fileset dir="properties/">
@@ -172,11 +173,30 @@
 	<!-- ==================== Compile Target ================================== -->
 	<target name="compile" description="Compile Java sources">
 		<echo message="Compile ..." />
+		<!-- Copy all sources in a temporary path for compilations, update sources classes by those in the update-esco directory -->
+		<mkdir dir="${source.tmp}"/>
+		<copy todir="${source.tmp}">
+			<fileset dir="${src.home}">
+				<exclude name="**/test/**"/>
+			</fileset>
+		</copy>
+		<if>
+			<equals arg1="${deploy.custom}" arg2="true" />
+			<then>
+				<echo message="compiling sources in update directory !" />
+				<copy todir="${source.tmp}" overwrite="true">
+					<fileset dir="${custom.dir}/src">
+						<exclude name="**/test/**"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
 		<!-- Compile Java classes as necessary to build location -->
-		<javac srcdir="${src.home}" destdir="${classes.home}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}" encoding="UTF-8">
+		<javac srcdir="${source.tmp}" destdir="${classes.home}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}" encoding="UTF-8">
 			<classpath refid="compile.classpath" />
 			<exclude name="**/test/**"/>
 		</javac>
+		<delete dir="${source.tmp}"/>
 		<copy todir="${classes.home}">
 			<fileset dir="${src.home}">
 				<exclude name="**/*.java" />
@@ -186,7 +206,21 @@
 				<exclude name="**/test/**"/>
 			</fileset>
 		</copy>
-		
+		<if>
+			<equals arg1="${deploy.custom}" arg2="true" />
+			<then>
+				<copy todir="${classes.home}" overwrite="true">
+					<fileset dir="${custom.dir}/src">
+						<exclude name="**/*.java" />
+						<exclude name="CVS" />
+						<exclude name="**/mysql/**"/>
+						<exclude name="**/postgresql/**"/>
+						<exclude name="**/test/**"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
+
 		<copy todir="${classes.home}/" overwrite="yes">
 			<fileset dir="${src.home}" >
 				<include name="**/${db.type}/*" />
@@ -205,7 +239,7 @@
 		<echo message="ATTENTION: please ensure that the Webservices esup-portal-ws (just server side) is installed in your portal, you can refer to: http://sourcesup.cru.fr/esup-portal-ws/main/index.html for more information" />
 		<echo message="*********************************************************" />
 	</target>
-	
+
 	<target name="notify" description="Notification">
 		<echo message="Invoking Email Notification" />
 		<java fork="true" dir="${build.home}/WEB-INF/classes" classname="org.uhp.portlets.news.notification.NotificationRunner">
