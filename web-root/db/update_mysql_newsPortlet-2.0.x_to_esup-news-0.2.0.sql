@@ -1,3 +1,5 @@
+SET foreign_key_checks = 0;
+
 ALTER TABLE news_user DROP COLUMN user_name;
 ALTER TABLE news_user DROP COLUMN email;
 ALTER TABLE news_item DROP COLUMN post_user_name;
@@ -22,7 +24,7 @@ CREATE TABLE news_type (
   CONSTRAINT unique_name UNIQUE (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
-INSERT INTO `news_type` (`type_id`,`name`, `description`) VALUES 
+INSERT INTO `news_type` (`type_id`,`name`, `description`) VALUES
 (1,'DEFAULT', 'Type de catégorie par défaut.');
 
 CREATE TABLE news_filter (
@@ -38,7 +40,7 @@ CREATE TABLE news_filter (
   CONSTRAINT unique_filter UNIQUE (attribute, operator, value, type, entity_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
-ALTER TABLE news_category 
+ALTER TABLE news_category
   ADD COLUMN entity_id BIGINT(20) NOT NULL,
   ADD INDEX (entity_id),
   ADD CONSTRAINT  cat_entity_fk   FOREIGN KEY (entity_id) REFERENCES news_entity(entity_id);
@@ -72,9 +74,9 @@ CREATE TABLE news_attachment (
   title varchar(300),
   description text,
   path varchar(300),
-  insert_date date,  
+  insert_date date,
   size BIGINT(20),
-  CONSTRAINT  attachment_pk   PRIMARY KEY (attachment_id)  
+  CONSTRAINT  attachment_pk   PRIMARY KEY (attachment_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 CREATE TABLE news_attachment_item (
@@ -84,7 +86,7 @@ CREATE TABLE news_attachment_item (
   INDEX (item_id),
   CONSTRAINT news_fk1 FOREIGN KEY (item_id) REFERENCES news_item (item_id),
   INDEX (attachment_id),
-  CONSTRAINT attachment_fk2 FOREIGN KEY (attachment_id) REFERENCES news_attachment (attachment_id) 
+  CONSTRAINT attachment_fk2 FOREIGN KEY (attachment_id) REFERENCES news_attachment (attachment_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 CREATE TABLE news_attachment_options (
@@ -93,7 +95,7 @@ CREATE TABLE news_attachment_options (
   max_size BIGINT(20),
   authorized_files_extensions varchar(300),
   forbidden_files_extensions varchar(300),
-  CONSTRAINT  attachment_options_pk   PRIMARY KEY (attachment_options_id)  
+  CONSTRAINT  attachment_options_pk   PRIMARY KEY (attachment_options_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 CREATE TABLE news_entity_attachment_options (
@@ -103,7 +105,7 @@ CREATE TABLE news_entity_attachment_options (
   INDEX (attachment_options_id),
   CONSTRAINT options_fk1 FOREIGN KEY (attachment_options_id) REFERENCES news_attachment_options (attachment_options_id),
   INDEX (entity_id),
-  CONSTRAINT options_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id) 
+  CONSTRAINT options_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 CREATE TABLE news_cmis_server (
@@ -113,7 +115,7 @@ CREATE TABLE news_cmis_server (
   server_pwd varchar(100),
   server_url varchar(200),
   repository_id varchar(100),
-  CONSTRAINT  cmis_server_pk   PRIMARY KEY (server_id)  
+  CONSTRAINT  cmis_server_pk   PRIMARY KEY (server_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 CREATE TABLE news_entity_cmis_server (
@@ -123,9 +125,11 @@ CREATE TABLE news_entity_cmis_server (
   INDEX (server_id),
   CONSTRAINT entity_cmis_server_fk1 FOREIGN KEY (server_id) REFERENCES news_cmis_server (server_id),
   INDEX (entity_id),
-  CONSTRAINT entity_cmis_server_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id) 
+  CONSTRAINT entity_cmis_server_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 INSERT INTO `news_sequence` VALUES ('attachment', 1);
 INSERT INTO `news_sequence` VALUES ('attachment_options', 1);
 INSERT INTO `news_sequence` VALUES ('cmis_server', 1);
+
+SET foreign_key_checks = 1;
