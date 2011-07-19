@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.web;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-import javax.swing.text.html.HTMLDocument.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,16 +57,16 @@ public class PermissionViewController extends AbstractController implements Init
 	private static final Log LOG = LogFactory.getLog(PermissionViewController.class);
 
 	/** The User Manager.*/
-	@Autowired 
+	@Autowired
 	private UserManager um;
 	/** The Entity Manager. */
-	@Autowired 
+	@Autowired
 	private EntityManager em;
 	/** The CategoryManager. */
-	@Autowired 
+	@Autowired
 	private CategoryManager cm;
 	/** The Topic manager. */
-	@Autowired 
+	@Autowired
 	private TopicManager tm;
 	/** The context of accesses. */
 	private String ctx;
@@ -77,7 +76,7 @@ public class PermissionViewController extends AbstractController implements Init
 		super();
 	}
 
-	
+
 	/**
 	 * @param request
 	 * @param response
@@ -85,7 +84,7 @@ public class PermissionViewController extends AbstractController implements Init
 	 * @throws Exception
 	 */
     @Override
-	protected ModelAndView handleRenderRequestInternal(final RenderRequest request, final RenderResponse response) 
+	protected ModelAndView handleRenderRequestInternal(final RenderRequest request, final RenderResponse response)
 	   throws Exception {
         List<String> usersUid = new ArrayList<String>();
 		final Long ctxId = Long.valueOf(request.getParameter(Constants.ATT_CTX_ID));
@@ -93,9 +92,9 @@ public class PermissionViewController extends AbstractController implements Init
 			LOG.debug("PermissionView: user has no role admin");
 			ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
 			//String msg = "you are not authorized for this action";
-			mav.addObject(Constants.MSG_ERROR, 
+			mav.addObject(Constants.MSG_ERROR,
 			        getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));
-			throw new ModelAndViewDefiningException(mav);  
+			throw new ModelAndViewDefiningException(mav);
 		}
 
 		ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_PERM + getCtx());
@@ -109,7 +108,7 @@ public class PermissionViewController extends AbstractController implements Init
             Category c = this.getCm().getCategoryById(ctxId);
             mav.addObject(Constants.OBJ_CATEGORY, c);
             mav.addObject(Constants.OBJ_ENTITY, this.getEm().getEntityById(c.getEntityId()));
-		} else if (getCtx().equalsIgnoreCase(NewsConstants.CTX_T)) { 
+		} else if (getCtx().equalsIgnoreCase(NewsConstants.CTX_T)) {
 			Topic topic = this.getTm().getTopicById(ctxId);
 			mav.addObject(Constants.OBJ_TOPIC, topic);
 			Category c = this.getCm().getCategoryById(topic.getCategoryId());
@@ -125,7 +124,7 @@ public class PermissionViewController extends AbstractController implements Init
 		        }
 			}
 		}
-		
+
 		mav.addObject(Constants.ATT_LIST, usersRoles);
 		// add the super admin user's uid to the uid list
 		List<IEscoUser> suser = this.um.getAllSuperUsers();
@@ -133,14 +132,14 @@ public class PermissionViewController extends AbstractController implements Init
 		    usersUid.add(u.getUserId());
 		}
 		mav.addObject(Constants.ATT_SUSER_LIST, this.um.getAllSuperUsers());
-		mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.um.getUserRoleInCtx(ctxId, 
+		mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.um.getUserRoleInCtx(ctxId,
 		        this.getCtx(), request.getRemoteUser())).getMask());
 		mav.addObject(Constants.ATT_LDAP_DISPLAY, this.um.getLdapUserService().getSearchDisplayedAttributes());
 		mav.addObject(Constants.ATT_USER_LIST, this.um.getUsersByListUid(usersUid));
 		if (LOG.isTraceEnabled()) {
 		    LOG.trace(" ModelAndView : " + mav.toString());
 		}
-		return mav;	
+		return mav;
 	}
 
     /**
@@ -170,7 +169,7 @@ public class PermissionViewController extends AbstractController implements Init
 
     /**
      * Setter du membre um.
-     * @param um la nouvelle valeur du membre um. 
+     * @param um la nouvelle valeur du membre um.
      */
     public void setUm(final UserManager um) {
         this.um = um;
@@ -188,7 +187,7 @@ public class PermissionViewController extends AbstractController implements Init
 
     /**
      * Setter du membre em.
-     * @param em la nouvelle valeur du membre em. 
+     * @param em la nouvelle valeur du membre em.
      */
     public void setEm(final EntityManager em) {
         this.em = em;
@@ -206,7 +205,7 @@ public class PermissionViewController extends AbstractController implements Init
 
     /**
      * Setter du membre cm.
-     * @param cm la nouvelle valeur du membre cm. 
+     * @param cm la nouvelle valeur du membre cm.
      */
     public void setCm(final CategoryManager cm) {
         this.cm = cm;
@@ -224,7 +223,7 @@ public class PermissionViewController extends AbstractController implements Init
 
     /**
      * Setter du membre tm.
-     * @param tm la nouvelle valeur du membre tm. 
+     * @param tm la nouvelle valeur du membre tm.
      */
     public void setTm(final TopicManager tm) {
         this.tm = tm;
@@ -242,7 +241,7 @@ public class PermissionViewController extends AbstractController implements Init
 
     /**
      * Setter du membre ctx.
-     * @param ctx la nouvelle valeur du membre ctx. 
+     * @param ctx la nouvelle valeur du membre ctx.
      */
     public void setCtx(final String ctx) {
         this.ctx = ctx;

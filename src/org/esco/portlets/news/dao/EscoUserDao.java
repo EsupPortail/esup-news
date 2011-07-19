@@ -77,7 +77,7 @@ public interface EscoUserDao {
      * @throws DataAccessException
      */
     boolean isSuperAdmin(final String uid) throws DataAccessException;
-    
+
     /**
      * @param uid
      * @return <code>String</code>
@@ -115,18 +115,18 @@ public interface EscoUserDao {
      * @param isGroup
      * @throws DataAccessException
      */
-    void addUserRole(final String uid, final String role, final String ctx, 
+    void addUserRole(final String uid, final String role, final String ctx,
             final Long ctxId, final String isGroup) throws DataAccessException;
-    
+
     /**
      * Update the role of the user in the context.
      * @param uid
      * @param role
      * @param ctx
      * @param ctxId
-     * @throws DataAccessException 
+     * @throws DataAccessException
      */
-    void updateUserRoleForCtx(final String uid, final String role, final String ctx, final Long ctxId) 
+    void updateUserRoleForCtx(final String uid, final String role, final String ctx, final Long ctxId)
     throws DataAccessException;
 
     /**
@@ -136,7 +136,7 @@ public interface EscoUserDao {
      * @return <code>List< UserRole ></code>
      * @throws DataAccessException
      */
-    List<UserRole> getUsersByRole(final Long target, final String targetCtx, 
+    List<UserRole> getUsersByRole(final Long target, final String targetCtx,
             final RoleEnum role) throws DataAccessException;
 
     /**
@@ -175,7 +175,7 @@ public interface EscoUserDao {
      * @param categoryId
      * @return <code>List< IEscoUser ></code>
      * @throws DataAccessException
-     * @throws LdapException 
+     * @throws LdapException
      */
     List<IEscoUser> getManagersForCategory(final Long categoryId) throws DataAccessException, LdapException;
 
@@ -183,7 +183,7 @@ public interface EscoUserDao {
      * @param topicId
      * @return <code>List< IEscoUser ></code>
      * @throws DataAccessException
-     * @throws LdapException 
+     * @throws LdapException
      */
     List<IEscoUser> getManagersForTopic(final Long topicId) throws DataAccessException, LdapException;
 
@@ -191,7 +191,7 @@ public interface EscoUserDao {
      * @param topicIds
      * @return <code>List< IEscoUser ></code>
      * @throws DataAccessException
-     * @throws LdapException 
+     * @throws LdapException
      */
     List<IEscoUser> getManagersForTopics(final Integer[] topicIds) throws DataAccessException, LdapException;
 
@@ -200,9 +200,9 @@ public interface EscoUserDao {
      * @param topicIds
      * @return <code>List< IEscoUser ></code>
      * @throws DataAccessException
-     * @throws LdapException 
+     * @throws LdapException
      */
-    List<IEscoUser> getManagersForTopics(final Long cId, 
+    List<IEscoUser> getManagersForTopics(final Long cId,
             final Integer[] topicIds) throws DataAccessException, LdapException;
 
     /**
@@ -219,13 +219,13 @@ public interface EscoUserDao {
      * @return <code>boolean</code>
      * @throws DataAccessException
      */
-    boolean isUserRoleExistForContext(final Long ctxId, final String ctxType, final String uid) 
+    boolean isUserRoleExistForContext(final Long ctxId, final String ctxType, final String uid)
         throws DataAccessException;
 
     /**
      * @return <code>List< IEscoUser ></code>
      * @throws DataAccessException
-     * @throws LdapException 
+     * @throws LdapException
      */
     List<IEscoUser> getAllUsers() throws DataAccessException, LdapException;
 
@@ -273,7 +273,7 @@ public interface EscoUserDao {
     /**
      * @return <code>List< IEscoUser ></code>
      * @throws DataAccessException
-     * @throws LdapException 
+     * @throws LdapException
      */
     List<IEscoUser> getAllSuperUsers() throws DataAccessException, LdapException;
 
@@ -315,37 +315,37 @@ public interface EscoUserDao {
      * @throws DataAccessException
      */
     boolean userRoleExist(final String uid) throws DataAccessException;
-    
+
     /**
      * @param token Search value.
      * @return <code>List< IEscoUser ></code> A list of users corresponding to the search value.
-     * @throws LdapException 
+     * @throws LdapException
      */
     List<IEscoUser> findPersonsByToken(final String token) throws LdapException;
-    
+
     /**
      * @param token Search value.
-     * @param filter 
+     * @param filter
      * @return <code>List< IEscoUser ></code> A list of users corresponding to the search value.
-     * @throws LdapException 
+     * @throws LdapException
      */
-    List<IEscoUser> findPersonsByTokenAndFilter(final String token, 
+    List<IEscoUser> findPersonsByTokenAndFilter(final String token,
             final org.springframework.ldap.support.filter.Filter filter) throws LdapException;
-    
+
     /**
-     * Get user's details from a list of user's id. 
+     * Get user's details from a list of user's id.
      * @param usersUid a list of id/uid to retrieve in the LDAP.
      * @return <code>Map< String, IEscoUser ></code> A Map of IEscoUser (details of users) with id/uid as key.
-     * @throws LdapException 
+     * @throws LdapException
      */
     Map<String, IEscoUser> findPersonsByListUid(final List<String> usersUid) throws LdapException;
-    
+
     /**
      * Name of the LDAP attribute mapped with the displayName attribute of the ESCOUser object.
      * @return <code>String</code>
      */
     String getDisplayName();
-    
+
     /**
      * Name of the LDAP attribute mapped with the mail attribute of the ESCOUser object.
      * @return <code>String</code>

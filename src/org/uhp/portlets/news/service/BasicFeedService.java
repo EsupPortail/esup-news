@@ -1,17 +1,17 @@
 package org.uhp.portlets.news.service;
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -138,7 +138,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 * @see org.uhp.portlets.news.service.FeedService#
 	 * generateOpml(java.lang.Long, java.lang.String, java.lang.String)
 	 */
-	public String generateOpml(final Long id, final String feedUrl, final String fType) {       
+	public String generateOpml(final Long id, final String feedUrl, final String fType) {
 		try {
 			final Category c = this.categoryDao.getCategoryById(id);
 			final List<Topic> topics = topicDao.getTopicListByCategory(id);
@@ -148,15 +148,15 @@ public class BasicFeedService implements FeedService, InitializingBean {
 			sbuf.append("<outline text=\"" + StringEscapeUtils.escapeXml(c.getName()) + "\">\n");
 			for (Topic t : topics) {
 				if (NewsConstants.S_Y.equals(t.getRssAllowed())) {
-					final String path = (NewsConstants.S_Y.equals(t.getPublicView())) 
-					? NewsConstants.PUBLIC_PATH : NewsConstants.PRIVATE_PATH; 
-					sbuf.append("<outline type=\"rss\" text=\"" 
+					final String path = (NewsConstants.S_Y.equals(t.getPublicView()))
+					? NewsConstants.PUBLIC_PATH : NewsConstants.PRIVATE_PATH;
+					sbuf.append("<outline type=\"rss\" text=\""
 							+ StringEscapeUtils.escapeXml(t.getName())
-							+ "\"  title=\"" + StringEscapeUtils.escapeXml(t.getName()) 
-							+ "\" description=\"" + StringEscapeUtils.escapeXml(t.getDesc()) 
-							+ "\" xmlUrl=\""  + feedUrl + path 
+							+ "\"  title=\"" + StringEscapeUtils.escapeXml(t.getName())
+							+ "\" description=\"" + StringEscapeUtils.escapeXml(t.getDesc())
+							+ "\" xmlUrl=\""  + feedUrl + path
 							+ "rss?t=" + Constants.EXPORT_TOPIC_FEED
-							+ "&amp;topicID=" + t.getTopicId() 
+							+ "&amp;topicID=" + t.getTopicId()
 							+ "&amp;feedType=" + fType + "\" /> \n");
 				}
 			}
@@ -177,7 +177,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 * getCategoryFeed(java.lang.Long, java.lang.String, java.lang.String)
 	 */
 	public String getCategoryFeed(final Long id, final String fType, final String feedUrl) {
-		StringBuilder sbuf = new StringBuilder();     
+		StringBuilder sbuf = new StringBuilder();
 		sbuf.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
 		try {
 			sbuf.append(getSimpleCategoryFeed(id, fType, feedUrl));
@@ -192,14 +192,14 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 * @param fType
 	 * @param feedUrl
 	 * @return String
-	 * @throws DataAccessException 
+	 * @throws DataAccessException
 	 */
-	private StringBuilder getSimpleCategoryFeed(final Long id, final String fType, final String feedUrl) 
+	private StringBuilder getSimpleCategoryFeed(final Long id, final String fType, final String feedUrl)
 	throws DataAccessException {
-		StringBuilder sbuf = new StringBuilder();     
+		StringBuilder sbuf = new StringBuilder();
 		try {
 			final Category c = this.categoryDao.getCategoryById(id);
-			final List<Topic> topics = this.topicDao.getTopicListByCategory(c.getCategoryId());   
+			final List<Topic> topics = this.topicDao.getTopicListByCategory(c.getCategoryId());
 			Integer ttl = getTTL(c.getRefreshPeriod(), c.getRefreshFrequency());
 			sbuf.append("<category edit=\"all\" name=\"" + StringEscapeUtils.escapeXml(c.getName())
 					+ "\" ttl=\"" + ttl.toString() + "\">\n");
@@ -211,16 +211,16 @@ public class BasicFeedService implements FeedService, InitializingBean {
 			for (final Topic t : topics) {
 				if (NewsConstants.S_Y.equals(t.getRssAllowed())) {
 					ttl = getTTL(t.getRefreshPeriod(), t.getRefreshFrequency());
-					path = (NewsConstants.S_Y.equals(t.getPublicView())) 
+					path = (NewsConstants.S_Y.equals(t.getPublicView()))
 					? NewsConstants.PUBLIC_PATH : NewsConstants.PRIVATE_PATH;
-					final String acc = ("1".equals(t.getPublicView())) 
+					final String acc = (NewsConstants.S_Y.equals(t.getPublicView()))
 					? PUBLIC_ACCESS : PRIVATE_ACCESS;
-					sbuf.append("<sourceProfile id=\"" + t.getTopicId() + "\" access=\"" + acc 
-							+ "\" name=\"" + StringEscapeUtils.escapeXml(t.getName()) 
-							+ "\" specificUserContent=\"no\" ttl=\"" 
-							+ ttl.toString() + "\" url=\"" + feedUrl + path 
+					sbuf.append("<sourceProfile id=\"" + t.getTopicId() + "\" access=\"" + acc
+							+ "\" name=\"" + StringEscapeUtils.escapeXml(t.getName())
+							+ "\" specificUserContent=\"no\" ttl=\""
+							+ ttl.toString() + "\" url=\"" + feedUrl + path
 							+ "rss?t=" + Constants.EXPORT_TOPIC_FEED
-							+ "&amp;topicID=" + t.getTopicId()  
+							+ "&amp;topicID=" + t.getTopicId()
 							+ "&amp;feedType=" + fType + "\"> \n");
 					if (!hasCatSubs && !this.subDao.hasSubscribers(t.getTopicId(), NewsConstants.CTX_T)) {
 						sbuf.append(this.getCtxVisibility(c.getEntityId(), NewsConstants.CTX_E));
@@ -235,7 +235,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 		} catch (DataAccessException e) {
 			LOG.error("Error while generating category feed : " + e.getLocalizedMessage());
 			throw e;
-		} 
+		}
 	}
 
 
@@ -249,27 +249,27 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 * @see org.uhp.portlets.news.service.FeedService#
 	 * getMostRecentItemsFeedOfCategory(Long, String, Integer, String)
 	 */
-	public SyndFeed getMostRecentItemsFeedOfCategory(final Long id, final String feedType, 
+	public SyndFeed getMostRecentItemsFeedOfCategory(final Long id, final String feedType,
 			final Integer nbLastDays, final String urlEntry) {
 		try {
 			final Category c = this.categoryDao.getCategoryById(id);
-			final List<Item> items = 
+			final List<Item> items =
 				this.itemDao.getMostRecentItemsByCategory(c.getCategoryId(), nbLastDays);
 			SyndFeed feed = new SyndFeedImpl();
 			feed.setFeedType(feedType);
-			try {  
+			try {
 				feed.setTitle(c.getName());
-				final String path = (NewsConstants.S_Y.equals(c.getPublicView())) 
+				final String path = (NewsConstants.S_Y.equals(c.getPublicView()))
 				? NewsConstants.PUBLIC_PATH : NewsConstants.PRIVATE_PATH;
-				feed.setLink(urlEntry + path + "rss?t=" + Constants.EXPORT_MOST_RECENT 
-						+ "&cID=" + c.getCategoryId() 
+				feed.setLink(urlEntry + path + "rss?t=" + Constants.EXPORT_MOST_RECENT
+						+ "&cID=" + c.getCategoryId()
 						+ "&feedType=" + feedType + "&dayCount=" + nbLastDays.intValue());
 				feed.setDescription(c.getDesc());
 				feed.setLanguage(c.getLangue());
 				feed.setEntries(addEntry(items, urlEntry, path));
 			} catch (final Exception ex) {
 				LOG.error("Error : " + ex.getLocalizedMessage());
-			}   
+			}
 			return feed;
 		} catch (DataAccessException e) {
 			LOG.error("Error while generating most recent items feed : " + e.getLocalizedMessage());
@@ -286,7 +286,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 * @see org.uhp.portlets.news.service.FeedService#
 	 * getMostRecentItemsFeedOfCategory(Long, String, Integer, String)
 	 */
-	public SyndFeed getMostRecentItemsFeedOfEntity(final Long id, final String feedType, 
+	public SyndFeed getMostRecentItemsFeedOfEntity(final Long id, final String feedType,
 			final Integer nbLastDays, final String urlEntry) {
 		/*try {
             final List<Category> cats = this.categoryDao.getAllCategoryOfEntity(id);
@@ -306,7 +306,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 * @see org.uhp.portlets.news.service.FeedService
 	 * #getTopicFeed(java.lang.Long, java.lang.String, java.lang.String)
 	 */
-	public SyndFeed getTopicFeed(final Long  id,  final String feedType, final String urlEntry) {   
+	public SyndFeed getTopicFeed(final Long  id,  final String feedType, final String urlEntry) {
 		try {
 			final Topic t = this.topicDao.getTopicById(id);
 			final Category c = this.categoryDao.getCategoryById(t.getCategoryId());
@@ -316,16 +316,16 @@ public class BasicFeedService implements FeedService, InitializingBean {
 			feed.setFeedType(feedType);
 			feed.setTitle(t.getName());
 			if (NewsConstants.S_N.equals(c.getPublicView())) {
-				path = NewsConstants.PRIVATE_PATH;              
+				path = NewsConstants.PRIVATE_PATH;
 			} else {
-				path = (NewsConstants.S_Y.equals(t.getPublicView())) 
+				path = (NewsConstants.S_Y.equals(t.getPublicView()))
 				? NewsConstants.PUBLIC_PATH : NewsConstants.PRIVATE_PATH;
 			}
-			feed.setLink(urlEntry + path + "rss?t=" + Constants.EXPORT_TOPIC_FEED 
+			feed.setLink(urlEntry + path + "rss?t=" + Constants.EXPORT_TOPIC_FEED
 					+ "&topicID=" + t.getTopicId() + "&feedType=" + feedType);
 			feed.setDescription(t.getDesc());
-			feed.setLanguage(t.getLangue());        
-			feed.setEntries(addEntry(items, urlEntry, path));           
+			feed.setLanguage(t.getLangue());
+			feed.setEntries(addEntry(items, urlEntry, path));
 			return feed;
 		} catch (DataAccessException e) {
 			LOG.error("Error while generating topic RSS feed : " + e.getLocalizedMessage());
@@ -342,10 +342,10 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	private List<SyndEntry> addEntry(final List<Item> items, final String urlEntry, final String path) {
 		final List<SyndEntry> entries = new ArrayList<SyndEntry>();
 
-		for (Item item : items) { 
+		for (Item item : items) {
 			SyndEntry entry = new SyndEntryImpl();
-			entry.setTitle(item.getTitle());             
-			entry.setLink(urlEntry + getItemPath(item.getItemId(), path) 
+			entry.setTitle(item.getTitle());
+			entry.setLink(urlEntry + getItemPath(item.getItemId(), path)
 					+ "item?c=1&itemID=" + item.getItemId());
 			entry.setAuthor(um.getUserNameByUid(item.getPostedBy()));
 			entry.setPublishedDate(item.getPostDate());
@@ -353,9 +353,9 @@ public class BasicFeedService implements FeedService, InitializingBean {
 			SyndContent description = new SyndContentImpl();
 			description.setType(DESC_CONTENT_TYPE);
 			description.setValue(item.getSummary());
-			entry.setDescription(description);  
-			entries.add(entry);         
-		} 
+			entry.setDescription(description);
+			entries.add(entry);
+		}
 		return entries;
 	}
 
@@ -389,10 +389,10 @@ public class BasicFeedService implements FeedService, InitializingBean {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < slist.size(); i++) {
 			if (slist.get(i).getIsGroup() == 1) {
-				sb.append("<group name=\"" + StringEscapeUtils.escapeXml(slist.get(i).getPrincipal()) 
-						+ "\" />\n"); 
+				sb.append("<group name=\"" + StringEscapeUtils.escapeXml(slist.get(i).getPrincipal())
+						+ "\" />\n");
 			} else {
-				sb.append("<regular attribute=\"uid\" value=\"" 
+				sb.append("<regular attribute=\"uid\" value=\""
 						+ StringEscapeUtils.escapeXml(slist.get(i).getPrincipal()) + "\" />\n");
 			}
 		}
@@ -408,13 +408,13 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 */
 	private String getCtxVisibility(final Long ctxId, final String ctx) {
 		final StringBuilder sbuf = new StringBuilder();
-		if (this.subDao.hasSubscribers(ctxId, ctx)) { 
+		if (this.subDao.hasSubscribers(ctxId, ctx)) {
 			sbuf.append("<visibility>\n");
 			sbuf.append("<allowed>\n");
-			List<Subscriber> sbs = 
+			List<Subscriber> sbs =
 				this.subDao.getSubscribers(ctxId, ctx, SubscribeType.SUB_FREE.toString());
 			sbuf.append(getSub(sbs));
-			sbuf.append("</allowed>\n"); 
+			sbuf.append("</allowed>\n");
 			sbs.clear();
 			sbuf.append("<autoSubscribed>\n");
 			sbs = this.subDao.getSubscribers(ctxId, ctx, SubscribeType.SUB_PRE.toString());
@@ -461,10 +461,10 @@ public class BasicFeedService implements FeedService, InitializingBean {
 		final Category c = this.categoryDao.getCategoryById(id);
 		if (c != null) {
 			if (c.getPublicView().equals(NewsConstants.S_N) &&  !isProtected) {
-				msg = ACC_BY_AUTH;                  
+				msg = ACC_BY_AUTH;
 			}
 			if (c.getRssAllowed().equals(NewsConstants.S_N)) {
-				msg = RSS_NOT_ALLOWED + " category";        
+				msg = RSS_NOT_ALLOWED + " category";
 			}
 		} else {
 			msg = null;
@@ -478,15 +478,15 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 * @return String
 	 * @see org.uhp.portlets.news.service.FeedService#getTopicFeedNotAvailableMsg(java.lang.Long, boolean)
 	 */
-	public String getTopicFeedNotAvailableMsg(final Long id, final boolean isProtected) {       
+	public String getTopicFeedNotAvailableMsg(final Long id, final boolean isProtected) {
 		String msg = "";
 		final Topic t = this.topicDao.getTopicById(id);
 		if (t != null) {
 			if (t.getRssAllowed().equals(NewsConstants.S_N)) {
-				msg = RSS_NOT_ALLOWED + " topic";                   
+				msg = RSS_NOT_ALLOWED + " topic";
 			}
 			if (t.getPublicView().equals(NewsConstants.S_N) &&  !isProtected) {
-				msg = ACC_BY_AUTH;                  
+				msg = ACC_BY_AUTH;
 			}
 		} else {
 			msg = null;
@@ -521,7 +521,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 * @param status
 	 * @return ItemsView
 	 */
-	public ItemsView getItems(final Category c, final Topic t,  final int status) {     
+	public ItemsView getItems(final Category c, final Topic t,  final int status) {
 		ItemsView itemsS = new ItemsView();
 
 		try {
@@ -532,7 +532,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 				itemsS.setItemStatus(ItemStatus.PENDING);
 
 				break;
-			case 1 :            
+			case 1 :
 				itemsS.setItems(itemDao.getValidatedItemListByTopic(id));
 				itemsS.setItemStatus(ItemStatus.PUBLISHED);
 				break;
@@ -552,7 +552,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 		}
 		itemsS.setTopic(t);
 		itemsS.setCatName(c.getName());
-		return itemsS; 
+		return itemsS;
 	}
 
 	/**
@@ -561,17 +561,17 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 * @return ItemV
 	 * @see org.uhp.portlets.news.service.FeedService#getItem(java.lang.Long, boolean)
 	 */
-	public ItemV getItem(final Long id, final boolean isProtected) {                
+	public ItemV getItem(final Long id, final boolean isProtected) {
 		try {
 			final Item item = itemDao.getItemById(id);
-			Category c = categoryDao.getCategoryById(item.getCategoryId()); 
+			Category c = categoryDao.getCategoryById(item.getCategoryId());
 
-			ItemV iv = new ItemV();          
-			iv.setItem(item);            
-			if (NewsConstants.S_N.equals(c.getRssAllowed()) 
+			ItemV iv = new ItemV();
+			iv.setItem(item);
+			if (NewsConstants.S_N.equals(c.getRssAllowed())
 					|| (NewsConstants.S_N.equals(c.getPublicView()) &&  !isProtected)) {
 				return null;
-			} 
+			}
 			iv.setCatName(c.getName());
 
 			List<Attachment> attachments = attachmentDao.getAttachmentsListByItem(id);
@@ -591,7 +591,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 * @param path
 	 * @return String
 	 */
-	private String getItemPath(final Long id, final String path) {      
+	private String getItemPath(final Long id, final String path) {
 		if (path.equals(NewsConstants.PUBLIC_PATH) && this.itemDao.hasProtectedTopics(id)) {
 			return NewsConstants.PRIVATE_PATH;
 		}
@@ -601,7 +601,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 
 	/**
 	 * Get the attachment file to download.
-	 * 
+	 *
 	 * @param fileUid
 	 * @param itemId
 	 * @param isProtected
@@ -624,7 +624,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 				// retrieve entity
 				Item item = itemDao.getItemById(itemId);
 				Category c = categoryDao.getCategoryById(item.getCategoryId());
-				if (NewsConstants.S_N.equals(c.getRssAllowed()) 
+				if (NewsConstants.S_N.equals(c.getRssAllowed())
 						|| (NewsConstants.S_N.equals(c.getPublicView()) && !isProtected)) {
 					return null;
 				}
@@ -634,7 +634,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 				toDownload.setFileName(attachement.getFileName());
 				toDownload.setAttachmentId(attachement.getAttachmentId());
 				return toDownload;
-			} 
+			}
 			return null;
 		} catch (DataAccessException e) {
 			LOG.error("DAE " + e.getMessage(), e.fillInStackTrace());
@@ -676,7 +676,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 			LOG.error("Error while generating category profile : " + e.getLocalizedMessage());
 			sbuf.append("<error>An error in database access occured.</error>");
 			return sbuf.toString();
-		} 
+		}
 	}
 
 
@@ -709,7 +709,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 		} catch (DataAccessException e) {
 			LOG.error("Error while generating category profile : " + e.getLocalizedMessage());
 
-		} 
+		}
 		return null;
 	}
 
@@ -720,22 +720,22 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 * @param fType
 	 * @return String
 	 */
-	private String getCategoryProfileOfEntityOfType(final Entity entity, final Type type, final String feedUrl, 
+	private String getCategoryProfileOfEntityOfType(final Entity entity, final Type type, final String feedUrl,
 			final String fType) {
 		StringBuilder  sbuf = new StringBuilder();
-		final List<Category> categories = 
-			this.categoryDao.getCategoryByTypeOfEntity(type.getTypeId(), entity.getEntityId());
+		final List<Category> categories =
+			this.categoryDao.getCategoryByTypeOfEntityInDisplayOrder(type.getTypeId(), entity.getEntityId());
 		for (Category cat : categories) {
 			String access;
-			if (NewsConstants.S_N.equals(cat.getPublicView())) {
-				access = PUBLIC_ACCESS;              
+			if (NewsConstants.S_Y.equals(cat.getPublicView())) {
+				access = PUBLIC_ACCESS;
 			} else {
 				access = PRIVATE_ACCESS;
 			}
 			Integer ttl = getTTL(cat.getRefreshPeriod(), cat.getRefreshFrequency());
 			sbuf.append("<categoryProfile name=\"" + entity.getName() + " - " + cat.getName()
 					+ "\" id=\"" + entity.getEntityId() + cat.getCategoryId() + "\""
-					+ " urlCategory=\"" + feedUrl + NewsConstants.PUBLIC_PATH 
+					+ " urlCategory=\"" + feedUrl + NewsConstants.PUBLIC_PATH
 					+ "rss?t=" + Constants.EXPORT_CAT_FEED
 					+ "&amp;cID=" + cat.getCategoryId()
 					+ "\" trustCategory=\"yes\" access=\"" + access + "\" ttl=\"" + ttl + "\" timeout=\"" + this.timeout + "\" >\n");
@@ -747,8 +747,8 @@ public class BasicFeedService implements FeedService, InitializingBean {
 
 
 
-	/** 
-	 * Obtains user's details from a list of user's id. 
+	/**
+	 * Obtains user's details from a list of user's id.
 	 * @param usersUid a list of id/uid to retrieve in the LDAP.
 	 * @return <code>Map< String, LdapUser ></code> A Map of LdapUser (details of users) with id/uid as key.
 	 * @see org.esco.portlets.news.services.UserManager#getUsersByListUid(java.util.List)
@@ -780,19 +780,19 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		final String notNull = " must not be null.";
-		Assert.notNull(this.typeDao, "The property TypeDAO typeDao in class " 
+		Assert.notNull(this.typeDao, "The property TypeDAO typeDao in class "
 				+ getClass().getSimpleName() + notNull);
-		Assert.notNull(this.categoryDao, "The property CategoryDao categoryDao in class " 
+		Assert.notNull(this.categoryDao, "The property CategoryDao categoryDao in class "
 				+ getClass().getSimpleName() + notNull);
-		Assert.notNull(this.um, "The property UserManager um in class " 
+		Assert.notNull(this.um, "The property UserManager um in class "
 				+ getClass().getSimpleName() + notNull);
-		Assert.notNull(this.entityDao, "The property EntityDAO entityDao in class " 
+		Assert.notNull(this.entityDao, "The property EntityDAO entityDao in class "
 				+ getClass().getSimpleName() + notNull);
-		Assert.notNull(this.topicDao, "The property TopicDao topicDao in class " 
+		Assert.notNull(this.topicDao, "The property TopicDao topicDao in class "
 				+ getClass().getSimpleName() + notNull);
-		Assert.notNull(this.itemDao, "The property ItemDao itemDao in class " 
+		Assert.notNull(this.itemDao, "The property ItemDao itemDao in class "
 				+ getClass().getSimpleName() + notNull);
-		Assert.notNull(this.subDao, "The property SubscriberDao subDao in class " 
+		Assert.notNull(this.subDao, "The property SubscriberDao subDao in class "
 				+ getClass().getSimpleName() + notNull);
 		if (this.timeout == null || this.timeout < 0) {
 			LOG.warn("The timeout property isn't set or used, so default timeout " + DEFAULT_TIMEOUT + " will be used.");

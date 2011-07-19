@@ -33,9 +33,9 @@ import org.uhp.portlets.news.domain.RolePerm;
 import org.uhp.portlets.news.web.support.Constants;
 
 /**
- * 
+ *
  * created by Anyware Services - Delphine Gavalda.
- * 
+ *
  * 14 juin 2010
  */
 public class EntityCmisServerParamsController extends SimpleFormController implements InitializingBean {
@@ -64,7 +64,7 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
 	setFormView(Constants.ACT_EDIT_E_CMIS_SERV_PARAMS);
 	setSuccessView(Constants.ACT_VIEW_E_ATT_CONF);
     }
-    
+
     public void afterPropertiesSet() throws Exception {
 	if (this.am == null || this.um == null || this.em == null || this.sf == null) {
 	    throw new IllegalArgumentException(
@@ -73,7 +73,7 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
     }
 
     @Override
-    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response, 
+    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response,
 	    				final BindException errors)
 	    throws Exception {
 	BindException newError = null;
@@ -95,7 +95,7 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
 	}
 	if (newError != null) {
 	    return super.showForm(request, response, newError);
-	} else {  
+	} else {
 	    return super.showForm(request, response, errors);
 	}
     }
@@ -162,7 +162,7 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
     }
 
     @Override
-    protected void onSubmitAction(final ActionRequest request, final ActionResponse response, 
+    protected void onSubmitAction(final ActionRequest request, final ActionResponse response,
 	    				final Object command, final BindException errors)
 	    throws Exception {
 	CmisServerParamsForm form = (CmisServerParamsForm) command;
@@ -204,10 +204,10 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
 	    if (!serverUrl.endsWith("/")) {
 		serverUrl += "/";
 	    }
-	    servParams.setServerUrl(serverUrl);
-	    servParams.setServerLogin(form.getServerLogin());
+	    servParams.setServerUrl(serverUrl.trim());
+	    servParams.setServerLogin(form.getServerLogin().trim());
 
-	    String toEncrypt = form.getServerLogin() + form.getServerPwd();
+	    String toEncrypt = form.getServerLogin().trim() + form.getServerPwd().trim();
 	    String hash = SimpleXOREncryption.encryptDecrypt(toEncrypt);
 	    servParams.setServerPwd(hash);
 
@@ -219,7 +219,7 @@ public class EntityCmisServerParamsController extends SimpleFormController imple
 	    } else {
 		isAppServer = false;
 	    }
-	    
+
 	    if (serverId > 0 && !isAppServer) {
 		servParams.setServerId(serverId);
 		am.updateServerInfos(servParams);

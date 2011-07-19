@@ -25,26 +25,26 @@ import org.uhp.portlets.news.service.exception.UserExistsException;
  * 8 juil. 09
  */
 public interface UserManager {
-    
+
     /**
      * Getter du membre userDao.
      * @return <code>EscoUserDao</code> le membre userDao.
      */
     EscoUserDao getUserDao();
 
-    /** 
-     * Obtains user's details from a list of user's id. 
+    /**
+     * Obtains user's details from a list of user's id.
      * @param usersUid A list of id/uid to retrieve in the LDAP.
      * @return <code>Map< String, IEscoUser ></code> A Map of LdapUser (details of users) with id/uid as key.
      */
 	Map<String, IEscoUser> getUsersByListUid(List<String> usersUid);
-	
+
 	/**
 	 * Obtain Ldap Properties.
 	 * @return <code>LdapUserService</code>
 	 */
 	LdapUserService getLdapUserService();
-	
+
     /**
      * @param userId
      * @return <code>boolean </code>
@@ -85,21 +85,21 @@ public interface UserManager {
      * @param searchBy
      * @return <code>User</code>
      */
-    IEscoUser findUserByUid(String searchBy);     
+    IEscoUser findUserByUid(String searchBy);
 
     /**
      * @param token
      * @return <code>List< User ></code>
      */
     List<IEscoUser> findPersonsByToken(String token);
-    
+
     /**
      * @param token Research criteria.
-     * @param filter 
+     * @param filter
      * @return <code>List< User ></code> The list of users returned corresponding to the token.
-     * @throws LdapException 
+     * @throws LdapException
      */
-    List<IEscoUser> findPersonsByTokenAndFilter(final String token, 
+    List<IEscoUser> findPersonsByTokenAndFilter(final String token,
             final org.springframework.ldap.support.filter.Filter filter) throws LdapException;
 
     /**
@@ -107,15 +107,15 @@ public interface UserManager {
      * @param role
      * @param ctx
      * @param ctxId
-     * @throws SubscriberExistForCtxSubType 
+     * @throws SubscriberExistForCtxSubType
      */
     void addUserCtxRole(User user, String role, String ctx, Long ctxId) throws SubscriberExistForCtxSubType;
-     
+
     /**
-     * Use this function with caution, 
+     * Use this function with caution,
      * it's usefull to make the migration of user role with the introduction of the entity context.
      * @param user
-     * @param entityId 
+     * @param entityId
      */
     void migrationUserCtxRole(final User user, final Long entityId);
 
@@ -141,7 +141,7 @@ public interface UserManager {
      * @return <code>boolean</code>
      */
     boolean isUserRoleExistForContext(Long ctxId, String ctxType, String uid);
-    
+
     /**
      * @return <code>List< User ></code>
      */
@@ -184,18 +184,18 @@ public interface UserManager {
      * @param userId
      * @return <code>Map< String, String ></code>
      */
-    Map<String, String> loadUserEntityRoleMaps(String userId); 
+    Map<String, String> loadUserEntityRoleMaps(String userId);
     /**
      * @param userId
      * @return <code>Map< String, Map< String, String >></code>
      */
-    Map<String, Map<String, String>> loadUserCategoryRoleMaps(String userId);                           
+    Map<String, Map<String, String>> loadUserCategoryRoleMaps(String userId);
     /**
      * @param userId
      * @return <code>Map< String, Map< String, String >></code>
      */
     Map<String, Map<String, String>> loadUserTopicRoleMaps(String userId);
-    
+
     /**
      * @param userId
      * @return <code>boolean</code>

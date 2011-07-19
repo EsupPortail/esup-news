@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.dao.iBatis;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -40,18 +40,18 @@ import org.uhp.portlets.news.domain.Category;
 
 @Repository("categoryDao")
 public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implements CategoryDao {
-    
+
 	private static final Log LOGGER = LogFactory.getLog(SqlMapClientCategoryDaoImpl.class);
 
 	@Autowired private SequenceDao sequenceDao;
-	
+
 	public void setSequenceDao(final SequenceDao sequenceDao) {
         this.sequenceDao = sequenceDao;
     }
 
 	@SuppressWarnings("unchecked")
-	public List<Category> getAllCategory() throws DataAccessException {	
-		List<Category> categories = getSqlMapClientTemplate().queryForList("getAllCategory", null);		
+	public List<Category> getAllCategory() throws DataAccessException {
+		List<Category> categories = getSqlMapClientTemplate().queryForList("getAllCategory", null);
 		List<Category> cats = new ArrayList<Category>();
         for (Category c : categories) {
             cats.add(setCounts(c));
@@ -60,9 +60,9 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
 	}
 
 	@SuppressWarnings("unchecked")
-    public List<Category> getCategoriesByUser(final String uid) throws DataAccessException {		
-		final List<Category> categories = 
-		    getSqlMapClientTemplate().queryForList("getAvailableCategoriesByUser", uid);	
+    public List<Category> getCategoriesByUser(final String uid) throws DataAccessException {
+		final List<Category> categories =
+		    getSqlMapClientTemplate().queryForList("getAvailableCategoriesByUser", uid);
 		List<Category> cats = new ArrayList<Category>();
 		for (Category c : categories) {
 			cats.add(setCounts(c));
@@ -70,13 +70,13 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
 		return cats;
 	}
 
-	public Category getCategoryById(final Long categoryId) throws DataAccessException {		
+	public Category getCategoryById(final Long categoryId) throws DataAccessException {
 		Category category = (Category) getSqlMapClientTemplate()
 		    .queryForObject("getCategoryById", categoryId);
 		if (category == null) {
 			LOGGER.error("category [" + categoryId + "] not found");
 			throw new ObjectRetrievalFailureException(Category.class, categoryId);
-		} 
+		}
 		category.setTotalCount((Integer) getSqlMapClientTemplate()
 		        .queryForObject("getTotalItemsCountByCategory", categoryId));
 		category.setPendingCount((Integer) getSqlMapClientTemplate()
@@ -84,7 +84,7 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
 
 		return category;
 	}
-	
+
 	private Category setCounts(final Category category) {
         Category c = category;
         c.setTotalCount((Integer) getSqlMapClientTemplate().queryForObject(
@@ -95,15 +95,15 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
     }
 
 	private void insert(final Category category) throws DataAccessException {
-		category.setCreationDate(new Date()); 
-		category.setLastUpdateDate(new Date()); 
+		category.setCreationDate(new Date());
+		category.setLastUpdateDate(new Date());
 		int dOrder = 1;
 		if (getMaxDisplayOrder(category.getEntityId()) != null) {
 		    dOrder = getMaxDisplayOrder(category.getEntityId()).intValue() + 1;
 		}
-		category.setDisplayOrder(dOrder); 
-		category.setCategoryId(this.sequenceDao.getNextId(Constants.SEQ_CAT));	
-		getSqlMapClientTemplate().insert("insertCategory", category); 
+		category.setDisplayOrder(dOrder);
+		category.setCategoryId(this.sequenceDao.getNextId(Constants.SEQ_CAT));
+		getSqlMapClientTemplate().insert("insertCategory", category);
 
 	}
 
@@ -149,16 +149,16 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
 
 	public boolean isCategoryNameExist(final String name, final Long entityId) throws DataAccessException {
 	    Map<String, Object> params = new HashMap<String, Object>(2);
-        params.put(Constants.NAME, name);   
+        params.put(Constants.NAME, name);
         params.put(Constants.ENTITY_ID, entityId);
-		Integer t = (Integer) getSqlMapClientTemplate().queryForObject("isCategoryNameExist", params);		
+		Integer t = (Integer) getSqlMapClientTemplate().queryForObject("isCategoryNameExist", params);
 		return t.intValue() > 0;
 	}
-	
-	public boolean isCategoryNameExist(final String name, final Long catId, final Long entityId) 
+
+	public boolean isCategoryNameExist(final String name, final Long catId, final Long entityId)
 	throws DataAccessException {
 		Map<String, Object> params = new HashMap<String, Object>(2);
-		params.put(Constants.NAME, name);	
+		params.put(Constants.NAME, name);
 		params.put(Constants.CAT_ID, catId);
 		params.put(Constants.ENTITY_ID, entityId);
 		Integer t = (Integer) getSqlMapClientTemplate().queryForObject("isSameCategoryNameExist", params);
@@ -169,25 +169,25 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
 			throws DataAccessException {
 		int tmp = c1.getDisplayOrder();
 		this.updateCategoryOrder(c1, c2.getDisplayOrder());
-		this.updateCategoryOrder(c2, tmp); 
-		
+		this.updateCategoryOrder(c2, tmp);
+
 	}
-	
+
 	private void updateCategoryOrder(final Category cat, final int order) throws DataAccessException  {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put(NewsConstants.C_ID, cat.getCategoryId());	
+		params.put(NewsConstants.C_ID, cat.getCategoryId());
 		params.put(Constants.DISPLAY_ORDER, Integer.valueOf(order));
 		try {
 			getSqlMapClientTemplate().update("updateCategoryOrderById", params);
 		} catch (DataAccessException e) {
-		    LOGGER.warn("SqlMapClientCategoryDaoImpl:: updateCategoryOrder : Error : " + e.getMessage());		
+		    LOGGER.warn("SqlMapClientCategoryDaoImpl:: updateCategoryOrder : Error : " + e.getMessage());
 		}
 	}
 
 	/**
      * Join a Category with a list of Type.
      * @param typeIds
-     * @param categoryId 
+     * @param categoryId
      * @throws DataAccessException
      * @see org.uhp.portlets.news.dao.CategoryDao#addTypesToCategory(java.util.List, Long)
      */
@@ -199,7 +199,7 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
             try {
                 getSqlMapClientTemplate().insert("insertOneTypeOfCategory", params);
             } catch (DataAccessException e) {
-                LOGGER.warn("SqlMapClientCategoryDaoImpl:: insertOneTypeOfCategory : Error : " + e.getMessage()); 
+                LOGGER.warn("SqlMapClientCategoryDaoImpl:: insertOneTypeOfCategory : Error : " + e.getMessage());
                 throw e;
             }
         }
@@ -209,7 +209,7 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
     /**
      * Delete the link between a Category and a list of Type.
      * @param typeIds
-     * @param categoryId 
+     * @param categoryId
      * @throws DataAccessException
      * @see org.uhp.portlets.news.dao.CategoryDao#deleteTypesOfCategory(java.util.List, java.lang.Long)
      */
@@ -222,15 +222,15 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
             try {
                 getSqlMapClientTemplate().delete("deleteOneTypeOfCategory", params);
             } catch (DataAccessException e) {
-                LOGGER.warn("SqlMapClientCategoryDaoImpl:: insertOneTypeOfCategory : Error : " + e.getMessage()); 
+                LOGGER.warn("SqlMapClientCategoryDaoImpl:: insertOneTypeOfCategory : Error : " + e.getMessage());
                 throw e;
             }
         }
     }
 
-    /** 
-     * Get the list of Type of the Category. 
-     * @param categoryId 
+    /**
+     * Get the list of Type of the Category.
+     * @param categoryId
      * @return <code>List<Type></code>
      * @throws DataAccessException
      * @see org.uhp.portlets.news.dao.CategoryDao#getTypesOfCategory(java.lang.Long)
@@ -240,9 +240,9 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
             throws DataAccessException {
         return getSqlMapClientTemplate().queryForList("getTypeListByCategory", categoryId);
     }
-	
+
     /**
-     * Get the list of Category of a given Type in an Entity.
+     * Get the list of Category of a given Type in an Entity order by name.
      * @param typeId
      * @param entityId
      * @return <code>List<Category></code>
@@ -261,7 +261,28 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
         }
         return cats;
     }
-    
+
+    /**
+     * Get the list of Category of a given Type in an Entity ordered by display order.
+     * @param typeId
+     * @param entityId
+     * @return <code>List<Category></code>
+     * @throws DataAccessException
+     * @see org.uhp.portlets.news.dao.CategoryDao#getCategoryByTypeOfEntityInDisplayOrder(Long, Long)
+     */
+    @SuppressWarnings("unchecked")
+    public List<Category> getCategoryByTypeOfEntityInDisplayOrder(final Long typeId, final Long entityId) throws DataAccessException {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(NewsConstants.TYPE_ID, typeId );
+        params.put(NewsConstants.ENTITY_ID, entityId);
+        List<Category> categories = getSqlMapClientTemplate().queryForList("getCategoryByTypeOfEntityInDiplayOrder", params);
+        List<Category> cats = new ArrayList<Category>();
+        for (Category c : categories) {
+            cats.add(setCounts(c));
+        }
+        return cats;
+    }
+
     /**
      * Get the list of all Category of a Type (for all Entity).
      * @param typeId
@@ -278,7 +299,7 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
         }
         return cats;
     }
-	
+
     /**
      * Get the list of all Category in an Entity.
      * @param entityId
@@ -304,12 +325,12 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
      * @see org.uhp.portlets.news.dao.CategoryDao#getCategoriesOfEntityByUser(String, Long)
      */
     @SuppressWarnings("unchecked")
-    public List<Category> getCategoriesOfEntityByUser(final String uid, final Long entityId) 
+    public List<Category> getCategoriesOfEntityByUser(final String uid, final Long entityId)
     throws DataAccessException {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(NewsConstants.UID, uid );
         params.put(NewsConstants.ENTITY_ID, entityId);
-        List<Category> categories = 
+        List<Category> categories =
             getSqlMapClientTemplate().queryForList("getAvailableCategoriesByUserFromEntity", params);
         List<Category> cats = new ArrayList<Category>();
         for (Category c : categories) {
@@ -317,7 +338,7 @@ public class SqlMapClientCategoryDaoImpl extends SqlMapClientDaoSupport implemen
         }
         return cats;
     }
-    
+
     /**
      * Get the list of all Category without an attachment of an Entity.
      * @return <code>List<Category></code>

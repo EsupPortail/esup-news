@@ -29,9 +29,9 @@ import org.uhp.portlets.news.domain.RolePerm;
 import org.uhp.portlets.news.web.support.Constants;
 
 /**
- * 
+ *
  * created by Anyware Services - Delphine Gavalda.
- * 
+ *
  * 14 juin 2010
  */
 public class CmisServerParamsController extends SimpleFormController implements InitializingBean {
@@ -64,9 +64,9 @@ public class CmisServerParamsController extends SimpleFormController implements 
 	    throw new IllegalArgumentException("An AttachmentManager, a User Manager are required");
 	}
     }
-    
+
     @Override
-    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response, 
+    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response,
 	    				final BindException errors)
 	    throws Exception {
 	if (!this.um.isSuperAdmin(request.getRemoteUser())) {
@@ -111,7 +111,7 @@ public class CmisServerParamsController extends SimpleFormController implements 
     }
 
     @Override
-    protected void onSubmitAction(final ActionRequest request, final ActionResponse response, 
+    protected void onSubmitAction(final ActionRequest request, final ActionResponse response,
 	    				final Object command, final BindException errors)
 	    throws Exception {
 	CmisServerParamsForm form = (CmisServerParamsForm) command;
@@ -136,14 +136,14 @@ public class CmisServerParamsController extends SimpleFormController implements 
 	if (!serverUrl.endsWith("/")) {
 	    serverUrl += "/";
 	}
-	servParams.setServerUrl(serverUrl);
-	servParams.setServerLogin(form.getServerLogin());
+	servParams.setServerUrl(serverUrl.trim());
+	servParams.setServerLogin(form.getServerLogin().trim());
 
-	String toEncrypt = form.getServerLogin() + form.getServerPwd();
+	String toEncrypt = form.getServerLogin().trim() + form.getServerPwd().trim();
 	String hash = SimpleXOREncryption.encryptDecrypt(toEncrypt);
 	servParams.setServerPwd(hash);
 
-	servParams.setRepositoryId(form.getRepositoryId());
+	servParams.setRepositoryId(form.getRepositoryId().trim());
 
 	if (serverId > 0) {
 	    servParams.setServerId(serverId);

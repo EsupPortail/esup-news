@@ -40,14 +40,14 @@
 		select cat_id, name, description, created_by, creation_date,
 			last_update_date, lang, refresh_period,	refresh_frequency,
 			display_order,public_view, rss_allowed, entity_id
-		from news_category 
+		from news_category
 		where cat_id = #value#
     </select>
 
 	<select id="isCategoryNameExist" parameterClass="map" resultClass="int">
 		SELECT count(cat_id) FROM news_category WHERE name=#name# and entity_id = #entityId#
 	</select>
-	
+
 	<select id="isSameCategoryNameExist" parameterClass="map" resultClass="int">
 		SELECT count(cat_id) FROM news_category WHERE name=#name# and entity_id = #entityId# and cat_id != #categoryId#
 	</select>
@@ -62,8 +62,8 @@
 
 	<select id="getAvailableCategoriesByUser" parameterClass="java.lang.String" resultMap="result">
 		SELECT c.cat_id, c.name, c.description, c.rss_allowed, c.public_view,
-			c.display_order FROM news_category as c, news_user_role as ur 
-		WHERE c.cat_id=ur.ctx_id and ur.ctx_type='C' and ur.is_group='0' and ur.principal=#value# 
+			c.display_order FROM news_category as c, news_user_role as ur
+		WHERE c.cat_id=ur.ctx_id and ur.ctx_type='C' and ur.is_group='0' and ur.principal=#value#
 		order by display_order desc
 	</select>
 
@@ -79,9 +79,9 @@
 		insert into
 		news_category (cat_id, name, description, created_by, lang,
 			creation_date,last_update_date, refresh_period, refresh_frequency,
-			display_order, public_view, rss_allowed, entity_id) 
-		values (#categoryId#, #name#, #desc#, #createdBy#, #langue#, 
-			#creationDate#, #lastUpdateDate#, #refreshPeriod#, #refreshFrequency#, 
+			display_order, public_view, rss_allowed, entity_id)
+		values (#categoryId#, #name#, #desc#, #createdBy#, #langue#,
+			#creationDate#, #lastUpdateDate#, #refreshPeriod#, #refreshFrequency#,
 			#displayOrder#, #publicView#, #rssAllowed#, #entityId#)
     </insert>
 
@@ -90,12 +90,12 @@
 		set name=#name#, description=#desc#, lang=#langue#,
 			last_update_date=#lastUpdateDate#, refresh_period=#refreshPeriod#,
 			refresh_frequency=#refreshFrequency#, display_order=#displayOrder#,
-			public_view=#publicView#, rss_allowed=#rssAllowed#, entity_id=#entityId# 
+			public_view=#publicView#, rss_allowed=#rssAllowed#, entity_id=#entityId#
 		where cat_id=#categoryId#
         </update>
 
 	<update id="updateCategoryOrderById" parameterClass="map">
-		update news_category set display_order=#displayOrder# 
+		update news_category set display_order=#displayOrder#
 		where cat_id=#categoryId#
     </update>
 
@@ -120,7 +120,7 @@
 		delete from news_category_type
 		where cat_id = #categoryId#
 	</delete>
-	
+
 	<select id="getCategoryByTypeOfEntity" resultMap="resultDetail" parameterClass="map">
 		select c.cat_id, c.name, c.description, created_by, creation_date,
 			last_update_date, lang, refresh_period,	refresh_frequency,
@@ -129,36 +129,45 @@
 		where c.entity_id=#entityId# and c.cat_id=ct.cat_id and ct.type_id=#typeId#
 		order by c.name asc
     </select>
-    
+
+    <select id="getCategoryByTypeOfEntityInDiplayOrder" resultMap="resultDetail" parameterClass="map">
+		select c.cat_id, c.name, c.description, created_by, creation_date,
+			last_update_date, lang, refresh_period,	refresh_frequency,
+			display_order,public_view, rss_allowed, entity_id
+		from news_category c, news_category_type ct
+		where c.entity_id=#entityId# and c.cat_id=ct.cat_id and ct.type_id=#typeId#
+		order by c.display_order desc
+    </select>
+
     <select id="getAllCategoryOfType" resultMap="result" parameterClass="map">
 		select c.cat_id, c.name, c.description, rss_allowed, public_view, display_order
 		from news_category c, news_category_type ct
 		where c.cat_id=ct.cat_id and ct.type_id=#value#
 		order by c.name asc
     </select>
-	
-	
+
+
 	<!-- Rattachement aux entités -->
-	
+
 	<select id="getAllCategoryOfEntity" parameterClass="java.lang.Long" resultMap="result">
 		select cat_id, name, description, rss_allowed, public_view, display_order
 		from news_category
 		where entity_id = #value#
 		order by display_order desc
     </select>
-    
+
     <select id="getAvailableCategoriesByUserFromEntity" parameterClass="map" resultMap="result">
 		SELECT c.cat_id, c.name, c.description, c.rss_allowed, c.public_view,
-			c.display_order FROM news_category as c, news_user_role as ur 
+			c.display_order FROM news_category as c, news_user_role as ur
 		WHERE c.cat_id=ur.ctx_id and c.entity_id = #entityId# and ur.ctx_type='C' and ur.is_group='0' and ur.principal=#uid#
 		order by display_order desc
 	</select>
-	
+
 	<select id="getAllCategoriesWithoutEntity" resultMap="result">
 		SELECT cat_id, name, description, rss_allowed, public_view, display_order
 		FROM news_category
 		WHERE entity_id IS NULL or entity_id = 0
 		ORDER BY display_order DESC
     </select>
-	
+
 </sqlMap>
