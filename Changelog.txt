@@ -71,6 +71,10 @@ Version initial de NewsPortlet en version 2.0.6
 	- Modification du nom du répertoire update-esco en custom (plus clair pour la communauté et n'était pas adapté).
 	- Renommage de la propriété deploy.update-esco en deploy.custom dans le fichier build.properties.
 	- Modification du build.xml pour déployer des sources java à partir du custom.
+	- Correction de bug : Résolution du problème d'ordonnancement des catégories dans esup-lecture (ordonné par le name auparavant)
+	- Ajout d'un identifiant au div des pièces jointes dans la page d'affichage d'une annonce
+	- Ajout d'un .trim() sur la saisie des champs de la configuration du serveur CMIS application et entité (évite de saisir une url, login, mot de passe et repositoryId avec des espaces en début et fin de chaîne.
+	- correction de bug : le type d'accès pour l'obtentiion des catégories via le lien unique était l'inverse de ce qu'il devait être.
 
 
 ==== TODO ====
