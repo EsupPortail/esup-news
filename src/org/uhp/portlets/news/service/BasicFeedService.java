@@ -45,7 +45,6 @@ import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.uhp.portlets.news.NewsConstants;
 import org.uhp.portlets.news.dao.CategoryDao;
@@ -727,15 +726,18 @@ public class BasicFeedService implements FeedService, InitializingBean {
 			this.categoryDao.getCategoryByTypeOfEntityInDisplayOrder(type.getTypeId(), entity.getEntityId());
 		for (Category cat : categories) {
 			String access;
+			String path;
 			if (NewsConstants.S_Y.equals(cat.getPublicView())) {
 				access = PUBLIC_ACCESS;
+				path = NewsConstants.PUBLIC_PATH;
 			} else {
 				access = PRIVATE_ACCESS;
+				path = NewsConstants.PRIVATE_PATH;
 			}
 			Integer ttl = getTTL(cat.getRefreshPeriod(), cat.getRefreshFrequency());
 			sbuf.append("<categoryProfile name=\"" + entity.getName() + " - " + cat.getName()
 					+ "\" id=\"" + entity.getEntityId() + cat.getCategoryId() + "\""
-					+ " urlCategory=\"" + feedUrl + NewsConstants.PUBLIC_PATH
+					+ " urlCategory=\"" + feedUrl + path
 					+ "rss?t=" + Constants.EXPORT_CAT_FEED
 					+ "&amp;cID=" + cat.getCategoryId()
 					+ "\" trustCategory=\"yes\" access=\"" + access + "\" ttl=\"" + ttl + "\" timeout=\"" + this.timeout + "\" >\n");
