@@ -18,7 +18,7 @@ import org.uhp.portlets.news.web.validator.AbstractValidator;
  * 20 mai 2010
  */
 public class FilterValidator extends AbstractValidator {
-    
+
     /** Dao of a Filter.*/
     @Autowired
     private FilterDAO filterDao;
@@ -29,13 +29,13 @@ public class FilterValidator extends AbstractValidator {
     public FilterValidator() {
         super();
     }
-    
+
     /**
      * @return <code>TypeForm.class</code>
      * @see org.uhp.portlets.news.web.validator.AbstractValidator#getValidatorSupportClass()
      */
-    @SuppressWarnings("unchecked")
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     protected Class getValidatorSupportClass() {
         return Filter.class;
     }
@@ -49,23 +49,23 @@ public class FilterValidator extends AbstractValidator {
     @Override
     public void validate(final Object obj, final Errors errors) {
         final Filter filter = (Filter) obj;
-        
+
         validateEntity(filter, errors);
         validateAttributes(filter, errors);
         validateFilter(filter, errors);
     }
-    
+
     /**
      * Validation of the entity.
      * @param filter
      * @param errors
      */
-    private void validateEntity(final Filter filter, final Errors errors) {           
-        ValidationUtils.rejectIfEmpty(errors, "entityId", "ENTITY_ID_REQUIRED", 
+    private void validateEntity(final Filter filter, final Errors errors) {
+        ValidationUtils.rejectIfEmpty(errors, "entityId", "ENTITY_ID_REQUIRED",
                 "The association with an entity is required.");
-        
+
     }
-    
+
     /**
      * Validation of the attribute.
      * @param filter
@@ -76,7 +76,7 @@ public class FilterValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmpty(errors, "operator", "FILTER_ATTR_REQUIRED", "You must select a value.");
         ValidationUtils.rejectIfEmpty(errors, "value", "FILTER_VALUE_REQUIRED", "A filter value is required");
     }
-    
+
     /**
      * @param filter
      * @param errors
@@ -97,7 +97,7 @@ public class FilterValidator extends AbstractValidator {
 
     /**
      * Setter du membre filterDao.
-     * @param filterDao la nouvelle valeur du membre filterDao. 
+     * @param filterDao la nouvelle valeur du membre filterDao.
      */
     public void setFilterDao(final FilterDAO filterDao) {
         this.filterDao = filterDao;

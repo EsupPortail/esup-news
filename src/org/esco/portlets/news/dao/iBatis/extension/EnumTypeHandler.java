@@ -17,7 +17,7 @@ import java.sql.SQLException;
  * 18 mai 2010
  * @param <E>
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 public abstract class EnumTypeHandler<E extends Enum> implements TypeHandlerCallback {
     /** Class. */
     private Class<E> enumClass;
@@ -37,7 +37,8 @@ public abstract class EnumTypeHandler<E extends Enum> implements TypeHandlerCall
      * @see com.ibatis.sqlmap.client.extensions.TypeHandlerCallback#
      * setParameter(com.ibatis.sqlmap.client.extensions.ParameterSetter, java.lang.Object)
      */
-    public void setParameter(final ParameterSetter setter, final Object parameter) throws SQLException {
+    @SuppressWarnings("unchecked")
+	public void setParameter(final ParameterSetter setter, final Object parameter) throws SQLException {
         setter.setString(((E) parameter).toString());
     }
 
@@ -57,7 +58,8 @@ public abstract class EnumTypeHandler<E extends Enum> implements TypeHandlerCall
      * @return Object
      * @see com.ibatis.sqlmap.client.extensions.TypeHandlerCallback#valueOf(java.lang.String)
      */
-    public Object valueOf(final String s) {
+    @SuppressWarnings("unchecked")
+	public Object valueOf(final String s) {
         return Enum.valueOf(this.enumClass, s);
     }
 }

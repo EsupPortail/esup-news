@@ -18,7 +18,7 @@ import org.uhp.portlets.news.web.validator.AbstractValidator;
  * 8 févr. 2010
  */
 public class TypeValidator extends AbstractValidator {
-    
+
     /** Dao d'un Type.*/
     @Autowired
     private TypeDAO typeDao;
@@ -29,12 +29,12 @@ public class TypeValidator extends AbstractValidator {
     public TypeValidator() {
         super();
     }
-    
+
     /**
      * @return <code>TypeForm.class</code>
      * @see org.uhp.portlets.news.web.validator.AbstractValidator#getValidatorSupportClass()
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     @Override
     protected Class getValidatorSupportClass() {
         return TypeForm.class;
@@ -49,23 +49,23 @@ public class TypeValidator extends AbstractValidator {
     @Override
     public void validate(final Object obj, final Errors errors) {
         final TypeForm typeF = (TypeForm) obj;
-        
+
         validateName(typeF, errors);
         validateDescription(typeF, errors);
     }
-    
+
     /**
      * Validation du nom du type.
      * @param typeF
      * @param errors
      */
-    private void validateName(final TypeForm typeF, final Errors errors) {           
+    private void validateName(final TypeForm typeF, final Errors errors) {
         ValidationUtils.rejectIfEmpty(errors, "type.name", "TYPE_NAME_REQUIRED", "Name is required.");
         if (this.typeDao.isTypeNameExist(typeF.getType().getName(), typeF.getType().getTypeId())) {
             errors.rejectValue("type.name", "TYPE_NAME_EXISTS", "A type with same name exists yet.");
         }
     }
-    
+
     /**
      * Vérifie la description.
      * @param typeF
@@ -85,7 +85,7 @@ public class TypeValidator extends AbstractValidator {
 
     /**
      * Setter du membre typeDao.
-     * @param typeDao la nouvelle valeur du membre typeDao. 
+     * @param typeDao la nouvelle valeur du membre typeDao.
      */
     public void setTypeDao(final TypeDAO typeDao) {
         this.typeDao = typeDao;

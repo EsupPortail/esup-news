@@ -23,7 +23,9 @@
          <supported-locale>en</supported-locale>
          <supported-locale>fr</supported-locale>
         <portlet-info>
-            <title>News, RSS, Publisher</title>
+            <title>News Publisher</title>
+            <short-title>esup-news</short-title>
+            <keywords>esup-news</keywords>
         </portlet-info>
     </portlet>
 

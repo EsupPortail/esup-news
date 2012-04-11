@@ -1,24 +1,25 @@
 package org.uhp.portlets.news.web.validator;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 import java.util.Calendar;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmis.portlets.news.domain.AttachmentOptions;
@@ -34,6 +35,9 @@ public class ItemValidator extends AbstractValidator {
     @Autowired
     private AttachmentManager am;
 
+    /** FileName validator set by a default value. */
+    private String fileNamePattern = "^[a-zA-Z0-9]+[a-zA-Z0-9-_\\.\u0020]*(\\.[a-zA-Z0-9]{3,4})$";
+
     @Override
     public void validate(final Object obj, final Errors errors) {
         // TODO Auto-generated method stub
@@ -46,7 +50,7 @@ public class ItemValidator extends AbstractValidator {
     // ----------------------------------------------------------------------------
     /**
      * Validate page 1 of the item form.
-     * 
+     *
      * @param obj
      * @param errors
      */
@@ -87,7 +91,7 @@ public class ItemValidator extends AbstractValidator {
             today.set(Calendar.SECOND, 0);
             today.set(Calendar.MILLISECOND, 0);
             if (today.after(endD)) {
-                errors.rejectValue("item.endDate", "ITEM_END_DATE_NOT_BEFORE_TODAY", 
+                errors.rejectValue("item.endDate", "ITEM_END_DATE_NOT_BEFORE_TODAY",
                         "End date should not before today");
             }
         }
@@ -95,7 +99,7 @@ public class ItemValidator extends AbstractValidator {
             Calendar startD = Calendar.getInstance();
             startD.setTime(itemForm.getItem().getStartDate());
             if (startD.after(endD)) {
-                errors.rejectValue("item.endDate", "ITEM_END_DATE_NOT_BEFORE_START_DAY", 
+                errors.rejectValue("item.endDate", "ITEM_END_DATE_NOT_BEFORE_START_DAY",
                         "End date should be after start day");
             }
         }
@@ -105,11 +109,11 @@ public class ItemValidator extends AbstractValidator {
     // -- External attachment page validation
     // --
     // ----------------------------------------------------------------------------
-    
+
     /**
      * Validate page2 of the item form.
      * @param temporaryStoragePath
-     * @param entityID 
+     * @param entityID
      * @param obj
      * @param errors
      */
@@ -126,6 +130,7 @@ public class ItemValidator extends AbstractValidator {
             validateFileType(options, itemF, errors);
         }
         validateFileTitle(itemF, errors);
+        validateFileName(itemF, errors);
     }
 
     public void validateFileSize(final long maxSize, final ItemForm itemForm, final Errors errors) {
@@ -143,6 +148,24 @@ public class ItemValidator extends AbstractValidator {
         }
     }
 
+    public void validateFileName(final ItemForm itemForm, final Errors errors) {
+        MultipartFile file = itemForm.getExternal().getFile();
+
+        Pattern pattern = Pattern.compile(fileNamePattern);
+
+        if (file != null) {
+            if (!pattern.matcher(file.getOriginalFilename()).matches()) {
+                errors.rejectValue("external.file", "ITEM_FILE_WRONG_NAME", "The file's name contains bad characters.");
+            } else if (file.getOriginalFilename().length() > 255) {
+                errors.rejectValue("external.file", "ITEM_FILE_WRONG_NAME_LENGTH", "The file's name is too long");
+            } else if (file.getOriginalFilename().length() < 4) {
+                errors.rejectValue("external.file", "ITEM_FILE_WRONG_NAME_LENGTH", "The file's name is too short");
+            }
+        } else {
+            errors.rejectValue("external.file", "ITEM_FILE_IS_EMPTY", "You must select a file");
+        }
+    }
+
     public void validateFileType(final AttachmentOptions options, final ItemForm itemForm, final Errors errors) {
         MultipartFile file = itemForm.getExternal().getFile();
 
@@ -152,7 +175,7 @@ public class ItemValidator extends AbstractValidator {
         if (file != null) {
             String originalFilename = file.getOriginalFilename();
             if (StringUtils.isNotEmpty(originalFilename)) {
-                String type = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, 
+                String type = originalFilename.substring(originalFilename.lastIndexOf(".") + 1,
                         originalFilename.length());
                 if (StringUtils.isNotEmpty(forbiddenFilesExtensions)) {
                     if (forbiddenFilesExtensions.contains(type)) {
@@ -173,7 +196,7 @@ public class ItemValidator extends AbstractValidator {
             errors.rejectValue("external.title", "ITEM_FILE_TITLE_REQUIRED", "Title is required.");
         }
     }
-    
+
 
     // ---------------------------------------------------------------------------
     // -- internal attachment page validation
@@ -181,7 +204,7 @@ public class ItemValidator extends AbstractValidator {
     // ----------------------------------------------------------------------------
     /**
      * Validate page 3 of the item form.
-     * 
+     *
      * @param obj
      * @param errors
      */
@@ -195,7 +218,7 @@ public class ItemValidator extends AbstractValidator {
     // ----------------------------------------------------------------------------
     /**
      * Validate page 4 of the item form.
-     * 
+     *
      * @param obj
      * @param errors
      */
@@ -207,19 +230,27 @@ public class ItemValidator extends AbstractValidator {
             errors.rejectValue("external.title", "ITEM_FILE_TITLE_REQUIRED", "Title is required.");
         }
     }
-    
+
     // -----------------------------------------------------------------------
 
     /**
-     * @return
+     * @return ItemForm.class
      * @see org.uhp.portlets.news.web.validator.AbstractValidator#getValidatorSupportClass()
      */
-    @SuppressWarnings("unchecked")
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     protected Class getValidatorSupportClass() {
         return ItemForm.class;
     }
-    
+
+	/**
+	 * Setter of attribute fileNamePattern.
+	 * @param fileNamePattern the attribute fileNamePattern to set
+	 */
+	public void setFileNamePattern(final String fileNamePattern) {
+		this.fileNamePattern = fileNamePattern;
+	}
+
 
 
 }

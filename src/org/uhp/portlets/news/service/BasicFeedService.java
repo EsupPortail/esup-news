@@ -143,7 +143,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 			final List<Topic> topics = topicDao.getTopicListByCategory(id);
 			final StringBuilder sbuf = new StringBuilder();
 			sbuf.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<opml version=\"1.0\">\n");
-			sbuf.append("\n<head><title>" + c.getName() + "</title></head>\n\n<body>");
+			sbuf.append("\n<head><title>" + StringEscapeUtils.escapeXml(c.getName()) + "</title></head>\n\n<body>");
 			sbuf.append("<outline text=\"" + StringEscapeUtils.escapeXml(c.getName()) + "\">\n");
 			for (Topic t : topics) {
 				if (NewsConstants.S_Y.equals(t.getRssAllowed())) {
@@ -195,42 +195,59 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 */
 	private StringBuilder getSimpleCategoryFeed(final Long id, final String fType, final String feedUrl)
 	throws DataAccessException {
-		StringBuilder sbuf = new StringBuilder();
+		StringBuilder categoryBuffer = new StringBuilder();
 		try {
 			final Category c = this.categoryDao.getCategoryById(id);
 			final List<Topic> topics = this.topicDao.getTopicListByCategory(c.getCategoryId());
 			Integer ttl = getTTL(c.getRefreshPeriod(), c.getRefreshFrequency());
-			sbuf.append("<category edit=\"all\" name=\"" + StringEscapeUtils.escapeXml(c.getName())
+			categoryBuffer.append("<category edit=\"all\" name=\"" + StringEscapeUtils.escapeXml(c.getName())
 					+ "\" ttl=\"" + ttl.toString() + "\">\n");
-			sbuf.append("<description>" + StringEscapeUtils.escapeXml(c.getDesc()) + "</description>\n");
-			sbuf.append(getCtxVisibility(c.getCategoryId(), NewsConstants.CTX_C));
-			sbuf.append("<sourceProfiles>\n");
+			categoryBuffer.append("<description>" + StringEscapeUtils.escapeXml(c.getDesc()) + "</description>\n");
+			final boolean hasEntitySubs = this.subDao.hasSubscribers(c.getEntityId(), NewsConstants.CTX_E);
+			final boolean hasCatSubs = this.subDao.hasSubscribers(c.getCategoryId(), NewsConstants.CTX_C);
 			String path;
-			boolean hasCatSubs = this.subDao.hasSubscribers(c.getCategoryId(), NewsConstants.CTX_C);
+			// Buffer of the list of categoryProfile from topics
+			StringBuilder topicsBuffer = new StringBuilder();
+			// Buffer of the list of the visibility of categoryProfile from topics
+			StringBuilder topicsVisibilityBuffer = new StringBuilder();
+			final String visibilityEntity = this.getCtxVisibility(c.getEntityId(), NewsConstants.CTX_E);
 			for (final Topic t : topics) {
 				if (NewsConstants.S_Y.equals(t.getRssAllowed())) {
+					final boolean hasTopSubs = this.subDao.hasSubscribers(t.getTopicId(), NewsConstants.CTX_T);
 					ttl = getTTL(t.getRefreshPeriod(), t.getRefreshFrequency());
 					path = (NewsConstants.S_Y.equals(t.getPublicView()))
 					? NewsConstants.PUBLIC_PATH : NewsConstants.PRIVATE_PATH;
 					final String acc = (NewsConstants.S_Y.equals(t.getPublicView()))
 					? PUBLIC_ACCESS : PRIVATE_ACCESS;
-					sbuf.append("<sourceProfile id=\"" + t.getTopicId() + "\" access=\"" + acc
+					topicsBuffer.append("<sourceProfile id=\"" + t.getTopicId() + "\" access=\"" + acc
 							+ "\" name=\"" + StringEscapeUtils.escapeXml(t.getName())
 							+ "\" specificUserContent=\"no\" ttl=\""
 							+ ttl.toString() + "\" url=\"" + feedUrl + path
 							+ "rss?t=" + Constants.EXPORT_TOPIC_FEED
 							+ "&amp;topicID=" + t.getTopicId()
 							+ "&amp;feedType=" + fType + "\"> \n");
-					if (!hasCatSubs && !this.subDao.hasSubscribers(t.getTopicId(), NewsConstants.CTX_T)) {
-						sbuf.append(this.getCtxVisibility(c.getEntityId(), NewsConstants.CTX_E));
+					if (!hasCatSubs && !hasTopSubs) {
+						topicsBuffer.append(visibilityEntity);
 					} else {
-						sbuf.append(this.getCtxVisibility(t.getTopicId(), NewsConstants.CTX_T));
+						String vis = this.getCtxVisibility(t.getTopicId(), NewsConstants.CTX_T);
+						topicsBuffer.append(vis);
+						topicsVisibilityBuffer.append(vis);
 					}
-					sbuf.append("\n</sourceProfile>");
+					topicsBuffer.append("\n</sourceProfile>");
 				}
 			}
-			sbuf.append("</sourceProfiles>\n</category>\n");
-			return sbuf;
+			if (hasCatSubs) {
+				categoryBuffer.append(getCtxVisibility(c.getCategoryId(), NewsConstants.CTX_C));
+			} else if (hasEntitySubs) {
+				categoryBuffer.append(this.getCtxVisibility(c.getEntityId(), NewsConstants.CTX_E));
+			} else {
+				categoryBuffer.append(topicsVisibilityBuffer);
+			}
+
+			categoryBuffer.append("<sourceProfiles>\n");
+			categoryBuffer.append(topicsBuffer);
+			categoryBuffer.append("</sourceProfiles>\n</category>\n");
+			return categoryBuffer;
 		} catch (DataAccessException e) {
 			LOG.error("Error while generating category feed : " + e.getLocalizedMessage());
 			throw e;
@@ -735,7 +752,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 				path = NewsConstants.PRIVATE_PATH;
 			}
 			Integer ttl = getTTL(cat.getRefreshPeriod(), cat.getRefreshFrequency());
-			sbuf.append("<categoryProfile name=\"" + entity.getName() + " - " + cat.getName()
+			sbuf.append("<categoryProfile name=\"" + StringEscapeUtils.escapeXml(entity.getName()) + " - " + StringEscapeUtils.escapeXml(cat.getName())
 					+ "\" id=\"" + entity.getEntityId() + cat.getCategoryId() + "\""
 					+ " urlCategory=\"" + feedUrl + path
 					+ "rss?t=" + Constants.EXPORT_CAT_FEED
