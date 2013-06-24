@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.web;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -44,6 +44,7 @@ import org.esco.portlets.news.domain.FilterType;
 import org.esco.portlets.news.domain.IEscoUser;
 import org.esco.portlets.news.services.EntityManager;
 import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.group.GroupService;
 import org.esupportail.portal.ws.client.PortalGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.support.filter.AbstractFilter;
@@ -84,11 +85,12 @@ public class SubcribeController extends AbstractWizardFormController {
     @Autowired private CategoryManager cm;
     @Autowired private UserManager um;
     @Autowired private SubscribeService subService;
+    @Autowired private GroupService gs;
     /** The Entity Manager. */
-    @Autowired 
+    @Autowired
     private EntityManager em;
     private int nbItemsToShow;
-    
+
     private List<IEscoUser> users;
     private List<PortalGroup> groups;
 
@@ -96,13 +98,13 @@ public class SubcribeController extends AbstractWizardFormController {
      * Constructor of SubcribeController.java.
      */
     public SubcribeController() {
-        setCommandClass(SubForm.class); 
+        setCommandClass(SubForm.class);
         setCommandName(Constants.CMD_SUB_F);
         setAllowDirtyBack(true);
         setAllowDirtyForward(false);
         setSessionForm(true);
         setPageAttribute(Constants.ATT_PAGE);
-        setPages(new String[] {Constants.ACT_ADD_AUDIENCE, Constants.ACT_ADD_AUDIENCE, Constants.ACT_ADD_AUDIENCE}); 
+        setPages(new String[] {Constants.ACT_ADD_AUDIENCE, Constants.ACT_ADD_AUDIENCE, Constants.ACT_ADD_AUDIENCE});
 
     }
 
@@ -124,11 +126,11 @@ public class SubcribeController extends AbstractWizardFormController {
     throws Exception {
         SubForm cmd = (SubForm) command;
         this.subService.addSubscribers(cmd.getSubKey(), cmd.getSubscriber());
-        response.setRenderParameter(Constants.ATT_CTX_ID, String.valueOf(cmd.getSubscriber().getCtxId()));	
+        response.setRenderParameter(Constants.ATT_CTX_ID, String.valueOf(cmd.getSubscriber().getCtxId()));
         response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_AUDIENCE + cmd.getSubscriber().getCtxType());
-        response.setRenderParameter(Constants.ATT_PM, 
+        response.setRenderParameter(Constants.ATT_PM,
                 Integer.toString(RolePerm.valueOf(this.um.getUserRoleInCtx(
-                        cmd.getSubscriber().getCtxId(), cmd.getSubscriber().getCtxType(), 
+                        cmd.getSubscriber().getCtxId(), cmd.getSubscriber().getCtxType(),
                         request.getRemoteUser())).getMask()));
     }
 
@@ -137,12 +139,12 @@ public class SubcribeController extends AbstractWizardFormController {
             ActionRequest request, ActionResponse response,
             Object command, BindException errors)
     throws Exception {
-        SubForm cmd = (SubForm) command;	    	     
+        SubForm cmd = (SubForm) command;
         response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_AUDIENCE + cmd.getSubscriber().getCtxType());
         response.setRenderParameter(Constants.ATT_CTX_ID, String.valueOf(cmd.getSubscriber().getCtxId()));
-        response.setRenderParameter(Constants.ATT_PM, 
+        response.setRenderParameter(Constants.ATT_PM,
                 Integer.toString(RolePerm.valueOf(this.um.getUserRoleInCtx(
-                        cmd.getSubscriber().getCtxId(), cmd.getSubscriber().getCtxType(), 
+                        cmd.getSubscriber().getCtxId(), cmd.getSubscriber().getCtxType(),
                         request.getRemoteUser())).getMask()));
     }
 
@@ -160,7 +162,7 @@ public class SubcribeController extends AbstractWizardFormController {
             case 0: subValidator.validateSearch(subF, errors);        break;
             case 1: subValidator.validateSubscriberKey(subF, errors); break;
             default : break;
-          //if (subF.getNavigate().equals("false")) { //}            
+          //if (subF.getNavigate().equals("false")) { //}
         }
 
     }
@@ -169,7 +171,7 @@ public class SubcribeController extends AbstractWizardFormController {
     protected Object formBackingObject(PortletRequest request) throws Exception {
         SubForm subForm = new SubForm();
         String ctx = request.getParameter(Constants.ATT_CTX);
-        subForm.getSubscriber().setCtxType(ctx); 
+        subForm.getSubscriber().setCtxType(ctx);
         subForm.getSubscriber().setCtxId(PortletRequestUtils.getLongParameter(request, Constants.ATT_CTX_ID));
         return subForm;
     }
@@ -181,11 +183,11 @@ public class SubcribeController extends AbstractWizardFormController {
         boolean isGrp = ((SubForm) command).getSubscriber().getIsGroup() == 1 ? true : false;
         Long ctxId = ((SubForm) command).getSubscriber().getCtxId();
         String ctx = ((SubForm) command).getSubscriber().getCtxType();
-        
+
         if (!this.um.isUserAdminInCtx(ctxId, ctx, request.getRemoteUser())) {
             LOG.warn("SubcribeController:: user " + request.getRemoteUser() + " has no role admin");
             throw new PortletSecurityException(
-                    getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
+                    getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));
         }
 
         Map<String, Object> model = new HashMap<String, Object>();
@@ -198,7 +200,7 @@ public class SubcribeController extends AbstractWizardFormController {
             e = this.em.getEntityById(c.getEntityId());
             model.put(Constants.OBJ_CATEGORY, c);
             model.put(Constants.OBJ_ENTITY, e);
-            
+
         } else if (ctx.equalsIgnoreCase(NewsConstants.CTX_T)) {
             Topic t = this.tm.getTopicById(ctxId);
             Category c = this.cm.getCategoryById(t.getCategoryId());
@@ -207,36 +209,27 @@ public class SubcribeController extends AbstractWizardFormController {
             model.put(Constants.OBJ_CATEGORY, c);
             model.put(Constants.OBJ_ENTITY, e);
         }
-        Map<FilterType, List<Filter>> mapFilters;
-        Set<String> tokens = new HashSet<String>();
-        AbstractFilter filter = null;
+        Map<FilterType, List<Filter>> mapFilters = null;
+        AbstractFilter ldapFilter = null;
         if (e != null) {
             mapFilters = this.em.getFiltersByTypeOfEntity(e.getEntityId());
-            if (!ctx.equalsIgnoreCase(NewsConstants.CTX_E) && isGrp 
-                    && mapFilters.containsKey(FilterType.Group) && !mapFilters.get(FilterType.Group).isEmpty()) {
-                    for (Filter f : mapFilters.get(FilterType.Group)) {
-                        tokens.add(f.getValue() + "%" 
-                                + ((SubForm) command).getToken().replaceAll("\\*+", "%"));
-                    }
-            } else if (isGrp) {
-                tokens.add(((SubForm) command).getToken().replaceAll("\\*+", "%"));
-            } else if (mapFilters.containsKey(FilterType.LDAP) ) {
+            if (mapFilters.containsKey(FilterType.LDAP) ) {
                 if (mapFilters.get(FilterType.LDAP).size() > 1) {
-                    filter = new AndFilter();
+                    ldapFilter = new AndFilter();
                     for (Filter f : mapFilters.get(FilterType.LDAP)) {
                         AbstractFilter ftmp = this.getLdapFilterFromFilter(f);
                         if (ftmp != null) {
-                            ((AndFilter) filter).and(ftmp);
+                            ((AndFilter) ldapFilter).and(ftmp);
                         }
                     }
                 } else if (mapFilters.get(FilterType.LDAP).size() == 1) {
                     Filter f = mapFilters.get(FilterType.LDAP).get(0);
-                    filter = this.getLdapFilterFromFilter(f);
+                    ldapFilter = this.getLdapFilterFromFilter(f);
                 }
             }
         }
-        
-        model.put(Constants.ATT_PM, 
+
+        model.put(Constants.ATT_PM,
                 RolePerm.valueOf(this.um.getUserRoleInCtx(ctxId, ctx, request.getRemoteUser())).getMask());
         String[] keys = ((SubForm) command).getSubKey();
         if (keys != null && keys.length > 0) {
@@ -254,21 +247,27 @@ public class SubcribeController extends AbstractWizardFormController {
         } else if (page == 1) {
             model.put(Constants.CMD_SUB_F, (SubForm) command);
             if (isGrp) {
-                groups = new ArrayList<PortalGroup>();
-                for (String token : tokens) {
-                    groups.addAll(this.subService.searchGroups(token));                  
-                }                    
+                String token = ((SubForm) command).getToken();
+                HashSet<PortalGroup> tmpList = new HashSet<PortalGroup>();
+                if (!ctx.equalsIgnoreCase(NewsConstants.CTX_E) && mapFilters != null && mapFilters.containsKey(FilterType.Group) && !mapFilters.get(FilterType.Group).isEmpty()) {
+                    for (Filter f : mapFilters.get(FilterType.Group)) {
+                    	tmpList.addAll(this.gs.searchPortalGroups(f.getValue(), token));
+                    }
+                } else {
+                	tmpList.addAll(this.gs.searchPortalGroups(token));
+                }
+                groups = new ArrayList<PortalGroup>(tmpList);
                 model.put("grps", groups);
             } else {
-                users = this.um.findPersonsByTokenAndFilter(((SubForm) command).getToken(), filter);
+                users = this.um.findPersonsByTokenAndFilter(((SubForm) command).getToken(), ldapFilter);
                 model.put(Constants.ATT_USER_LIST, users);
             }
             model.put(Constants.ATT_LDAP_DISPLAY, um.getLdapUserService().getSearchDisplayedAttributes());
             model.put(Constants.ATT_NB_ITEM_TO_SHOW, this.nbItemsToShow);
-            model.put(Constants.ERRORS, errors);			
+            model.put(Constants.ERRORS, errors);
         } else if (page == 2) {
             model.put(Constants.CMD_SUB_F, (SubForm) command);
-            List<EscoUser> lu = null;           
+            List<EscoUser> lu = null;
             if (((SubForm) command).getSubscriber().getIsGroup() == 0) {
                 lu = new ArrayList<EscoUser>();
                 for (String id : ((SubForm) command).getSubKey()) {
@@ -284,7 +283,7 @@ public class SubcribeController extends AbstractWizardFormController {
         }
         return model;
     }
-    
+
     /**
      * From a filter return an LDAP filter.
      * @param f
@@ -299,7 +298,7 @@ public class SubcribeController extends AbstractWizardFormController {
         case EQUAL : ftmp = new EqualsFilter(f.getAttribute(), f.getValue()); break;
         case GE : ftmp = new GreaterThanOrEqualsFilter(f.getAttribute(), f.getValue()); break;
         case LE : ftmp = new LessThanOrEqualsFilter(f.getAttribute(), f.getValue()); break;
-        default : ftmp = new WhitespaceWildcardsFilter(f.getAttribute(), f.getValue()); break;    
+        default : ftmp = new WhitespaceWildcardsFilter(f.getAttribute(), f.getValue()); break;
         }
         return ftmp;
     }
@@ -316,8 +315,8 @@ public class SubcribeController extends AbstractWizardFormController {
         response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_NEWSSTORE);
 
     }
-    
-    
+
+
 
     public void setNbItemsToShow(final int nbItemsToShow) {
         this.nbItemsToShow = nbItemsToShow;
@@ -333,7 +332,7 @@ public class SubcribeController extends AbstractWizardFormController {
 
     /**
      * Setter du membre users.
-     * @param users la nouvelle valeur du membre users. 
+     * @param users la nouvelle valeur du membre users.
      */
     public void setUsers(final List<IEscoUser> users) {
         this.users = users;
@@ -349,7 +348,7 @@ public class SubcribeController extends AbstractWizardFormController {
 
     /**
      * Setter du membre groups.
-     * @param groups la nouvelle valeur du membre groups. 
+     * @param groups la nouvelle valeur du membre groups.
      */
     public void setGroups(List<PortalGroup> groups) {
         this.groups = groups;
@@ -363,8 +362,8 @@ public class SubcribeController extends AbstractWizardFormController {
             if (paramName.startsWith(PARAM_TARGET) || paramName.equals(PARAM_FINISH) || paramName.equals(PARAM_FINISH))   {
                 return true;
             }
-        } 
+        }
         return super.isFormSubmission (request);
     }
-    
+
 }

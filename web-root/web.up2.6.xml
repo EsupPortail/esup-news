@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 
-	<display-name>News Publisher</display-name>
+	<display-name>News Publisher Application</display-name>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/context/applicationContext.xml
@@ -62,6 +62,21 @@
 		<servlet-name>ViewRendererServlet</servlet-name>
 		<servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>news</servlet-name>
+		<display-name>news Wrapper</display-name>
+		<description>Automated generated Portlet Wrapper</description>
+		<servlet-class>org.apache.pluto.core.PortletServlet</servlet-class>
+
+		<init-param>
+			<param-name>portlet-class</param-name>
+			<param-value>org.springframework.web.portlet.DispatcherPortlet</param-value>
+		</init-param>
+		<init-param>
+			<param-name>portlet-guid</param-name>
+			<param-value>[APP_NAME].news</param-value>
+		</init-param>
 	</servlet>
 
 	<servlet>
@@ -152,11 +167,11 @@
 		<url-pattern>/WEB-INF/servlet/view</url-pattern>
 	</servlet-mapping>
 
-<!--  	<servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>news</servlet-name>
 		<url-pattern>/news/*</url-pattern>
 	</servlet-mapping>
--->
+
 	<servlet-mapping>
 		<servlet-name>Feed</servlet-name>
 		<url-pattern>/feeds/pub/rss</url-pattern>

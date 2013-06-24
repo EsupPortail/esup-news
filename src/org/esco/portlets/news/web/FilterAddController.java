@@ -43,7 +43,7 @@ public class FilterAddController extends SimpleFormController implements Initial
 
     /** Logger. */
     private static final Log LOG = LogFactory.getLog(FilterAddController.class);
-    
+
     /** Manager d'une Entity. */
     @Autowired
     private EntityManager em;
@@ -56,7 +56,7 @@ public class FilterAddController extends SimpleFormController implements Initial
      */
     public FilterAddController() {
         super();
-        setCommandClass(Filter.class); 
+        setCommandClass(Filter.class);
         setCommandName(Constants.OBJ_FILTER);
         setFormView(Constants.ACT_ADD_FILTER);
         setSuccessView(Constants.ACT_VIEW_FILTERS);
@@ -74,7 +74,7 @@ public class FilterAddController extends SimpleFormController implements Initial
         if (LOG.isTraceEnabled()) {
             LOG.trace("Entering FormBackingObject.");
         }
-        Long entityId = PortletRequestUtils.getLongParameter(request, Constants.ATT_ENTITY_ID); 
+        Long entityId = PortletRequestUtils.getLongParameter(request, Constants.ATT_ENTITY_ID);
         filter.setEntityId(entityId);
         filter.setOperator(FilterOperator.EQUAL);
         return filter;
@@ -87,23 +87,23 @@ public class FilterAddController extends SimpleFormController implements Initial
      * @param errors
      * @throws Exception
      * @see org.springframework.web.portlet.mvc.SimpleFormController#
-     * onSubmitAction(javax.portlet.ActionRequest, javax.portlet.ActionResponse, 
+     * onSubmitAction(javax.portlet.ActionRequest, javax.portlet.ActionResponse,
      * java.lang.Object, org.springframework.validation.BindException)
      */
     @Override
-    protected void onSubmitAction(final ActionRequest request, final ActionResponse response, 
+    protected void onSubmitAction(final ActionRequest request, final ActionResponse response,
             final Object command, final BindException errors) throws Exception {
         final Filter filter = (Filter) command;
         if (LOG.isTraceEnabled()) {
             LOG.trace("Filter given in parameter :" + filter);
         }
-        if (!this.um.isSuperAdmin(request.getRemoteUser())) {            
+        if (!this.um.isSuperAdmin(request.getRemoteUser())) {
             throw new PortletSecurityException(
-                    getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
+                    getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));
         }
-        if (filter.getType().equals(FilterType.Group)) {
-            filter.setOperator(FilterOperator.EQUAL);
-        }
+        /*if (filter.getType().equals(FilterType.Group)) {
+            filter.setOperator(FilterOperator.CONTAINS);
+        }*/
         this.getEm().addFilterToEntity(filter);
         response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_FILTERS);
         response.setRenderParameter(Constants.ATT_ENTITY_ID, String.valueOf(filter.getEntityId()));
@@ -119,19 +119,19 @@ public class FilterAddController extends SimpleFormController implements Initial
      * showForm(javax.portlet.RenderRequest, javax.portlet.RenderResponse, org.springframework.validation.BindException)
      */
     @Override
-    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response, 
+    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response,
             final BindException errors) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Entering show form.");
         }
         ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
-        if (!this.getUm().isSuperAdmin(request.getRemoteUser())) {            
+        if (!this.getUm().isSuperAdmin(request.getRemoteUser())) {
             mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage("news.alert.superUserOnly"));
             throw new ModelAndViewDefiningException(mav);
         }
         return super.showForm(request, response, errors);
     }
-    
+
     /**
      * @param request
      * @param command
@@ -145,10 +145,12 @@ public class FilterAddController extends SimpleFormController implements Initial
     protected Map<String, Object> referenceData(final PortletRequest request, final Object command,
             final Errors errors) throws Exception {
         Filter filter = (Filter) command;
-        Map<String, Object> model = new HashMap<String, Object>();        
+        Map<String, Object> model = new HashMap<String, Object>();
         model.put(Constants.OBJ_ENTITY, this.em.getEntityById(filter.getEntityId()));
         model.put(Constants.ATT_FILTER_TYPE, FilterType.values());
         model.put(Constants.ATT_FILTER_OPERATOR, FilterOperator.values());
+        model.put(Constants.ATT_FILTER_OPERATOR_LDAP, FilterOperator.getLdapOperators());
+        model.put(Constants.ATT_FILTER_OPERATOR_GROUP, FilterOperator.getGroupOperators());
         model.put(Constants.ATT_FILTER_LDAP_ATTRS, this.um.getLdapUserService().getFilterSearchAttributes());
         if (this.um.isSuperAdmin(request.getRemoteUser())) {
             model.put(Constants.ATT_PM, RolePerm.ROLE_ADMIN.getMask());
@@ -172,7 +174,7 @@ public class FilterAddController extends SimpleFormController implements Initial
     throws Exception {
         return null;
     }
-    
+
     /**
      * @param request
      * @param response
@@ -193,7 +195,7 @@ public class FilterAddController extends SimpleFormController implements Initial
     public EntityManager getEm() {
         return em;
     }
-    
+
     /**
      * Getter du membre um.
      * @return <code>UserManager</code> le membre um.
@@ -201,10 +203,10 @@ public class FilterAddController extends SimpleFormController implements Initial
     public UserManager getUm() {
         return um;
     }
-    
+
     /**
      * Setter du membre em.
-     * @param em la nouvelle valeur du membre em. 
+     * @param em la nouvelle valeur du membre em.
      */
     public void setEm(final EntityManager em) {
         this.em = em;
@@ -212,7 +214,7 @@ public class FilterAddController extends SimpleFormController implements Initial
 
     /**
      * Setter du membre um.
-     * @param um la nouvelle valeur du membre um. 
+     * @param um la nouvelle valeur du membre um.
      */
     public void setUm(final UserManager um) {
         this.um = um;
@@ -223,9 +225,9 @@ public class FilterAddController extends SimpleFormController implements Initial
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.getUm(), "The property UserManager um in class " 
+        Assert.notNull(this.getUm(), "The property UserManager um in class "
                 + getClass().getSimpleName() + " must not be null.");
-        Assert.notNull(this.getEm(), "The property EntityManager em in class " 
+        Assert.notNull(this.getEm(), "The property EntityManager em in class "
                 + getClass().getSimpleName() + " must not be null.");
     }
 }

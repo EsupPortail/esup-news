@@ -3,7 +3,7 @@
 <sqlMap namespace="news_filter">
 
 	<typeAlias alias="filter" type="org.esco.portlets.news.domain.Filter" />
-	
+
 	<resultMap class="filter" id="filter_result">
 			<result column="filter_id" property="filterId" />
 			<result column="attribute" property="attribute" />
@@ -12,7 +12,7 @@
 			<result column="type" property="type" />
 			<result column="entity_id" property="entityId"/>
 	</resultMap>
-	
+
 	<insert id="insertFilterOfEntity" parameterClass="filter">
 		<![CDATA[insert into news_filter (attribute, operator, value, type, entity_id)
 		values (#attribute#, #operator#, #value#, #type#, #entityId#)]]>
@@ -20,45 +20,51 @@
 			SELECT LAST_INSERT_ID() AS filter_id
         </selectKey>
     </insert>
-    
+
     <update id="updateFilterById" parameterClass="filter">
 		update news_filter
 		set attribute = #attribute#, operator = #operator#, value = #value#, type = #type#, entity_id = #entityId#
 		where filter_id = #filterId#
     </update>
-    
+
     <select id="getAllFilter" parameterClass="java.lang.Long" resultMap="filter_result">
 		select filter_id, attribute, operator, value, type, entity_id
 		from news_filter
 		order by attribute asc
     </select>
-    
+
     <select id="getFilterListByEntity" parameterClass="java.lang.Long" resultMap="filter_result">
 		select filter_id, attribute, operator, value, type, entity_id
 		from news_filter
 		where entity_id=#value#
 		order by attribute asc
     </select>
-    
+
      <select id="getFilterOfTypeOfEntity" parameterClass="map" resultMap="filter_result">
 		select filter_id, attribute, operator, value, type, entity_id
 		from news_filter
 		where entity_id=#entityId# and type=#type#
 		order by attribute asc
     </select>
-    
+
     <select id="selectFilterById" parameterClass="java.lang.Long" resultMap="filter_result">
 		select filter_id, attribute, operator, value, type, entity_id
 		from news_filter
 		where filter_id=#value#
-    </select> 
-    
+    </select>
+
     <select id="existFilterOfEntity" resultClass="int" parameterClass="filter">
-		SELECT COUNT(filter_id) AS total FROM news_filter 
+		SELECT COUNT(filter_id) AS total FROM news_filter
 		WHERE attribute = #attribute# and operator = #operator# and value = #value#
 		and type = #type# and  entity_id = #entityId#
-	</select> 
-    
+	</select>
+
+	<select id="sameFilterOfEntity" resultClass="int" parameterClass="filter">
+		SELECT COUNT(filter_id) AS total FROM news_filter
+		WHERE attribute = #attribute# and operator = #operator# and value = #value#
+		and type = #type# and  entity_id = #entityId# and entity_id != #entityId#
+	</select>
+
     <delete id="deleteAllFilterOnEntity" parameterClass="java.lang.Long">
 		delete from news_filter
 		where entity_id = #value#
@@ -67,5 +73,5 @@
 		delete from news_filter
 		where filter_id = #filterId# and entity_id = #entityId#
 	</delete>
-	
+
 </sqlMap>

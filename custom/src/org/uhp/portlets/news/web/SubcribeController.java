@@ -44,6 +44,7 @@ import org.esco.portlets.news.domain.FilterType;
 import org.esco.portlets.news.domain.IEscoUser;
 import org.esco.portlets.news.services.EntityManager;
 import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.group.GroupService;
 import org.esupportail.portal.ws.client.PortalGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.support.filter.AbstractFilter;
@@ -85,6 +86,7 @@ public class SubcribeController extends AbstractWizardFormController {
     @Autowired private CategoryManager cm;
     @Autowired private UserManager um;
     @Autowired private SubscribeService subService;
+    @Autowired private GroupService gs;
     /** The Entity Manager. */
     @Autowired
     private EntityManager em;
@@ -208,31 +210,22 @@ public class SubcribeController extends AbstractWizardFormController {
             model.put(Constants.OBJ_CATEGORY, c);
             model.put(Constants.OBJ_ENTITY, e);
         }
-        Map<FilterType, List<Filter>> mapFilters;
-        Set<String> tokens = new HashSet<String>();
-        AbstractFilter filter = null;
+        Map<FilterType, List<Filter>> mapFilters = null;
+        AbstractFilter ldapFilter = null;
         if (e != null) {
             mapFilters = this.em.getFiltersByTypeOfEntity(e.getEntityId());
-            if (!ctx.equalsIgnoreCase(NewsConstants.CTX_E) && isGrp
-                    && mapFilters.containsKey(FilterType.Group) && !mapFilters.get(FilterType.Group).isEmpty()) {
-                    for (Filter f : mapFilters.get(FilterType.Group)) {
-                        tokens.add(f.getValue() + "%"
-                                + ((SubForm) command).getToken().replaceAll("\\*+", "%"));
-                    }
-            } else if (isGrp) {
-                tokens.add(((SubForm) command).getToken().replaceAll("\\*+", "%"));
-            } else if (mapFilters.containsKey(FilterType.LDAP) ) {
+            if (mapFilters.containsKey(FilterType.LDAP) ) {
                 if (mapFilters.get(FilterType.LDAP).size() > 1) {
-                    filter = new OrFilter();
+                    ldapFilter = new OrFilter();
                     for (Filter f : mapFilters.get(FilterType.LDAP)) {
                         AbstractFilter ftmp = this.getLdapFilterFromFilter(f);
                         if (ftmp != null) {
-                            ((OrFilter) filter).or(ftmp);
+                            ((OrFilter) ldapFilter).or(ftmp);
                         }
                     }
                 } else if (mapFilters.get(FilterType.LDAP).size() == 1) {
                     Filter f = mapFilters.get(FilterType.LDAP).get(0);
-                    filter = this.getLdapFilterFromFilter(f);
+                    ldapFilter = this.getLdapFilterFromFilter(f);
                 }
             }
         }
@@ -255,13 +248,19 @@ public class SubcribeController extends AbstractWizardFormController {
         } else if (page == 1) {
             model.put(Constants.CMD_SUB_F, (SubForm) command);
             if (isGrp) {
-                groups = new ArrayList<PortalGroup>();
-                for (String token : tokens) {
-                    groups.addAll(this.subService.searchGroups(token));
+                String token = ((SubForm) command).getToken();
+                HashSet<PortalGroup> tmpList = new HashSet<PortalGroup>();
+                if (!ctx.equalsIgnoreCase(NewsConstants.CTX_E) && mapFilters != null && mapFilters.containsKey(FilterType.Group) && !mapFilters.get(FilterType.Group).isEmpty()) {
+                    for (Filter f : mapFilters.get(FilterType.Group)) {
+                    	tmpList.addAll(this.gs.searchPortalGroups(f.getValue(), token));
+                    }
+                } else {
+                	tmpList.addAll(this.gs.searchPortalGroups(token));
                 }
+                groups = new ArrayList<PortalGroup>(tmpList);
                 model.put("grps", groups);
             } else {
-                users = this.um.findPersonsByTokenAndFilter(((SubForm) command).getToken(), filter);
+                users = this.um.findPersonsByTokenAndFilter(((SubForm) command).getToken(), ldapFilter);
                 model.put(Constants.ATT_USER_LIST, users);
             }
             model.put(Constants.ATT_LDAP_DISPLAY, um.getLdapUserService().getSearchDisplayedAttributes());

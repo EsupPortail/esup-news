@@ -21,12 +21,14 @@ public enum FilterOperator {
     /** */
     NOT_EQUAL("<>"),
     /** */
-    APPROX("~=");
-    
-    
+    APPROX("~="),
+    /** */
+    CONTAINS("∋");
+
+
     /** */
     private String code;
-        
+
     /**
      * Constructeur de l'objet FilterOperator.java.
      * @param code
@@ -45,10 +47,20 @@ public enum FilterOperator {
 
     /**
      * Setter du membre code.
-     * @param code la nouvelle valeur du membre code. 
+     * @param code la nouvelle valeur du membre code.
      */
     public void setCode(final String code) {
         this.code = code;
+    }
+
+    public static FilterOperator[] getLdapOperators() {
+    	FilterOperator tab[] = {FilterOperator.EQUAL, FilterOperator.GE, FilterOperator.LE, FilterOperator.NOT_EQUAL, FilterOperator.APPROX};
+    	return tab;
+    }
+
+    public static FilterOperator[] getGroupOperators() {
+    	FilterOperator tab[] = {FilterOperator.CONTAINS};
+    	return tab;
     }
 
 }

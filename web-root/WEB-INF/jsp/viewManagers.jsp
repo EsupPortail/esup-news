@@ -93,8 +93,7 @@
 					src="<html:imagesPath/>delete.gif" border=0 
 					onClick="return confirm('<fmt:message key="news.alert.delete.user"/>');"/>
 			</d:column>
-
-			<d:setProperty name="paging.banner.placement" value="bottom" />
+			
 			<d:setProperty name="paging.banner.item_name" value="${tit}" />
 			<d:setProperty name="paging.banner.items_name" value="${tit}s" />
 		</d:table>

@@ -8,7 +8,8 @@
 
 
     <portlet>
-        <portlet-name>news</portlet-name>
+        <portlet-name>esup-news</portlet-name>
+        <display-name xml:lang="fr">Publication d'annonces</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
 		<init-param>
 			<name>contextConfigLocation</name>
@@ -20,8 +21,8 @@
             <portlet-mode>view</portlet-mode>
             <portlet-mode>help</portlet-mode>
         </supports>
-         <supported-locale>en</supported-locale>
-         <supported-locale>fr</supported-locale>
+        <supported-locale>en</supported-locale>
+        <supported-locale>fr</supported-locale>
         <portlet-info>
             <title>News Publisher</title>
             <short-title>esup-news</short-title>

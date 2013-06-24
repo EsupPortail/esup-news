@@ -1,5 +1,4 @@
 SET foreign_key_checks = 0;
-
 ALTER TABLE news_user DROP COLUMN user_name;
 ALTER TABLE news_user DROP COLUMN email;
 ALTER TABLE news_item DROP COLUMN post_user_name;
@@ -131,5 +130,4 @@ CREATE TABLE news_entity_cmis_server (
 INSERT INTO `news_sequence` VALUES ('attachment', 1);
 INSERT INTO `news_sequence` VALUES ('attachment_options', 1);
 INSERT INTO `news_sequence` VALUES ('cmis_server', 1);
-
 SET foreign_key_checks = 1;

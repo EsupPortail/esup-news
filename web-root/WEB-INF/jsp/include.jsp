@@ -32,72 +32,70 @@
 <c:set var="portletVersion" value="@NEWS_VERSION@" />
 <c:set var="namespace"><portlet:namespace /></c:set>
 <c:set var="attActivate" value="@NEWS_ATTACHMENTS_ACTIVATION@" />
-<c:set var="compatibility3_2" value="@NEWS_PORTLET_PARAMS_COMPATIBILITY@" />
+<c:set var="portal_compatibility" value="@NEWS_COMPATIBILTY@" />
 <c:set var="portletParamPrefixe" value="" />
+<c:set var="pltc_target" value="" />
 
-<c:if test="${compatibility3_2}">
-<rx:text id="queryString"> <%=request.getQueryString()%>
-</rx:text> <rx:regexp id="pltc_target_regexp">s/(.*)pltc_target=([^&]*)(.*)/$2_/gmi</rx:regexp>
+<c:choose>
+	<c:when test="portal_compatibility == '3_2'" >
+		<rx:text id="queryString"> <%=request.getQueryString()%>
+		</rx:text> <rx:regexp id="pltc_target_regexp">s/(.*)pltc_target=([^&]*)(.*)/$2_/gmi</rx:regexp>
 
-<c:set var="pltc_target">
-<rx:substitute regexp="pltc_target_regexp" text="queryString"/>
-</c:set>
-<c:set var="portletParamPrefixe" value="pltp_" />
-</c:if>
+		<c:set var="pltc_target">
+		<rx:substitute regexp="pltc_target_regexp" text="queryString"/>
+		</c:set>
+		<c:set var="portletParamPrefixe" value="pltp_" />
+	</c:when>
+	<c:when test="not (portal_compatibility == '3_2') and not (portal_compatibility == '2_6')" >
+	<!-- uPortal 4 Compatibility -->
+		<c:set var="portletParamPrefixe" value="pP_" />
+	</c:when>
+</c:choose>
 
 <link rel="stylesheet" href="${ctxPath}/css/news.css" type="text/css" media="screen"/>
 <link rel="stylesheet" href="${ctxPath}/css/portlet.css" type="text/css"/>
-<script type="text/javascript" src="${ctxPath}/scripts/jquery.js"></script>
-<SCRIPT type=text/javascript>
+<script type=text/javascript>
+
 	function slide(id) {
-		var slidingElt = $('#' + id);
-		if (slidingElt.is(':visible')) {
-			 slidingElt.slideUp();
+		var slidingElt = document.getElementById(id);
+		if (slidingElt.style.display == "none" || !slidingElt.style.display) {
+			 slidingElt.style.display="block";
 		} else {
-			 slidingElt.slideDown();
+			slidingElt.style.display="none";
 		}
 	}
 
-	function disableFilterSelect(id, val, bool) {
-		var disableElt = document.getElementById(id);
-		if (val == 'Group'){
-			disableElt.disabled=true;
-			if (bool){
-				disableElt.style.display="none"
-			} else {
-				disableElt.style.display="block";
-			}
-		} else {
-			disableElt.disabled=false;
-			disableElt.style.display="block";
-		}
-	}
-	function enableFilterSelect(id, val) {
-		var disableElt = document.getElementById(id);
+	function disableFilterSelect(id, val) {
+		var ldapElt = document.getElementById(id+"LDAP");
+		var groupElt = document.getElementById(id+"Group");
 		if (val == 'LDAP'){
-			disableElt.disabled=true;
-			disableElt.style.display="none";
+			groupElt.disabled=true;
+			groupElt.style.display='none';
+			ldapElt.disabled=false;
+			ldapElt.style.display='block';
 		} else {
-			disableElt.disabled=false;
-			disableElt.style.display="block";
+			groupElt.disabled=false;
+			groupElt.style.display='block';
+			ldapElt.disabled=true;
+			ldapElt.style.display='none';
 		}
 	}
-	
+
 	function checkAll(theForm) { // check all the checkboxes in the list
   		for (var i=0;i<theForm.elements.length;i++) {
     		var e = theForm.elements[i];
 			var eName = e.name;
     		if (eName != 'allbox' && (e.type.indexOf("checkbox") == 0)) {
-        		e.checked = theForm.allbox.checked;		
+        		e.checked = theForm.allbox.checked;
 			}
-		} 
+		}
 	}
 
 /* Function to clear a form of all it's values */
 	function clearForm(frmObj) {
 		for (var i = 0; i < frmObj.length; i++) {
         	var element = frmObj.elements[i];
-			if(element.type.indexOf("text") == 0 || 
+			if(element.type.indexOf("text") == 0 ||
 				element.type.indexOf("password") == 0) {
 					element.value="";
 			} else if (element.type.indexOf("radio") == 0) {
@@ -110,9 +108,9 @@
 				}
             	element.options[0].selected=true;
 			}
-		} 
+		}
 	}
-	
+
 	function removeInput(name) {
 		var inputs = document.getElementsByTagName('input');
 		for (var i = 0; i < inputs.length; i++){
@@ -124,8 +122,8 @@
 			}
 		}
 	}
-	
-</SCRIPT>
+
+</script>
 <portlet:renderURL var="homeUrl" portletMode="view">
 	<portlet:param name="action" value="newsStore" />
 </portlet:renderURL>

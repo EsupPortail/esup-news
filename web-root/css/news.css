@@ -125,14 +125,14 @@
 	height: 20px;
 	COLOR: #ff9422;
 	margin: 0px;
-	margin-left : 30px; 
+	margin-left : 30px;
 }
 
 .esup-news p.news_T {
 	background: url("../images/icone_theme_p2.gif") no-repeat left;
 	text-indent: 25px;
 	margin: 0px;
-	margin-left : 60px; 
+	margin-left : 60px;
 	height : 20px;
 	COLOR: #009319;
 }
@@ -152,6 +152,8 @@
 	padding: 5px;
 	margin: auto;
 	width: 90%;
+	border-collapse: separate;
+    border-spacing: 1px;
 }
 
 .esup-news table.adm td.news_listA {
@@ -665,7 +667,7 @@
 	padding-right:50px;
 	width:90%;
 }
-	
+
 .esup-news .attachments_buttons {
 	text-align : right;
 	border-style : none;
@@ -686,7 +688,7 @@
 }
 
 .esup-news .first_line td{
-	border-top : 1px solid #FFA500;	
+	border-top : 1px solid #FFA500;
 }
 
 .esup-news .attachments_header {
@@ -712,7 +714,7 @@
 }
 
 .esup-news .clearBoth {
-	clear:both;	
+	clear:both;
 }
 
 .esup-news .internal_attachment_check {
@@ -721,7 +723,7 @@
 
 .esup-news .internal_attachment_table {
 	width : 100%;
-	padding-top:2px;	
+	padding-top:2px;
 }
 .esup-news .internal_attachment_table th{
 	border-top : 1px solid #FFA500;
@@ -741,18 +743,18 @@
 	padding-left:0px;
 }
 .esup-news .internal_attachment_table td..internal_attachment_name {
-	
+
 }
 .esup-news .internal_attachment_table td..internal_attachment_size {
-	
+
 }
 .esup-news .internal_attachment_table td..internal_attachment_date {
-	
+
 }
 
 .esup-news .breadcrumb {
 	background-color: #CCCCCC;
-	padding:2px 5px;	
+	padding:2px 5px;
 	font-weight : bold;
 }
 .esup-news .breadcrumb a {

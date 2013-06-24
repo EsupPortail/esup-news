@@ -19,6 +19,7 @@ import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.uhp.portlets.news.NewsConstants;
+import org.uhp.portlets.news.dao.Constants;
 
 /**
  * Implementation of the Dao.
@@ -27,10 +28,10 @@ import org.uhp.portlets.news.NewsConstants;
  */
 @Repository("filterDao")
 public class FilterDAOImpl extends SqlMapClientDaoSupport implements FilterDAO {
-    
+
     /** Logger. */
     private static final Log LOG = LogFactory.getLog(FilterDAOImpl.class);
-    
+
     /** Constructor.  */
     public FilterDAOImpl() {
         super();
@@ -49,8 +50,8 @@ public class FilterDAOImpl extends SqlMapClientDaoSupport implements FilterDAO {
         }
         return f;
     }
-    
-   
+
+
     /**
      * List of all filters.
      * @return <code>List<Filter></code>
@@ -60,7 +61,7 @@ public class FilterDAOImpl extends SqlMapClientDaoSupport implements FilterDAO {
     public List<Filter> getAllFilters() throws DataAccessException {
         return getSqlMapClientTemplate().queryForList("getAllFilter");
     }
-    
+
     /**
      * Add search filters to the entity.
      * @param filter A list of filters.
@@ -74,7 +75,7 @@ public class FilterDAOImpl extends SqlMapClientDaoSupport implements FilterDAO {
                 getSqlMapClientTemplate().insert("updateFilterById", filter);
             }
         } catch (DataAccessException e) {
-            LOG.warn("EntityDaoImpl:: insertFilterOfEntity : Error : " + e.getMessage()); 
+            LOG.warn("EntityDaoImpl:: insertFilterOfEntity : Error : " + e.getMessage());
             throw e;
         }
     }
@@ -88,7 +89,7 @@ public class FilterDAOImpl extends SqlMapClientDaoSupport implements FilterDAO {
         try {
             getSqlMapClientTemplate().delete("deleteAllFilterOnEntity", entityId);
         } catch (DataAccessException e) {
-            LOG.warn("EntityDaoImpl:: deleteAllFiltersOfEntity : Error : " + e.getMessage()); 
+            LOG.warn("EntityDaoImpl:: deleteAllFiltersOfEntity : Error : " + e.getMessage());
             throw e;
         }
     }
@@ -107,7 +108,7 @@ public class FilterDAOImpl extends SqlMapClientDaoSupport implements FilterDAO {
         try {
             return getSqlMapClientTemplate().delete("deleteFilterOnEntity", params) == 1;
         } catch (DataAccessException e) {
-            LOG.warn("EntityDaoImpl:: deleteFilterOnEntity : Error : " + e.getMessage()); 
+            LOG.warn("EntityDaoImpl:: deleteFilterOnEntity : Error : " + e.getMessage());
             throw e;
         }
     }
@@ -122,23 +123,23 @@ public class FilterDAOImpl extends SqlMapClientDaoSupport implements FilterDAO {
     public List<Filter> getFiltersOfEntity(final Long entityId) throws DataAccessException {
         return getSqlMapClientTemplate().queryForList("getFilterListByEntity", entityId);
     }
-    
+
     /**
      * Returns the list of filters associated to an Entity of a filter type.
      * @param entityId The entity id.
-     * @param type The FilterType. 
+     * @param type The FilterType.
      * @return <code>List<Filter></code>
      * @throws DataAccessException
      */
     @SuppressWarnings("unchecked")
-    public List<Filter> getFiltersOfTypeOfEntity(final Long entityId, final FilterType type) 
+    public List<Filter> getFiltersOfTypeOfEntity(final Long entityId, final FilterType type)
     throws DataAccessException {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(NewsConstants.FILTER_TYPE, type);
-        params.put(NewsConstants.ENTITY_ID, entityId);        
+        params.put(NewsConstants.ENTITY_ID, entityId);
         return getSqlMapClientTemplate().queryForList("getFilterOfTypeOfEntity", params);
     }
-    
+
     /**
      * Return true if the filter already exist.
      * @param filter The filter, the entityId must be set.
@@ -150,8 +151,10 @@ public class FilterDAOImpl extends SqlMapClientDaoSupport implements FilterDAO {
             throw new IllegalArgumentException(
                     "The filter was not initialized correctly, check your filter initialisation.");
         }
-        int i = (Integer) getSqlMapClientTemplate().queryForObject("existFilterOfEntity", filter);
-        return  i > 0;
+        if (filter.getFilterId() == null || filter.getFilterId() < 1) {
+        	return ((Integer) getSqlMapClientTemplate().queryForObject("existFilterOfEntity", filter)) > 0;
+        }
+        return ((Integer) getSqlMapClientTemplate().queryForObject("sameFilterOfEntity", filter)) > 0;
     }
 
 }

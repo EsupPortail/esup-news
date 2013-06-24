@@ -1,6 +1,8 @@
 
 <project name="Esup-News" default="compile" basedir=".">
 
+	<property name="app.compatibility" value="" />
+
 	<property file="build.properties" />
 	<property file="properties/news.properties" />
 
@@ -38,6 +40,7 @@
 	<target name="clean" description="Delete old build directory">
 		<echo message="clean ..." />
 		<delete dir="${build.home}" />
+		<delete dir="${source.tmp}"/>
 	</target>
 
 
@@ -68,6 +71,7 @@
 			<fileset dir="${lib.home}">
 				<include name="*.jar" />
 				<exclude name="portlet-api-1.0.jar" />
+				<exclude name="portlet-api-2.0.jar" />
 				<exclude name="servlet-api.jar" />
 			</fileset>
 		</copy>
@@ -84,11 +88,22 @@
 
 		<copy file="web-root/web.xml" todir="${build.home}/WEB-INF" overwrite="yes" />
 		<if>
-			<equals arg1="${app.compatibility_3_2}" arg2="true" />
+			<equals arg1="${app.compatibility}" arg2="2_6" />
 			<then>
-				<echo message="Deploying uPortal 3.2 compatibility !" />
-				<copy file="web-root/web.up3.2.xml" overwrite="yes" tofile="${build.home}/WEB-INF/web.xml"/>
+				<echo message="Compile in uPortal 2.6 compatibility mode !" />
+				<copy file="web-root/web.up2.6.xml" overwrite="yes" tofile="${build.home}/WEB-INF/web.xml"/>
 			</then>
+			<elseif>
+				<equals arg1="${app.compatibility}" arg2="3_2" />
+				<then>
+			  		<echo message="Compile in uPortal 3.2 compatibility mode !" />
+			  		<copy file="web-root/web.up3.2.xml" overwrite="yes" tofile="${build.home}/WEB-INF/web.xml"/>
+				</then>
+			</elseif>
+
+			<else>
+				<echo message="Compile in  uPortal 4.x compatibility mode !" />
+			</else>
 		</if>
 
 		<replace file="${build.home}/WEB-INF/web.xml" token="[CAS_URL_LOGIN]" value="${cas.url.login}" />
@@ -121,8 +136,7 @@
 		<replace file="${build.home}/WEB-INF/jsp/items.jsp" token="@NEWS_VERSION@" value="${app.version}" />
 
 		<replace file="${build.home}/WEB-INF/jsp/include.jsp" token="@NEWS_ATTACHMENTS_ACTIVATION@" value="${attachments.activate}" />
-
-		<replace file="${build.home}/WEB-INF/jsp/include.jsp" token="@NEWS_PORTLET_PARAMS_COMPATIBILITY@" value="${app.compatibility_3_2}" />
+		<replace file="${build.home}/WEB-INF/jsp/include.jsp" token="@NEWS_COMPATIBILTY@" value="${app.compatibility}" />
 
 		<copy file="properties/news.properties" todir="${build.home}/WEB-INF/context" overwrite="yes" />
 		<replace file="${build.home}/WEB-INF/context/sql-map-config.xml" token="@db_type@" value="${db.type}" />
@@ -160,6 +174,14 @@
 			<transaction src="db/create.sql" />
 		</sql>
 	</target>
+
+	<!-- db-test test access for the NewsPublisher Portlet -->
+		<target name="db-test">
+			<echo message=" Testing database access" />
+			<sql driver="${jdbc.driverClassName}" url="${jdbc.url}" userid="${jdbc.username}" password="${jdbc.password}" classpathref="compile.classpath" print="yes">
+				SELECT * from news_user_role
+			</sql>
+		</target>
 
 	<!-- db-update update tables for the NewsPublisher Portlet. -->
 	<target name="db-update">
@@ -231,9 +253,30 @@
 
 	<target name="deploy" description="Deploy the portlet apps" depends="compile">
 		<echo message="Deploy Portlet..." />
-		<copy todir="${deploy.home}/${app.name}" overwrite="yes" failonerror="false">
-			<fileset dir="${build.home}" />
-		</copy>
+
+		<if>
+			<equals arg1="${app.compatibility}" arg2="2_6" />
+			<then>
+				<copy todir="${deploy.home}/${app.name}" overwrite="yes" failonerror="false">
+					<fileset dir="${build.home}" />
+				</copy>
+			</then>
+			<elseif>
+				<equals arg1="${app.compatibility}" arg2="3_2" />
+				<then>
+					<copy todir="${deploy.home}/${app.name}" overwrite="yes" failonerror="false">
+						<fileset dir="${build.home}" />
+					</copy>
+				</then>
+			</elseif>
+
+			<else>
+				<antcall target="war" />
+				<echo message="War archive generated, now you should run 'ant deployPortletApp -Dmaven.test.skip=true -DportletApp=PATH_TO/${app.name}.war' to deploy the app in the portal." />
+				<echo message="" />
+			</else>
+		</if>
+
 
 		<echo message="*********************************************************" />
 		<echo message="ATTENTION: please ensure that the Webservices esup-portal-ws (just server side) is installed in your portal, you can refer to: http://sourcesup.cru.fr/esup-portal-ws/main/index.html for more information" />

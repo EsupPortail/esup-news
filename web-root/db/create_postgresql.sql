@@ -20,7 +20,7 @@ CREATE TABLE news_type (
   PRIMARY KEY (type_id)
 );
 
-INSERT INTO news_type (type_id,name, description) VALUES 
+INSERT INTO news_type (type_id,name, description) VALUES
 (1,'DEFAULT', 'Type de catégorie par défaut.');
 
 --CREATE SEQUENCE news_filter_filter_id_seq;
@@ -46,7 +46,7 @@ CREATE TABLE news_category (
   creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   last_update_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   lang CHAR(3) default NULL,
-  refresh_period VARCHAR(10) default NULL,  
+  refresh_period VARCHAR(10) default NULL,
   refresh_frequency INTEGER default NULL,
   display_order INTEGER default 0,
   public_view CHAR(1) default '1',
@@ -89,12 +89,12 @@ CREATE TABLE news_role (
   role_id INTEGER NOT NULL,
   role_name VARCHAR(25) NOT NULL default '',
   role_desc_key VARCHAR(100) NOT NULL default '',
-  PRIMARY KEY(role_name) 
+  PRIMARY KEY(role_name)
 );
 
 
 
-INSERT INTO news_role (role_id, role_name, role_desc_key) VALUES 
+INSERT INTO news_role (role_id, role_name, role_desc_key) VALUES
 (1, 'ROLE_USER', 'role.user.desc'),
 (2, 'ROLE_CONTRIBUTOR', 'role.contributor.desc'),
 (3, 'ROLE_EDITOR', 'role.editor.desc'),
@@ -105,7 +105,7 @@ INSERT INTO news_role (role_id, role_name, role_desc_key) VALUES
 CREATE TABLE news_sequence (
   name VARCHAR(30) NOT NULL default '',
   value INTEGER NOT NULL default 0,
-  PRIMARY KEY(name) 
+  PRIMARY KEY(name)
 );
 
 INSERT INTO news_sequence VALUES ('category', 1);
@@ -120,11 +120,11 @@ INSERT INTO news_sequence VALUES ('cmis_server', 1);
 CREATE TABLE news_subscribe_type (
   sub_type VARCHAR(30) NOT NULL default '',
   sub_desc VARCHAR(100) NOT NULL default '',
-  PRIMARY KEY(sub_type) 
+  PRIMARY KEY(sub_type)
 );
 
 
-INSERT INTO news_subscribe_type (sub_type, sub_desc) VALUES 
+INSERT INTO news_subscribe_type (sub_type, sub_desc) VALUES
 ('FORCED_SUB', 'Forced subscriber'),
 ('FREE_SUB', 'User can freely subscribe'),
 ('PRE_SUB', 'users are pre-subscribed');
@@ -135,10 +135,10 @@ CREATE TABLE news_subscribers (
   id INTEGER NOT NULL default 0,
   ctx_id INTEGER  NOT NULL default 0,
   ctx_type CHAR(1) NOT NULL default '',
-  sub_key VARCHAR(150) NOT NULL default '',
+  sub_key VARCHAR(250) NOT NULL default '',
   sub_is_group CHAR(1) NOT NULL default '',
   sub_type VARCHAR(30) NOT NULL default '',
-  PRIMARY KEY(id)  
+  PRIMARY KEY(id)
 ) ;
 
 
@@ -181,8 +181,8 @@ CREATE TABLE news_entity_type (
 );
 
 CREATE TABLE news_category_type (
-       cat_id BIGINT NOT NULL, 
-       type_id BIGINT NOT NULL, 
+       cat_id BIGINT NOT NULL,
+       type_id BIGINT NOT NULL,
        PRIMARY KEY (cat_id, type_id),
        CONSTRAINT category_type_cat_fk FOREIGN KEY (cat_id)
                   REFERENCES news_category (cat_id),
@@ -197,17 +197,17 @@ CREATE TABLE news_user (
   enabled CHAR(1) default NULL,
   register_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   last_access timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY(user_id) 
+  PRIMARY KEY(user_id)
 );
 
 
 
-INSERT INTO news_user (user_id, user_name, email, is_sup_adm, enabled) VALUES 
+INSERT INTO news_user (user_id, user_name, email, is_sup_adm, enabled) VALUES
 ('[SUPER_USER_UID]', '[SUPER_USER_UID]', '[SUPER_USER_EMAIL]', '1',  '1');
 
 
 CREATE TABLE news_user_role (
-  principal VARCHAR(150) NOT NULL default '',
+  principal VARCHAR(250) NOT NULL default '',
   is_group CHAR(1) NOT NULL default '0',
   role_name VARCHAR(25) NOT NULL default '',
   ctx_id INTEGER NOT NULL default 0,
@@ -228,7 +228,7 @@ CREATE TABLE news_attachment (
   path VARCHAR(300),
   insert_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   size INTEGER,
-  PRIMARY KEY (attachment_id)  
+  PRIMARY KEY (attachment_id)
 );
 
 
@@ -237,7 +237,7 @@ CREATE TABLE news_attachment_item (
   attachment_id  INTEGER NOT NULL,
   PRIMARY KEY (item_id, attachment_id),
   CONSTRAINT news_fk FOREIGN KEY (item_id) REFERENCES news_item (item_id),
-  CONSTRAINT attachment_fk FOREIGN KEY (attachment_id) REFERENCES news_attachment (attachment_id) 
+  CONSTRAINT attachment_fk FOREIGN KEY (attachment_id) REFERENCES news_attachment (attachment_id)
 );
 
 
@@ -247,7 +247,7 @@ CREATE TABLE news_attachment_options (
   max_size INTEGER,
   authorized_files_extensions VARCHAR(300),
   forbidden_files_extensions VARCHAR(300),
-  PRIMARY KEY (attachment_options_id)  
+  PRIMARY KEY (attachment_options_id)
 );
 
 
@@ -256,7 +256,7 @@ CREATE TABLE news_entity_attachment_options (
   entity_id  BIGINT NOT NULL,
   PRIMARY KEY (attachment_options_id, entity_id),
   CONSTRAINT options_fk1 FOREIGN KEY (attachment_options_id) REFERENCES news_attachment_options (attachment_options_id),
-  CONSTRAINT options_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id) 
+  CONSTRAINT options_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id)
 );
 
 CREATE TABLE news_cmis_server (
@@ -266,7 +266,7 @@ CREATE TABLE news_cmis_server (
   server_pwd VARCHAR(100),
   server_url VARCHAR(200),
   repository_id VARCHAR(100),
-  PRIMARY KEY (server_id)  
+  PRIMARY KEY (server_id)
 );
 
 CREATE TABLE news_entity_cmis_server (
@@ -274,5 +274,5 @@ CREATE TABLE news_entity_cmis_server (
   entity_id INTEGER NOT NULL,
   PRIMARY KEY (server_id, entity_id),
   CONSTRAINT entity_cmis_server_fk1 FOREIGN KEY (server_id) REFERENCES news_cmis_server (server_id),
-  CONSTRAINT entity_cmis_server_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id) 
+  CONSTRAINT entity_cmis_server_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id)
 );

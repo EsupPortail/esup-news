@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.web;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -79,7 +79,7 @@ public class PermissionController extends AbstractWizardFormController {
     private static final int DEFAULT_NB = 10;
     /** */
     private static final Log LOG = LogFactory.getLog(PermissionController.class);
-    
+
     /** Liste des utilisateurs obtenus par recherche. */
     private List<IEscoUser> users;
     /** */
@@ -93,7 +93,7 @@ public class PermissionController extends AbstractWizardFormController {
     private int nbItemsToShow;
 
     public PermissionController() {
-        setCommandClass(PermForm.class); 
+        setCommandClass(PermForm.class);
         setCommandName(Constants.CMD_PERM);
         setAllowDirtyBack(true);
         setAllowDirtyForward(false);
@@ -101,7 +101,7 @@ public class PermissionController extends AbstractWizardFormController {
         setPageAttribute(Constants.ATT_PAGE);
         setPages(new String[] {Constants.ACT_ADD_PERM, Constants.ACT_ADD_PERM, Constants.ACT_ADD_PERM});
     }
-    
+
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.em, "An EntityManager is required.");
         Assert.notNull(this.cm, "A CategoryManager is required.");
@@ -119,7 +119,7 @@ public class PermissionController extends AbstractWizardFormController {
             Object command, BindException errors)
     throws Exception {
         PermForm permForm = (PermForm) command;
-        IEscoUser u = permForm.getUser();	
+        IEscoUser u = permForm.getUser();
         for (User user : users) {
             if (user.getUserId().equalsIgnoreCase(u.getUserId())) {
                 u.setDisplayName(user.getDisplayName());
@@ -129,7 +129,7 @@ public class PermissionController extends AbstractWizardFormController {
         this.um.addUserCtxRole(permForm.getUser(), permForm.getRole(), permForm.getCtxType(), permForm.getCtxId());
         response.setRenderParameter(Constants.ATT_CTX_ID, String.valueOf(permForm.getCtxId()));
         response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_PERM + permForm.getCtxType());
-        response.setRenderParameter(Constants.ATT_PM, 
+        response.setRenderParameter(Constants.ATT_PM,
                 Integer.toString(RolePerm.valueOf(this.um.getUserRoleInCtx(
                         permForm.getCtxId(), permForm.getCtxType(), request.getRemoteUser())).getMask()));
 
@@ -140,11 +140,11 @@ public class PermissionController extends AbstractWizardFormController {
             ActionRequest request, ActionResponse response,
             Object command, BindException errors)
     throws Exception {
-        PermForm cmd = (PermForm)command;	
+        PermForm cmd = (PermForm)command;
 
-        response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_PERM + cmd.getCtxType());		
+        response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_PERM + cmd.getCtxType());
         response.setRenderParameter(Constants.ATT_CTX_ID, String.valueOf((cmd.getCtxId())));
-        response.setRenderParameter(Constants.ATT_PM, 
+        response.setRenderParameter(Constants.ATT_PM,
                 Integer.toString(RolePerm.valueOf(this.um.getUserRoleInCtx(
                         cmd.getCtxId(), cmd.getCtxType(), request.getRemoteUser())).getMask()));
     }
@@ -175,7 +175,7 @@ public class PermissionController extends AbstractWizardFormController {
     protected Map<String, Object> referenceData(PortletRequest request, Object command, Errors errors, int page) throws Exception {
 
         Long ctxId = StringUtils.defaultIfEmpty(
-                request.getParameter(Constants.ATT_CTX_ID), null) == null ? ((PermForm) command).getCtxId() : 
+                request.getParameter(Constants.ATT_CTX_ID), null) == null ? ((PermForm) command).getCtxId() :
                     Long.valueOf(request.getParameter(Constants.ATT_CTX_ID));
         String ctx = ((PermForm) command).getCtxType();
         boolean isGrp = ((PermForm) command).getIsGroup() == 1 ? true : false;
@@ -183,7 +183,7 @@ public class PermissionController extends AbstractWizardFormController {
         if (!this.um.isUserAdminInCtx(ctxId, ctx, request.getRemoteUser())) {
             LOG.warn("PermissionController:: user " + request.getRemoteUser() + " has no role admin");
             throw new PortletSecurityException(
-                    getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
+                    getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));
         }
         Map<String, Object> model = new HashMap<String, Object>();
         Entity e = null;
@@ -203,56 +203,53 @@ public class PermissionController extends AbstractWizardFormController {
             model.put(Constants.OBJ_ENTITY, e);
         }
         model.put(Constants.ATT_CTX_ID, ctxId);
-        model.put(Constants.ATT_PM, 
+        model.put(Constants.ATT_PM,
                 RolePerm.valueOf(this.um.getUserRoleInCtx(ctxId, ctx, request.getRemoteUser())).getMask());
-        
-        Map<FilterType, List<Filter>> mapFilters;
-        Set<String> tokens = new HashSet<String>();
-        AbstractFilter filter = null;
+
+        Map<FilterType, List<Filter>> mapFilters = null;
+        AbstractFilter ldapFilter = null;
         if (e != null) {
             mapFilters = this.em.getFiltersByTypeOfEntity(e.getEntityId());
-            if (isGrp && mapFilters.containsKey(FilterType.Group) && !mapFilters.get(FilterType.Group).isEmpty()) {
-                    for (Filter f : mapFilters.get(FilterType.Group)) {
-                        tokens.add(f.getValue() + "%" 
-                                + ((SubForm) command).getToken().replaceAll("\\*+", "%"));
-                    }
-            } else if (isGrp) {
-                tokens.add(((SubForm) command).getToken().replaceAll("\\*+", "%"));
-            } else if (mapFilters.containsKey(FilterType.LDAP)) {
+            if (mapFilters.containsKey(FilterType.LDAP)) {
                 if (mapFilters.get(FilterType.LDAP).size() > 1) {
-                    filter = new AndFilter();
+                    ldapFilter = new AndFilter();
                     for (Filter f : mapFilters.get(FilterType.LDAP)) {
                         AbstractFilter ftmp = this.getLdapFilterFromFilter(f);
                         if (ftmp != null) {
-                            ((AndFilter) filter).and(ftmp);
+                            ((AndFilter) ldapFilter).and(ftmp);
                         }
                     }
                 } else if (mapFilters.get(FilterType.LDAP).size() == 1) {
                     Filter f = mapFilters.get(FilterType.LDAP).get(0);
-                    filter = this.getLdapFilterFromFilter(f);
+                    ldapFilter = this.getLdapFilterFromFilter(f);
                 }
             }
         }
-        
 
-        if (page == 0) { 			
+
+        if (page == 0) {
             model.put(Constants.ATT_ROLE_LIST,  RoleEnum.values());
             return model;
-        } else if (page == 1) {	
+        } else if (page == 1) {
             PermForm permForm = (PermForm) command;
             model.put(Constants.ATT_IS_GRP, permForm.getIsGroup());
-            
             if (isGrp) {
-                groups = new ArrayList<PortalGroup>();
-                for (String token : tokens) {
-                    groups.addAll(this.gs.searchPortalGroups(token));                  
-                }                    
+                String token = ((SubForm) command).getToken();
+                HashSet<PortalGroup> tmpList = new HashSet<PortalGroup>();
+                if (mapFilters != null && mapFilters.containsKey(FilterType.Group) && !mapFilters.get(FilterType.Group).isEmpty()) {
+                    for (Filter f : mapFilters.get(FilterType.Group)) {
+                    	tmpList.addAll(this.gs.searchPortalGroups(f.getValue(), token));
+                    }
+                } else {
+                	tmpList.addAll(this.gs.searchPortalGroups(token));
+                }
+                groups = new ArrayList<PortalGroup>(tmpList);
                 model.put("grps", groups);
             } else {
-                users = this.um.findPersonsByTokenAndFilter(((PermForm) command).getToken(), filter);
+                users = this.um.findPersonsByTokenAndFilter(((PermForm) command).getToken(), ldapFilter);
                 model.put(Constants.ATT_USER_LIST, users);
             }
-            
+
             //users = this.um.findPersonsByToken(permForm.getToken());
             if (LOG.isDebugEnabled()) {
                 LOG.debug("List of users found : " + users);
@@ -262,10 +259,10 @@ public class PermissionController extends AbstractWizardFormController {
             model.put(Constants.ATT_LDAP_DISPLAY, um.getLdapUserService().getSearchDisplayedAttributes());
             model.put(Constants.ERRORS, errors);
             return model;
-        } else if (page == 2) {		
-            PermForm pf = (PermForm) command;			
+        } else if (page == 2) {
+            PermForm pf = (PermForm) command;
             if (this.um.isUserRoleExistForContext(
-                    pf.getCtxId(), pf.getCtxType(), pf.getUser().getUserId())) {				
+                    pf.getCtxId(), pf.getCtxType(), pf.getUser().getUserId())) {
                 LOG.warn("Warning : user has already a role in this context !");
                 model.put("oldRole", this.um.getUserRoleInCtx(
                         pf.getCtxId(), pf.getCtxType(), pf.getUser().getUserId()));
@@ -312,7 +309,7 @@ public class PermissionController extends AbstractWizardFormController {
         case EQUAL : ftmp = new EqualsFilter(f.getAttribute(), f.getValue()); break;
         case GE : ftmp = new GreaterThanOrEqualsFilter(f.getAttribute(), f.getValue()); break;
         case LE : ftmp = new LessThanOrEqualsFilter(f.getAttribute(), f.getValue()); break;
-        default : ftmp = new WhitespaceWildcardsFilter(f.getAttribute(), f.getValue()); break;    
+        default : ftmp = new WhitespaceWildcardsFilter(f.getAttribute(), f.getValue()); break;
         }
         return ftmp;
     }
@@ -326,12 +323,12 @@ public class PermissionController extends AbstractWizardFormController {
         for (Enumeration params = request.getParameterNames(); params.hasMoreElements();) {
             String paramName = (String) params.nextElement();
             LOG.debug("Attribut Form : " + paramName);
-            if (paramName.startsWith(PARAM_TARGET) 
-                    || paramName.equals(PARAM_FINISH) 
+            if (paramName.startsWith(PARAM_TARGET)
+                    || paramName.equals(PARAM_FINISH)
                     || paramName.equals(PARAM_FINISH))   {
                 return true;
             }
-        } 
+        }
         return super.isFormSubmission(request);
     }
 

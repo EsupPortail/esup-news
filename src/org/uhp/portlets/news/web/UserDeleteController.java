@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.web;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -53,7 +53,7 @@ public class UserDeleteController extends AbstractController implements Initiali
     }
 
     @Override
-    protected void handleActionRequestInternal(final ActionRequest request, final ActionResponse response) 
+    protected void handleActionRequestInternal(final ActionRequest request, final ActionResponse response)
     throws Exception {
         userId = request.getParameter(Constants.ATT_USER_ID);
         this.deleted = false;
@@ -69,16 +69,15 @@ public class UserDeleteController extends AbstractController implements Initiali
     protected ModelAndView handleRenderRequestInternal(final RenderRequest request, final RenderResponse response)
     throws Exception {
         if (this.deleted) {
-            ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_M);					
+            ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_M);
             mav.addObject(Constants.ATT_USER_LIST, this.um.getAllUsers());
             mav.addObject(Constants.ATT_NB_ITEM_TO_SHOW, this.nbUsersToShow);
             mav.addObject("msg", getMessageSourceAccessor().getMessage(MSG_KEY));
             return mav;
 
         } else {
-            return new ModelAndView("Errors", "message", getMessageSourceAccessor().getMessage(msgKey));  
+            return new ModelAndView("Errors", "message", getMessageSourceAccessor().getMessage(msgKey));
         }
-
     }
 
 

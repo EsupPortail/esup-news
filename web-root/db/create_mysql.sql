@@ -17,7 +17,7 @@ CREATE TABLE news_type (
   CONSTRAINT unique_name UNIQUE (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
-INSERT INTO `news_type` (`type_id`,`name`, `description`) VALUES 
+INSERT INTO `news_type` (`type_id`,`name`, `description`) VALUES
 (1,'DEFAULT', 'Type de catégorie par défaut.');
 
 CREATE TABLE news_filter (
@@ -79,12 +79,12 @@ CREATE TABLE news_role (
   role_id int(11) NOT NULL,
   role_name varchar(25) NOT NULL default '',
   role_desc_key varchar(100) NOT NULL default '',
-  CONSTRAINT  news_role_pk   PRIMARY KEY (role_name)   
+  CONSTRAINT  news_role_pk   PRIMARY KEY (role_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 
 
-INSERT INTO `news_role` (`role_id`, `role_name`, `role_desc_key`) VALUES 
+INSERT INTO `news_role` (`role_id`, `role_name`, `role_desc_key`) VALUES
 (1, 'ROLE_USER', 'role.user.desc'),
 (2, 'ROLE_CONTRIBUTOR', 'role.contributor.desc'),
 (3, 'ROLE_EDITOR', 'role.editor.desc'),
@@ -95,7 +95,7 @@ INSERT INTO `news_role` (`role_id`, `role_name`, `role_desc_key`) VALUES
 CREATE TABLE news_sequence (
   name varchar(30) NOT NULL default '',
   value bigint(20) NOT NULL default '0',
-  CONSTRAINT  news_sequence_pk   PRIMARY KEY (name) 
+  CONSTRAINT  news_sequence_pk   PRIMARY KEY (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 INSERT INTO `news_sequence` VALUES ('category', 1);
@@ -110,11 +110,11 @@ INSERT INTO `news_sequence` VALUES ('cmis_server', 1);
 CREATE TABLE news_subscribe_type (
   sub_type varchar(30) NOT NULL default '',
   sub_desc varchar(100) NOT NULL default '',
-  CONSTRAINT  news_subscribe_type_pk   PRIMARY KEY (sub_type)  
+  CONSTRAINT  news_subscribe_type_pk   PRIMARY KEY (sub_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 
-INSERT INTO news_subscribe_type (`sub_type`, `sub_desc`) VALUES 
+INSERT INTO news_subscribe_type (`sub_type`, `sub_desc`) VALUES
 ('FORCED_SUB', 'Forced subscriber'),
 ('FREE_SUB', 'User can freely subscribe'),
 ('PRE_SUB', 'users are pre-subscribed');
@@ -125,10 +125,10 @@ CREATE TABLE news_subscribers (
   id bigint(20) NOT NULL default '0',
   ctx_id bigint(20)  NOT NULL default '0',
   ctx_type char(1) NOT NULL default '',
-  sub_key varchar(150) NOT NULL default '',
+  sub_key varchar(250) NOT NULL default '',
   sub_is_group char(1) NOT NULL default '',
   sub_type varchar(30) NOT NULL default '',
-  CONSTRAINT  news_subscribers_pk   PRIMARY KEY (id) 
+  CONSTRAINT  news_subscribers_pk   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 
@@ -158,8 +158,8 @@ CREATE TABLE news_topic_item (
   item_id bigint(20) NOT NULL default '0',
   display_order bigint(20) default '0',
   CONSTRAINT  news_topic_item_pk   PRIMARY KEY (`topic_id`,`item_id`),
-  CONSTRAINT  topic_item_fk1       FOREIGN KEY (topic_id) REFERENCES news_topic(topic_id),  
-CONSTRAINT  topic_item_fk2       FOREIGN KEY (item_id) REFERENCES news_item(item_id) 
+  CONSTRAINT  topic_item_fk1       FOREIGN KEY (topic_id) REFERENCES news_topic(topic_id),
+CONSTRAINT  topic_item_fk2       FOREIGN KEY (item_id) REFERENCES news_item(item_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 
@@ -170,17 +170,17 @@ CREATE TABLE news_user (
   enabled char(1) default NULL,
   register_date date,
   last_access datetime,
-  CONSTRAINT  news_user_pk   PRIMARY KEY (user_id)  
+  CONSTRAINT  news_user_pk   PRIMARY KEY (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 
 
-INSERT INTO news_user (`user_id`, `is_sup_adm`, `enabled`) VALUES 
+INSERT INTO news_user (`user_id`, `is_sup_adm`, `enabled`) VALUES
 ('[SUPER_USER_UID]', '1',  '1');
 
 
 CREATE TABLE news_user_role (
-  principal varchar(150) NOT NULL default '',
+  principal varchar(250) NOT NULL default '',
   is_group char(1) NOT NULL default '0',
   role_name varchar(25) NOT NULL default '',
   ctx_id bigint(20) NOT NULL default '0',
@@ -217,9 +217,9 @@ CREATE TABLE news_attachment (
   title varchar(300),
   description text,
   path varchar(300),
-  insert_date date,  
+  insert_date date,
   size BIGINT(20),
-  CONSTRAINT  attachment_pk   PRIMARY KEY (attachment_id)  
+  CONSTRAINT  attachment_pk   PRIMARY KEY (attachment_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 
@@ -230,7 +230,7 @@ CREATE TABLE news_attachment_item (
   INDEX (item_id),
   CONSTRAINT news_fk1 FOREIGN KEY (item_id) REFERENCES news_item (item_id),
   INDEX (attachment_id),
-  CONSTRAINT attachment_fk2 FOREIGN KEY (attachment_id) REFERENCES news_attachment (attachment_id) 
+  CONSTRAINT attachment_fk2 FOREIGN KEY (attachment_id) REFERENCES news_attachment (attachment_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 
@@ -240,7 +240,7 @@ CREATE TABLE news_attachment_options (
   max_size BIGINT(20),
   authorized_files_extensions varchar(300),
   forbidden_files_extensions varchar(300),
-  CONSTRAINT  attachment_options_pk   PRIMARY KEY (attachment_options_id)  
+  CONSTRAINT  attachment_options_pk   PRIMARY KEY (attachment_options_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 
@@ -251,7 +251,7 @@ CREATE TABLE news_entity_attachment_options (
   INDEX (attachment_options_id),
   CONSTRAINT options_fk1 FOREIGN KEY (attachment_options_id) REFERENCES news_attachment_options (attachment_options_id),
   INDEX (entity_id),
-  CONSTRAINT options_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id) 
+  CONSTRAINT options_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 CREATE TABLE news_cmis_server (
@@ -261,7 +261,7 @@ CREATE TABLE news_cmis_server (
   server_pwd varchar(100),
   server_url varchar(200),
   repository_id varchar(100),
-  CONSTRAINT  cmis_server_pk   PRIMARY KEY (server_id)  
+  CONSTRAINT  cmis_server_pk   PRIMARY KEY (server_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 CREATE TABLE news_entity_cmis_server (
@@ -271,5 +271,5 @@ CREATE TABLE news_entity_cmis_server (
   INDEX (server_id),
   CONSTRAINT entity_cmis_server_fk1 FOREIGN KEY (server_id) REFERENCES news_cmis_server (server_id),
   INDEX (entity_id),
-  CONSTRAINT entity_cmis_server_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id) 
+  CONSTRAINT entity_cmis_server_fk2 FOREIGN KEY (entity_id) REFERENCES news_entity (entity_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;

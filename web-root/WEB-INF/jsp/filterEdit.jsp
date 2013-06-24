@@ -5,7 +5,7 @@
 <div id="news_clear"></div>
 <br />
 <fieldset>
-    <legend> <fmt:message key="edit.filter.page.title" /> </legend> 
+    <legend> <fmt:message key="edit.filter.page.title" /> </legend>
 	<html:errors path="filter" fields="true" />
 	<spring:nestedPath path="filter">
 	<form name="${namespace}editFilter" method="post"
@@ -53,9 +53,17 @@
 			<td class="portlet-form-label"><fmt:message
 				key="news.label.filter.operator" /><span class="portlet-msg-alert">*</span></td>
 			<td><spring:bind path="operator">
-			<select id="news_filter_select_op" class="portlet-font" name="<c:out value='${status.expression}'/>"
-					<c:if test="${filter.type eq 'Group'}">disabled</c:if>>
-				<c:forEach var="attr" items="${operatorList}" varStatus="i">
+			<select id="news_filter_select_opLDAP" class="portlet-font" name="<c:out value='${status.expression}'/>"
+					<c:if test="${filter.type eq 'Group'}">disabled style="display:none"</c:if>>
+				<c:forEach var="attr" items="${operatorListLDAP}" varStatus="i">
+					<option value="${attr}" <c:if test="${attr eq status.value}">selected</c:if>>
+						<c:out value="${attr.code}" />
+					</option>
+				</c:forEach>
+			</select>
+			<select id="news_filter_select_opGroup" class="portlet-font" name="<c:out value='${status.expression}'/>"
+					<c:if test="${filter.type eq 'LDAP'}">disabled style="display:none"</c:if>>
+				<c:forEach var="attr" items="${operatorListGROUP}" varStatus="i">
 					<option value="${attr}" <c:if test="${attr eq status.value}">selected</c:if>>
 						<c:out value="${attr.code}" />
 					</option>
@@ -69,7 +77,7 @@
 				key="news.label.filter.criteria" /><span class="portlet-msg-alert">*</span></td>
 			<td><html:input path="value" size="60" maxlength="150" value="${filter.value}"/></td>
 		</tr>
-		
+
 		<tr>
 			<td colspan="2" align="center"><input type="submit"
 				value="<fmt:message key='button.save'/>" /> <input type="button"
@@ -80,7 +88,7 @@
 	</form>
 </spring:nestedPath>
 </fieldset>
-<p/><div class="news_legende"> 
+<p/><div class="news_legende">
 <p class="portlet-font"><fmt:message key="news.label.legende"/> :<br/>
 <span class="portlet-msg-alert">* <fmt:message key="news.legend.field_required"/></span>
 </div></p>

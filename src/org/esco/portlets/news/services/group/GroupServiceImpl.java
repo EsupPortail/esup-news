@@ -5,6 +5,7 @@
  */
 package org.esco.portlets.news.services.group;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -24,11 +25,11 @@ import org.springframework.util.Assert;
  */
 @Service("groupService")
 public class GroupServiceImpl implements InitializingBean, GroupService {
-    
+
 
     /** */
     private static final Log LOG = LogFactory.getLog(GroupServiceImpl.class);
-    
+
     /** */
     private PortalService portalService;
 
@@ -38,21 +39,21 @@ public class GroupServiceImpl implements InitializingBean, GroupService {
     public GroupServiceImpl() {
         super();
     }
-    
+
     /**
      * Looking for groups.
      * @param token
      * @return List<PortalGroup>
-     * @throws PortalErrorException 
+     * @throws PortalErrorException
      */
     public List<PortalGroup> searchPortalGroups(final String token) throws PortalErrorException {
         List<PortalGroup> grps;
 
-        try { 
+        try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Searching groups with token : " + token);
             }
-            grps = portalService.searchGroupsByName(token);     
+            grps = portalService.searchGroupsByName(token);
         } catch (PortalErrorException e) {
             LOG.error(e.getLocalizedMessage());
             throw e;
@@ -62,12 +63,42 @@ public class GroupServiceImpl implements InitializingBean, GroupService {
         }
         return grps;
     }
-    
+
+    /**
+     * Looking for groups, where the filter will be used to make de search on uPortal Groups and the token will be used to filter on returned groups that match the token
+     * @param filter
+     * @param token
+     * @return List<PortalGroup>
+     * @throws PortalErrorException
+     */
+    public List<PortalGroup> searchPortalGroups(final String filter, final String token) throws PortalErrorException {
+        List<PortalGroup> grps = new ArrayList<PortalGroup>();
+
+        try {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Searching groups with filter : " + filter + " and token : " + token);
+            }
+            List<PortalGroup> tmp_grps = portalService.searchGroupsByName(filter);
+            for (PortalGroup pg : tmp_grps){
+            	if (pg.getName().toLowerCase().matches(".*" + token.toLowerCase().replaceAll("\\*+", ".*") + ".*")){
+            		grps.add(pg);
+            	}
+            }
+        } catch (PortalErrorException e) {
+            LOG.error(e.getLocalizedMessage());
+            throw e;
+        } catch (PortalGroupNotFoundException e) {
+            LOG.warn(e.getLocalizedMessage());
+            return null;
+        }
+        return grps;
+    }
+
     /**
      * Looking for a group.
      * @param id
      * @return PortalGroup
-     * @throws PortalErrorException 
+     * @throws PortalErrorException
      */
     public PortalGroup getPortalGroupById(final String id) throws PortalErrorException {
         try {
@@ -80,7 +111,7 @@ public class GroupServiceImpl implements InitializingBean, GroupService {
             return null;
         }
     }
-    
+
     /**
      * Setter of portalService.
      * @param portalService
@@ -103,8 +134,8 @@ public class GroupServiceImpl implements InitializingBean, GroupService {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.getPortalService(), "The property subscriberDao in class " 
+        Assert.notNull(this.getPortalService(), "The property subscriberDao in class "
                 + this.getClass().getSimpleName() + " must not be null.");
     }
-    
+
 }

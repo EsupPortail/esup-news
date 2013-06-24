@@ -5,8 +5,12 @@
  */
 package org.esco.portlets.news.web.validator;
 
+import java.util.Arrays;
+
 import org.esco.portlets.news.dao.FilterDAO;
 import org.esco.portlets.news.domain.Filter;
+import org.esco.portlets.news.domain.FilterOperator;
+import org.esco.portlets.news.domain.FilterType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -84,6 +88,12 @@ public class FilterValidator extends AbstractValidator {
     private void validateFilter(final Filter filter, final Errors errors) {
         if (this.filterDao.isFilterOnEntityExist(filter)) {
             errors.rejectValue("FILTER_EXIST", "A filter with same attributes already exist.");
+        }
+        if (FilterType.Group.equals(filter.getType()) && !Arrays.asList(FilterOperator.getGroupOperators()).contains(filter.getOperator())) {
+        	errors.rejectValue("FILTER_WRONG_OPERATOR", "The selected operator doesn't correspond to the filter type.");
+        }
+        if (FilterType.LDAP.equals(filter.getType()) && !Arrays.asList(FilterOperator.getLdapOperators()).contains(filter.getOperator())) {
+        	errors.rejectValue("FILTER_WRONG_OPERATOR", "The selected operator doesn't correspond to the filter type.");
         }
     }
 

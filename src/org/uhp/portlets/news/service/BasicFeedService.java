@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -89,6 +90,8 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	private static final Log LOG = LogFactory.getLog(BasicFeedService.class);
 	/** */
 	private static final int DEFAULT_TIMEOUT = 3600;
+	/** Group Store key to remove from resource generation when used with user attributes.*/
+	private static final String GROUP_STORE_NAME = "smartldap.";
 
 	/** Entity Dao. **/
 	@Autowired
@@ -404,9 +407,11 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	private String getSub(final List<Subscriber> slist) {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < slist.size(); i++) {
-			if (slist.get(i).getIsGroup() == 1) {
-				sb.append("<group name=\"" + StringEscapeUtils.escapeXml(slist.get(i).getPrincipal())
-						+ "\" />\n");
+			if (slist.get(i).getIsGroup() == 1 && slist.get(i).getPrincipal().contains(GROUP_STORE_NAME)) {
+				String value = StringEscapeUtils.escapeXml(slist.get(i).getPrincipal().replace(GROUP_STORE_NAME, ""));
+				sb.append("<regex attribute=\"isMemberOf\" pattern=\"" + Pattern.quote(value) + "(:.*)?" + "\" />\n");
+			} else if  (slist.get(i).getIsGroup() == 1) {
+				sb.append("<group name=\"" + StringEscapeUtils.escapeXml(slist.get(i).getPrincipal()) + "\" />\n");
 			} else {
 				sb.append("<regular attribute=\"uid\" value=\""
 						+ StringEscapeUtils.escapeXml(slist.get(i).getPrincipal()) + "\" />\n");
