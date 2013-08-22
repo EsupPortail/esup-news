@@ -90,8 +90,6 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	private static final Log LOG = LogFactory.getLog(BasicFeedService.class);
 	/** */
 	private static final int DEFAULT_TIMEOUT = 3600;
-	/** Group Store key to remove from resource generation when used with user attributes.*/
-	private static final String GROUP_STORE_NAME = "smartldap.";
 
 	/** Entity Dao. **/
 	@Autowired
@@ -123,6 +121,9 @@ public class BasicFeedService implements FeedService, InitializingBean {
 
 	/** Timeout in paramters */
 	private Integer timeout;
+
+	/** Group Store key to remove from resource generation when used with user attributes.*/
+	private String groupStoreName = "smartldap.";
 
 	/**
 	 * Constructor of BasicFeedService.java.
@@ -407,8 +408,8 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	private String getSub(final List<Subscriber> slist) {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < slist.size(); i++) {
-			if (slist.get(i).getIsGroup() == 1 && slist.get(i).getPrincipal().contains(GROUP_STORE_NAME)) {
-				String value = StringEscapeUtils.escapeXml(slist.get(i).getPrincipal().replace(GROUP_STORE_NAME, ""));
+			if (slist.get(i).getIsGroup() == 1 && slist.get(i).getPrincipal().contains(groupStoreName)) {
+				String value = StringEscapeUtils.escapeXml(slist.get(i).getPrincipal().replace(groupStoreName, ""));
 				sb.append("<regex attribute=\"isMemberOf\" pattern=\"" + Pattern.quote(value) + "(:.*)?" + "\" />\n");
 			} else if  (slist.get(i).getIsGroup() == 1) {
 				sb.append("<group name=\"" + StringEscapeUtils.escapeXml(slist.get(i).getPrincipal()) + "\" />\n");
@@ -798,6 +799,22 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	}
 
 	/**
+	 * Getter of member groupStoreName.
+	 * @return <code>String</code> the attribute groupStoreName
+	 */
+	public String getGroupStoreName() {
+		return groupStoreName;
+	}
+
+	/**
+	 * Setter of attribute groupStoreName.
+	 * @param groupStoreName the attribute groupStoreName to set
+	 */
+	public void setGroupStoreName(final String groupStoreName) {
+		this.groupStoreName = groupStoreName;
+	}
+
+	/**
 	 * @throws Exception
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
@@ -822,5 +839,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 			LOG.warn("The timeout property isn't set or used, so default timeout " + DEFAULT_TIMEOUT + " will be used.");
 			this.timeout = DEFAULT_TIMEOUT;
 		}
+		Assert.notNull(this.groupStoreName, "The property groupStoreName in class "
+				+ getClass().getSimpleName() + notNull);
 	}
 }
