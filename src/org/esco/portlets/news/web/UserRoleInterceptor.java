@@ -25,7 +25,7 @@ import org.uhp.portlets.news.web.support.Constants;
 public class UserRoleInterceptor extends HandlerInterceptorAdapter {
     /** Logger. */
     private static final Log LOG = LogFactory.getLog(UserRoleInterceptor.class);
-    
+
     /** Manager des Users. */
     @Autowired
     private UserManager um;
@@ -36,8 +36,8 @@ public class UserRoleInterceptor extends HandlerInterceptorAdapter {
     public UserRoleInterceptor() {
         super();
     }
-    
-    
+
+
 
     /**
      * @param request
@@ -46,15 +46,15 @@ public class UserRoleInterceptor extends HandlerInterceptorAdapter {
      * @param modelAndView
      * @throws Exception
      * @see org.springframework.web.portlet.handler.HandlerInterceptorAdapter
-     * #postHandleRender(javax.portlet.RenderRequest, javax.portlet.RenderResponse, java.lang.Object, 
+     * #postHandleRender(javax.portlet.RenderRequest, javax.portlet.RenderResponse, java.lang.Object,
      * org.springframework.web.portlet.ModelAndView)
      */
     @Override
-    public void postHandleRender(final RenderRequest request, final RenderResponse response, 
+    public void postHandleRender(final RenderRequest request, final RenderResponse response,
                 final Object handler, final ModelAndView modelAndView) throws Exception {
-        
-        if (!modelAndView.getModelMap().containsKey(Constants.ATT_PM)) {
-            if (this.um.isSuperAdmin(request.getRemoteUser())) {            
+
+        if (modelAndView != null && modelAndView.getModelMap() !=null && !modelAndView.getModelMap().containsKey(Constants.ATT_PM)) {
+            if (this.um.isSuperAdmin(request.getRemoteUser())) {
                 modelAndView.addObject(Constants.ATT_PM, RolePerm.ROLE_ADMIN.getMask());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("UserRoleInterceptor the user has the role :" + RolePerm.ROLE_ADMIN.getName());
@@ -68,10 +68,10 @@ public class UserRoleInterceptor extends HandlerInterceptorAdapter {
                     break;
                 }
             }
-            LOG.debug("UserRoleInterceptor the user has the role :" 
+            LOG.debug("UserRoleInterceptor the user has the role :"
                     + name);
           }
-        
+
     }
-    
+
 }
