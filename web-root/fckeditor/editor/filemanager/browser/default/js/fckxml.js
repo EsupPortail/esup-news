@@ -95,6 +95,7 @@ FCKXml.prototype.LoadUrl = function( urlToCall, asyncFunctionPointer )
 	}
 
 	oXmlHttp.send( null ) ;
+	try { oXmlHttp.responseType = 'msxml-document'; } catch(e){}
 
 	if ( ! bAsync )
 	{
@@ -120,11 +121,11 @@ FCKXml.prototype.SelectNodes = function( xpath )
 		if ( xPathResult )
 		{
 			var oNode = xPathResult.iterateNext() ;
- 			while( oNode )
- 			{
- 				aNodeArray[aNodeArray.length] = oNode ;
- 				oNode = xPathResult.iterateNext();
- 			}
+			while( oNode )
+			{
+				aNodeArray[aNodeArray.length] = oNode ;
+				oNode = xPathResult.iterateNext();
+			}
 		}
 		return aNodeArray ;
 	}
