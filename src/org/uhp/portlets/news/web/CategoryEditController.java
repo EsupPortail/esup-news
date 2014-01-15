@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.web;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -63,24 +63,24 @@ import org.uhp.portlets.news.web.support.Constants;
  */
 public class CategoryEditController extends SimpleFormController implements InitializingBean {
 
-    /** Logger. */
-    private static final Log LOG = LogFactory.getLog(CategoryEditController.class);
+	/** Logger. */
+	private static final Log LOGGER = LogFactory.getLog(CategoryEditController.class);
 
-    /** Manager of a Category . */
-    @Autowired 
-    private CategoryManager cm;
-    /** Manager of an User. */
-    @Autowired 
-    private UserManager um;
-    /** Manager of an Entity. */
-    @Autowired
-    private EntityManager em;
+	/** Manager of a Category . */
+	@Autowired
+	private CategoryManager cm;
+	/** Manager of an User. */
+	@Autowired
+	private UserManager um;
+	/** Manager of an Entity. */
+	@Autowired
+	private EntityManager em;
 
 	/**
 	 * Constructor of CategoryEditController.java.
 	 */
 	public CategoryEditController() {
-		setCommandClass(CategoryForm.class); 
+		setCommandClass(CategoryForm.class);
 		setCommandName(Constants.CMD_CATEGORY);
 		setFormView(Constants.ACT_EDIT_CAT);
 		setSuccessView(Constants.ACT_VIEW_CAT);
@@ -92,7 +92,7 @@ public class CategoryEditController extends SimpleFormController implements Init
 	 * @param errors
 	 * @throws Exception
 	 * @see org.springframework.web.portlet.mvc.SimpleFormController#
-	 * onSubmitAction(javax.portlet.ActionRequest, javax.portlet.ActionResponse, java.lang.Object, 
+	 * onSubmitAction(javax.portlet.ActionRequest, javax.portlet.ActionResponse, java.lang.Object,
 	 * org.springframework.validation.BindException)
 	 */
 	@Override
@@ -101,85 +101,80 @@ public class CategoryEditController extends SimpleFormController implements Init
 
 		CategoryForm catF = (CategoryForm) command;
 		if (catF != null && catF.getCategory() != null && catF.getCategory().getCategoryId() > 0 ) {
-		    catF.getCategory().setLastUpdateDate(new Date());
+			securityCheck(request.getRemoteUser(), NewsConstants.CTX_C, catF.getCategory().getCategoryId());
+			catF.getCategory().setLastUpdateDate(new Date());
 			this.cm.saveCategory(catF.getCategory());
 			response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_CAT);
-			response.setRenderParameter(Constants.ATT_CAT_ID, 
-			        String.valueOf(catF.getCategory().getCategoryId()));
-			response.setRenderParameter(Constants.ATT_ENTITY_ID, 
-			        String.valueOf(catF.getCategory().getEntityId()));
-			
-			
+			response.setRenderParameter(Constants.ATT_CAT_ID,
+					String.valueOf(catF.getCategory().getCategoryId()));
+			response.setRenderParameter(Constants.ATT_ENTITY_ID,
+					String.valueOf(catF.getCategory().getEntityId()));
+
+
 			// List of type attached to the category passed in the form
-            Set<Long> tIds = new HashSet<Long>();
-            if (catF.getTypesIds() != null && catF.getTypesIds().length > 0) {
-                for (String str : catF.getTypesIds()) {
-                    tIds.add(Long.valueOf(str));
-                }
-            }
-            
-            Set<Long> deltypeIds = new HashSet<Long>();
-            
-            // Ids of authorised types defines in the entity
-            Set<Long> autorizedTypesIds = new HashSet<Long>();
-            for (Type t :  this.getEm().getAutorizedTypesOfEntity(catF.getCategory().getEntityId())) {
-                autorizedTypesIds.add(t.getTypeId());
-            }
-            // remove from database types that aren't anymore attached to the category
-            // and obtains the list of types that aren't already attached to the category
-            for (Type t : this.getCm().getTypesOfCategory(catF.getCategory().getCategoryId())) {
-                if (autorizedTypesIds.contains(t.getTypeId())) {
-                    if (tIds.contains(t.getTypeId())) {
-                        tIds.remove(t.getTypeId());
-                    } else {
-                        deltypeIds.add(t.getTypeId());
-                    }
-                } else {
-                    // remove unauthorised types from the selection
-                    deltypeIds.add(t.getTypeId());
-                    tIds.remove(t.getTypeId());
-                }
-            }
-            
-            // delete link of type that aren't more attached to the category.
-            this.getCm().deleteTypeOfCategory(
-                    new ArrayList<Long>(deltypeIds), catF.getCategory().getCategoryId());
-            
-            // insert types that aren't already attached to the category.
-            if (!tIds.isEmpty()) {
-                this.getCm().addAuthorizedTypeToCategory(new ArrayList<Long>(tIds), catF.getCategory().getCategoryId());
-            }
-			
-			
+			Set<Long> tIds = new HashSet<Long>();
+			if (catF.getTypesIds() != null && catF.getTypesIds().length > 0) {
+				for (String str : catF.getTypesIds()) {
+					tIds.add(Long.valueOf(str));
+				}
+			}
+
+			Set<Long> deltypeIds = new HashSet<Long>();
+
+			// Ids of authorised types defines in the entity
+			Set<Long> autorizedTypesIds = new HashSet<Long>();
+			for (Type t :  this.getEm().getAutorizedTypesOfEntity(catF.getCategory().getEntityId())) {
+				autorizedTypesIds.add(t.getTypeId());
+			}
+			// remove from database types that aren't anymore attached to the category
+			// and obtains the list of types that aren't already attached to the category
+			for (Type t : this.getCm().getTypesOfCategory(catF.getCategory().getCategoryId())) {
+				if (autorizedTypesIds.contains(t.getTypeId())) {
+					if (tIds.contains(t.getTypeId())) {
+						tIds.remove(t.getTypeId());
+					} else {
+						deltypeIds.add(t.getTypeId());
+					}
+				} else {
+					// remove unauthorised types from the selection
+					deltypeIds.add(t.getTypeId());
+					tIds.remove(t.getTypeId());
+				}
+			}
+
+			// delete link of type that aren't more attached to the category.
+			this.getCm().deleteTypeOfCategory(
+					new ArrayList<Long>(deltypeIds), catF.getCategory().getCategoryId());
+
+			// insert types that aren't already attached to the category.
+			if (!tIds.isEmpty()) {
+				this.getCm().addAuthorizedTypeToCategory(new ArrayList<Long>(tIds), catF.getCategory().getCategoryId());
+			}
+
+
 		} else {
-			LOG.error("Category does not exist.");
-            throw new IllegalArgumentException("Category does not exist.");
-        }
-	} 
+			LOGGER.error("Category does not exist.");
+			throw new IllegalArgumentException("Category does not exist.");
+		}
+	}
 
 	/**
-	 * @param request
-	 * @param response
-	 * @param errors
-	 * @return <code>ModelAndView</code>
+	 * @param userId
+	 * @param CtxType
+	 * @param CtxId
 	 * @throws Exception
-	 * @see org.springframework.web.portlet.mvc.SimpleFormController#
-	 * showForm(javax.portlet.RenderRequest, javax.portlet.RenderResponse, 
-	 * org.springframework.validation.BindException)
 	 */
-	@Override
-	protected ModelAndView showForm(final RenderRequest request, final RenderResponse response, 
-	        final BindException errors) throws Exception {            
-		String uid = request.getRemoteUser();
-		Long categoryId = PortletRequestUtils.getLongParameter(request, Constants.ATT_CAT_ID);
-		if (!this.um.isUserAdminInCtx(categoryId, NewsConstants.CTX_C, uid)) {
-		    ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
-			String msg = "you are not authorized for this action";
-			mav.addObject(Constants.MSG_ERROR, msg);
+	private void securityCheck(final String userId, final String CtxType, final Long CtxId) throws Exception {
+		ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
+		if(!this.um.isUserAdminInCtx(CtxId, CtxType, userId)) {
+			if(LOGGER.isWarnEnabled()) {
+				LOGGER.warn("AddCategory:: user " + userId +" has no permission for this action");
+			}
+			mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage("news.alert.notAuthorizedAction"));
 			throw new ModelAndViewDefiningException(mav);
 		}
-		return super.showForm(request, response, errors);
 	}
+
 	/**
 	 * @param request
 	 * @return <code>CategoryForm</code>
@@ -190,20 +185,21 @@ public class CategoryEditController extends SimpleFormController implements Init
 	@Override
 	protected Object formBackingObject(final PortletRequest request) throws Exception {
 		Long categoryId = PortletRequestUtils.getLongParameter(request, Constants.ATT_CAT_ID);
-		CategoryForm catF = new CategoryForm();	
+		CategoryForm catF = new CategoryForm();
 		if (categoryId  != null) {
-			catF.setCategory(this.cm.getCategoryById(categoryId));	 
+			securityCheck(request.getRemoteUser(), NewsConstants.CTX_C, categoryId);
+			catF.setCategory(this.cm.getCategoryById(categoryId));
 			List<String> tIds = new ArrayList<String>();
-            for (Type t : this.getCm().getTypesOfCategory(categoryId)) {
-                tIds.add(String.valueOf(t.getTypeId()));
-            }
-            catF.setTypesIds(tIds.toArray(new String[0]));
-            return catF;
+			for (Type t : this.getCm().getTypesOfCategory(categoryId)) {
+				tIds.add(String.valueOf(t.getTypeId()));
+			}
+			catF.setTypesIds(tIds.toArray(new String[0]));
+			return catF;
 		}
-		
+
 		throw new ObjectRetrievalFailureException(Category.class, null);
 	}
-	
+
 	/**
 	 * @param request
 	 * @param command
@@ -214,17 +210,18 @@ public class CategoryEditController extends SimpleFormController implements Init
 	 * referenceData(javax.portlet.PortletRequest, java.lang.Object, org.springframework.validation.Errors)
 	 */
 	@Override
-	protected Map<String, Object> referenceData(final PortletRequest request, final Object command, 
-	        final Errors errors) throws Exception {
-	    Category category = ((CategoryForm) command).getCategory();
+	protected Map<String, Object> referenceData(final PortletRequest request, final Object command,
+			final Errors errors) throws Exception {
+		Category category = ((CategoryForm) command).getCategory();
+		securityCheck(request.getRemoteUser(), NewsConstants.CTX_C, category.getCategoryId());
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(Constants.ATT_TYPE_LIST, this.getEm().getAutorizedTypesOfEntity(category.getEntityId()));
 		model.put(Constants.OBJ_ENTITY, this.em.getEntityById(category.getEntityId()));
 		model.put(Constants.ATT_PM, RolePerm.valueOf(this.um.getUserRoleInCtx(
-		        category.getCategoryId(), NewsConstants.CTX_C, request.getRemoteUser())).getMask());
+				category.getCategoryId(), NewsConstants.CTX_C, request.getRemoteUser())).getMask());
 		return model;
 	}
-	
+
 	/**
 	 * @param request
 	 * @param binder
@@ -235,11 +232,11 @@ public class CategoryEditController extends SimpleFormController implements Init
 	@Override
 	protected void initBinder(final PortletRequest request, final PortletRequestDataBinder binder)
 	throws Exception {
-		SimpleDateFormat dateFormat = 
-		    new SimpleDateFormat(getMessageSourceAccessor().getMessage(Constants.DATE_FORMAT));
+		SimpleDateFormat dateFormat =
+			new SimpleDateFormat(getMessageSourceAccessor().getMessage(Constants.DATE_FORMAT));
 		binder.registerCustomEditor(Date.class, null, new CustomDateEditor(dateFormat, true));
 	}
-	
+
 	/**
 	 * @param request
 	 * @param response
@@ -265,60 +262,60 @@ public class CategoryEditController extends SimpleFormController implements Init
 	throws Exception {
 		response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_NEWSSTORE);
 	}
-    /**
-     * Getter du membre cm.
-     * @return <code>CategoryManager</code> le membre cm.
-     */
-    public CategoryManager getCm() {
-        return cm;
-    }
-    /**
-     * Setter du membre cm.
-     * @param cm la nouvelle valeur du membre cm. 
-     */
-    public void setCm(final CategoryManager cm) {
-        this.cm = cm;
-    }
-    /**
-     * Getter du membre um.
-     * @return <code>UserManager</code> le membre um.
-     */
-    public UserManager getUm() {
-        return um;
-    }
-    /**
-     * Setter du membre um.
-     * @param um la nouvelle valeur du membre um. 
-     */
-    public void setUm(final UserManager um) {
-        this.um = um;
-    }
-    /**
-     * Getter du membre em.
-     * @return <code>EntityManager</code> le membre em.
-     */
-    public EntityManager getEm() {
-        return em;
-    }
-    /**
-     * Setter du membre em.
-     * @param em la nouvelle valeur du membre em. 
-     */
-    public void setEm(final EntityManager em) {
-        this.em = em;
-    }
+	/**
+	 * Getter du membre cm.
+	 * @return <code>CategoryManager</code> le membre cm.
+	 */
+	public CategoryManager getCm() {
+		return cm;
+	}
+	/**
+	 * Setter du membre cm.
+	 * @param cm la nouvelle valeur du membre cm.
+	 */
+	public void setCm(final CategoryManager cm) {
+		this.cm = cm;
+	}
+	/**
+	 * Getter du membre um.
+	 * @return <code>UserManager</code> le membre um.
+	 */
+	public UserManager getUm() {
+		return um;
+	}
+	/**
+	 * Setter du membre um.
+	 * @param um la nouvelle valeur du membre um.
+	 */
+	public void setUm(final UserManager um) {
+		this.um = um;
+	}
+	/**
+	 * Getter du membre em.
+	 * @return <code>EntityManager</code> le membre em.
+	 */
+	public EntityManager getEm() {
+		return em;
+	}
+	/**
+	 * Setter du membre em.
+	 * @param em la nouvelle valeur du membre em.
+	 */
+	public void setEm(final EntityManager em) {
+		this.em = em;
+	}
 
-    /**
-     * @throws Exception
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.getCm(), "The property CategoryManager cm in class " 
-                + getClass().getSimpleName() + " must not be null.");
-        Assert.notNull(this.getUm(), "The property UserManager um in class " 
-                + getClass().getSimpleName() + " must not be null.");
-        Assert.notNull(this.getEm(), "The property EntityManager em in class " 
-                + getClass().getSimpleName() + " must not be null.");
-    }
+	/**
+	 * @throws Exception
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(this.getCm(), "The property CategoryManager cm in class "
+				+ getClass().getSimpleName() + " must not be null.");
+		Assert.notNull(this.getUm(), "The property UserManager um in class "
+				+ getClass().getSimpleName() + " must not be null.");
+		Assert.notNull(this.getEm(), "The property EntityManager em in class "
+				+ getClass().getSimpleName() + " must not be null.");
+	}
 }
 

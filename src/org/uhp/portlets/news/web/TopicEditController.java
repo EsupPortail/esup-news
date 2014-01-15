@@ -2,18 +2,18 @@
 package org.uhp.portlets.news.web;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -32,6 +32,8 @@ import javax.portlet.RenderResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindException;
@@ -41,15 +43,13 @@ import org.springframework.web.portlet.ModelAndViewDefiningException;
 import org.springframework.web.portlet.bind.PortletRequestUtils;
 import org.springframework.web.portlet.mvc.SimpleFormController;
 import org.uhp.portlets.news.NewsConstants;
-import org.uhp.portlets.news.web.support.Constants;
 import org.uhp.portlets.news.domain.Category;
 import org.uhp.portlets.news.domain.RolePerm;
 import org.uhp.portlets.news.domain.Topic;
 import org.uhp.portlets.news.service.CategoryManager;
 import org.uhp.portlets.news.service.ItemManager;
 import org.uhp.portlets.news.service.TopicManager;
-import org.esco.portlets.news.services.EntityManager;
-import org.esco.portlets.news.services.UserManager;
+import org.uhp.portlets.news.web.support.Constants;
 
 
 public class TopicEditController extends SimpleFormController implements InitializingBean {
@@ -59,14 +59,14 @@ public class TopicEditController extends SimpleFormController implements Initial
 	@Autowired    private ItemManager im = null;
 	@Autowired    private UserManager um = null;
 	/** Manager of an Entity. */
-    @Autowired
-    private EntityManager em;
+	@Autowired
+	private EntityManager em;
 	private Long topicId;
 
 	private static final Log LOGGER = LogFactory.getLog(TopicEditController.class);
 
 	public TopicEditController() {
-		setCommandClass(Topic.class); 
+		setCommandClass(Topic.class);
 		setCommandName(Constants.OBJ_TOPIC);
 		setFormView(Constants.ACT_EDIT_TOPIC);
 		setSuccessView(Constants.ACT_VIEW_TOPIC);
@@ -82,33 +82,34 @@ public class TopicEditController extends SimpleFormController implements Initial
 
 		Topic topic = (Topic) command;
 		if(topic != null) {
+			securityCheck(request.getRemoteUser(), NewsConstants.CTX_T, topic.getTopicId());
 			topic.setLastUpdateDate(new Date());
-			this.tm.saveTopic(topic);				
+			this.tm.saveTopic(topic);
 			response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_CAT);
 			response.setRenderParameter(Constants.ATT_CAT_ID, String.valueOf(topic.getCategoryId()));
 		}
 		else {
 			throw new IllegalArgumentException("Topic does not exist.");
 		}
-	} 
+	}
 
-
-	@Override
-	protected ModelAndView showForm(RenderRequest request, RenderResponse response, BindException errors) throws Exception {
+	private void securityCheck(final String userId, final String CtxType, final Long CtxId) throws Exception {
 		ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
-		if(!this.um.isUserAdminInCtx(this.topicId, NewsConstants.CTX_T, request.getRemoteUser())) {       		
-			String msg = "you are not authorized for this action";
-			mav.addObject(Constants.MSG_ERROR,msg);
+		if(!this.um.isUserAdminInCtx(CtxId, CtxType, userId)) {
+			if(LOGGER.isWarnEnabled()) {
+				LOGGER.warn("EditTopic:: user " + userId +" has no permission for this action");
+			}
+			mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage("news.alert.notAuthorizedAction"));
 			throw new ModelAndViewDefiningException(mav);
 		}
-
-		return super.showForm(request, response, errors);
 	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Object formBackingObject(PortletRequest request)
 	throws Exception {
 		topicId = PortletRequestUtils.getLongParameter(request, Constants.ATT_TOPIC_ID);
+		securityCheck(request.getRemoteUser(), NewsConstants.CTX_T, topicId);
 		Enumeration paramEnum  =request.getParameterNames();
 		while(paramEnum.hasMoreElements()){
 			String paramName = (String)paramEnum.nextElement();
@@ -119,15 +120,16 @@ public class TopicEditController extends SimpleFormController implements Initial
 	}
 
 	@Override
-	protected Map<String,Object> referenceData(PortletRequest request, Object command, Errors errors)  {
+	protected Map<String,Object> referenceData(PortletRequest request, Object command, Errors errors) throws Exception {
 
 		Topic topic = (Topic) command;
+		securityCheck(request.getRemoteUser(), NewsConstants.CTX_T, topic.getTopicId());
 		Map<String,Object> model = new HashMap<String,Object>();
 		Category category = this.cm.getCategoryById(topic.getCategoryId());
-		model.put(Constants.OBJ_CATEGORY, category);     
-        model.put(Constants.OBJ_ENTITY, this.em.getEntityById(category.getEntityId()));
+		model.put(Constants.OBJ_CATEGORY, category);
+		model.put(Constants.OBJ_ENTITY, this.em.getEntityById(category.getEntityId()));
 		model.put(Constants.ATT_PM, RolePerm.valueOf(
-		        this.um.getUserRoleInCtx(topic.getTopicId(), NewsConstants.CTX_T, request.getRemoteUser())).getMask());
+				this.um.getUserRoleInCtx(topic.getTopicId(), NewsConstants.CTX_T, request.getRemoteUser())).getMask());
 		return model;
 	}
 
