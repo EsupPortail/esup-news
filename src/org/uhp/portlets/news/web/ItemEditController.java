@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.web;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -154,20 +154,22 @@ public class ItemEditController extends AbstractWizardFormController implements 
 			response.setRenderParameter(Constants.ATT_CAT_ID, request.getParameter(Constants.ATT_CAT_ID));
 
 		} else {
-		    	final Long tId = ctxTopicId;
+				final Long tId = ctxTopicId;
 			if (tId != null) {
 				response.setRenderParameter(Constants.ATT_TOPIC_ID, String.valueOf(tId));
 				ctxTopicId = null;
+				response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_TOPIC);
+			} else {
+				response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_CAT);
 			}
 			ItemForm itemForm = (ItemForm) command;
 			Long cId = itemForm.getItem().getCategoryId();
 			response.setRenderParameter(Constants.ATT_CAT_ID, String.valueOf(cId));
-			
+
 			response.setRenderParameter(Constants.ATT_STATUS, itemForm.getItem().getStatus());
-			response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_TOPIC);
-			
+
 			request.getPortletSession().setAttribute("_globalCancel", true);
-			
+
 			// clean temporary directory
 			String prefix = itemForm.getItem().getItemId() + "_";
 			this.am.cleanTempStorageDirectory(this.getPortletContext().getRealPath(temporaryStoragePath), prefix);
@@ -203,7 +205,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 			Category category = this.cm.getCategoryById(itemForm.getItem().getCategoryId());
 			Entity entity = this.em.getEntityById(category.getEntityId());
 			String path = this.getPortletContext().getRealPath(temporaryStoragePath);
-			
+
 			itemValidator.validate2ndPart(path, entity.getEntityId().toString(), command, errors);
 			break;
 		case 2:
@@ -244,7 +246,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 				if (aId >= 0 && aId < itemForm.getAttachments().size()) {
 					Attachment attachment = itemForm.getAttachments().get(aId);
 					// update the form
-					String id = StringUtils.isNotEmpty(attachment.getId()) ? attachment.getId() : Integer.toString(aId); 
+					String id = StringUtils.isNotEmpty(attachment.getId()) ? attachment.getId() : Integer.toString(aId);
 					itemForm.setAttachmentToUpdate(id, attachment.getTitle(), attachment.getDesc());
 				}
 
@@ -328,7 +330,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 	throws Exception {
 		// clean temporary directory
 		this.am.cleanTempStorageDirectory(this.getPortletContext().getRealPath(temporaryStoragePath));
-	    
+
 		int currentPage = 0;
 		try {
 			currentPage = getCurrentPage(request);
@@ -359,7 +361,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		ItemForm itemForm = new ItemForm();
 		itemId = PortletRequestUtils.getLongParameter(request, Constants.ATT_ITEM_ID);
 		Item item = this.im.getItemById(itemId);
-				
+
 		itemForm.setItem(item);
 		List<Topic> topics = this.im.getTopicListByItem(itemId);
 		String[] topicIds = new String[topics.size()];
@@ -459,15 +461,15 @@ public class ItemEditController extends AbstractWizardFormController implements 
 			}
 			model.put(Constants.ATT_USER_ID, userUid);
 			model.put(Constants.ATT_PM, perm);
-			
+
 			File directory = new File(this.getPortletContext().getRealPath(temporaryStoragePath));
 			String prefix = itemForm.getItem().getItemId() + "_";
 			File[] listFiles = directory.listFiles(new PrefixFilter(prefix));
 			String filesNames = "";
 			for (File file : listFiles){
-			    String filename = file.getName();
-			    filename = filename.substring(prefix.length(), filename.lastIndexOf("."));
-			    filesNames += filename + ",";
+				String filename = file.getName();
+				filename = filename.substring(prefix.length(), filename.lastIndexOf("."));
+				filesNames += filename + ",";
 			}
 			model.put("existingFileNames", filesNames);
 			return model;
@@ -507,17 +509,17 @@ public class ItemEditController extends AbstractWizardFormController implements 
 				Item selectedItem = im.getItemById(selectedItemId);
 				Topic selectedTopic = tm.getTopicById(topicId);
 				Category selectedCat = cm.getCategoryById(selectedTopic.getCategoryId());
-				
+
 				// existing attachments
 				List<Attachment> attachments = itemForm.getAttachments();
 				Map<String, String> mapIds = new HashMap<String, String>();
 				for(Attachment existingAtt : attachments) {
-				    if(StringUtils.isNotEmpty(existingAtt.getId())) {
-					mapIds.put(existingAtt.getId(), existingAtt.getId());	
-				    }
+					if(StringUtils.isNotEmpty(existingAtt.getId())) {
+					mapIds.put(existingAtt.getId(), existingAtt.getId());
+					}
 				}
 				model.put("existingIdsMap", mapIds);
-				
+
 				List<org.cmis.portlets.news.domain.Attachment> attachmentsListByItem = am
 				.getAttachmentsListByItem(selectedItem.getItemId());
 				model.put("attachments", attachmentsListByItem);
@@ -617,24 +619,24 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		return temporaryStoragePath;
 	}
 
-	
-       /**
-	* 
-	* Implementation of FilenameFilter 
-	* 
+
+	   /**
+	*
+	* Implementation of FilenameFilter
+	*
 	*/
-	public class PrefixFilter implements FilenameFilter { 
-		String prefix; 
-		/** 
-		 * Constructor 
+	public class PrefixFilter implements FilenameFilter {
+		String prefix;
+		/**
+		 * Constructor
 		 * @param prefix a file prefix
 		 */
 		@SuppressWarnings("hiding")
-		public PrefixFilter(String prefix) { 
-		    this.prefix = prefix; 
-		} 
-		public boolean accept(File dir, String name) { 
-		    return name.startsWith(prefix); 
-		} 
+		public PrefixFilter(String prefix) {
+			this.prefix = prefix;
+		}
+		public boolean accept(File dir, String name) {
+			return name.startsWith(prefix);
+		}
 	}
 }

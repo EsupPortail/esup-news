@@ -30,6 +30,7 @@ div.calendar { position: relative; }
   padding: 2px;          /* Make the buttons seem like they're pressing */
   background: url("title-bg.gif") repeat-x 0 100%; color: #000;
   font-weight: bold;
+  display: table-cell;
 }
 
 .calendar .nav {

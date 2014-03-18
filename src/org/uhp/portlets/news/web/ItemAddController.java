@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.web;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -81,7 +81,7 @@ public class ItemAddController extends AbstractWizardFormController implements I
 
 	@Autowired
 	private AttachmentManager am;
-	
+
 	private String temporaryStoragePath;
 	private Long ctxTopicId;
 
@@ -149,25 +149,25 @@ public class ItemAddController extends AbstractWizardFormController implements I
 			response.setRenderParameter(Constants.ATT_CAT_ID, request.getParameter(Constants.ATT_CAT_ID));
 
 		} else {
-		    	ItemForm itemForm = (ItemForm) command;
-		    	final Long tId = ctxTopicId;
+				ItemForm itemForm = (ItemForm) command;
+				final Long tId = ctxTopicId;
 			if (tId != null) {
-			    response.setRenderParameter(Constants.ATT_TOPIC_ID, String.valueOf(tId));
-			    ctxTopicId = null;
-			    String status = itemForm.getItem().getStatus();
-			    if (status == null) {
+				response.setRenderParameter(Constants.ATT_TOPIC_ID, String.valueOf(tId));
+				ctxTopicId = null;
+				String status = itemForm.getItem().getStatus();
+				if (status == null) {
 				response.setRenderParameter(Constants.ATT_STATUS, "1");
-			    } else {
+				} else {
 				response.setRenderParameter(Constants.ATT_STATUS, status);
-			    }
-			    response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_TOPIC);
+				}
+				response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_TOPIC);
 			} else {
-			    Long cId = itemForm.getItem().getCategoryId();
-			    response.setRenderParameter(Constants.ATT_CAT_ID, String.valueOf(cId));
-			    response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_CAT);
+				Long cId = itemForm.getItem().getCategoryId();
+				response.setRenderParameter(Constants.ATT_CAT_ID, String.valueOf(cId));
+				response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_CAT);
 			}
-		    	request.getPortletSession().setAttribute("_globalCancel", true);
-			
+				request.getPortletSession().setAttribute("_globalCancel", true);
+
 			// clean temporary directory
 			String prefix = "user_" + request.getRemoteUser() + "_";
 			this.am.cleanTempStorageDirectory(this.getPortletContext().getRealPath(temporaryStoragePath), prefix);
@@ -182,7 +182,7 @@ public class ItemAddController extends AbstractWizardFormController implements I
 		request.getPortletSession().removeAttribute("_globalCancel");
 		if (!isGlobalCancel) {
 			return showForm(request, response, errors);
-		} 
+		}
 		return super.renderFinish(request, response, command, errors);
 	}
 
@@ -254,12 +254,12 @@ public class ItemAddController extends AbstractWizardFormController implements I
 					// update the form
 					// set the position in the list as ID to retrive the attachment after the update
 					itemForm.setAttachmentToUpdate(Integer.toString(aId), attachment.getTitle(), attachment.getDesc());
-				}   
+				}
 
 			} else {
 				if (errors.getErrorCount() == 0) {
 					if (page == 1) {
-					    	String prefix = "user_" + request.getRemoteUser() + "_";
+							String prefix = "user_" + request.getRemoteUser() + "_";
 						itemForm.addExternalAttachment(this.getPortletContext().getRealPath(temporaryStoragePath), prefix);
 
 					} else if (page == 2) {
@@ -276,7 +276,7 @@ public class ItemAddController extends AbstractWizardFormController implements I
 						} else {
 							itemForm.setTopicId(topicId);
 						}
-						
+
 						if (attachmentIds != null && attachmentIds.length > 0) {
 							for (String id : attachmentIds) {
 								boolean attached = false;
@@ -301,7 +301,7 @@ public class ItemAddController extends AbstractWizardFormController implements I
 						attachmentToUpdate.setTitle(attachmentUpdated.getTitle());
 						attachmentToUpdate.setDesc(attachmentUpdated.getDesc());
 
-						attachmentUpdated = null;	   
+						attachmentUpdated = null;
 					}
 				}
 			}
@@ -333,11 +333,11 @@ public class ItemAddController extends AbstractWizardFormController implements I
 	@Override
 	protected ModelAndView showForm(RenderRequest request, RenderResponse response, BindException errors)
 	throws Exception {
-		
+
 		// clean temporary directory
 		this.am.cleanTempStorageDirectory(this.getPortletContext().getRealPath(temporaryStoragePath));
 
-	    	int currentPage = 0;
+			int currentPage = 0;
 
 		try {
 			currentPage = getCurrentPage(request);
@@ -436,7 +436,13 @@ public class ItemAddController extends AbstractWizardFormController implements I
 
 			if (ctxTopicId != null) {
 				model.put(Constants.OBJ_TOPIC, this.tm.getTopicById(ctxTopicId));
-				perm = RolePerm.valueOf(this.um.getUserRoleInCtx(ctxTopicId, NewsConstants.CTX_T, uid)).getMask();
+				final String p = this.um.getUserRoleInCtx(ctxTopicId, NewsConstants.CTX_T, uid);
+				LOGGER.debug("User " + uid +" Role : " + p + " In topic id " + ctxTopicId);
+				if (p != null) {
+					perm = RolePerm.valueOf(p).getMask();
+				} else {
+					LOGGER.warn("User " + uid + " don't have rights to create Item in Topic context with id " +  ctxTopicId);
+				}
 			}
 			if (cId != null) {
 				final Category category = this.cm.getCategoryById(cId);
@@ -445,7 +451,14 @@ public class ItemAddController extends AbstractWizardFormController implements I
 				model.put(Constants.OBJ_ENTITY, this.em.getEntityById(category.getEntityId()));
 				model.put(Constants.ATT_NB_DAYS, nbDays);
 				model.put(Constants.ATT_T_LIST, this.tm.getTopicListForCategoryByUser(cId, uid));
-				int permTmp = RolePerm.valueOf(this.um.getUserRoleInCtx(cId, NewsConstants.CTX_C, uid)).getMask();
+				final String p = this.um.getUserRoleInCtx(cId, NewsConstants.CTX_C, uid);
+				LOGGER.debug("User " + uid +" Role : " + p + " In cat id " + cId);
+				int permTmp = 0;
+				if (p != null) {
+					permTmp = RolePerm.valueOf(p).getMask();
+				} else {
+					LOGGER.warn("User " + uid + " don't have rights to create Item in category context with id " +  cId);
+				}
 				if (perm < permTmp) {
 					perm = permTmp;
 				}
@@ -475,30 +488,43 @@ public class ItemAddController extends AbstractWizardFormController implements I
 			if (cId != null && cId != -1) {
 				Category category = this.cm.getCategoryById(cId);
 				model.put(Constants.OBJ_CATEGORY, category);
-				perm = RolePerm.valueOf(this.um.getUserRoleInCtx(cId, NewsConstants.CTX_C, userUid)).getMask();
+				final String p = this.um.getUserRoleInCtx(cId, NewsConstants.CTX_C, userUid);
+				LOGGER.debug("User " + userUid +" Role : " + p + " In cat id " + cId);
+				if (p != null) {
+					perm = RolePerm.valueOf(p).getMask();
+				} else {
+					LOGGER.warn("User " + userUid + " don't have rights to create Item in Category context with id " +  cId);
+				}
 			}
 			if (tId != null && tId != -1) {
 				model.put(Constants.OBJ_TOPIC, this.tm.getTopicById(tId));
-				int permTmp = RolePerm.valueOf(this.um.getUserRoleInCtx(tId, NewsConstants.CTX_T, userUid)).getMask();
+				final String p = this.um.getUserRoleInCtx(tId, NewsConstants.CTX_T, userUid);
+				LOGGER.debug("User " + userUid +" Role : " + p + " In topic id " + tId);
+				int permTmp = 0;
+				if (p != null) {
+					perm = RolePerm.valueOf(p).getMask();
+				} else {
+					LOGGER.warn("User " + userUid + " don't have rights to create Item in Topic context with id " +  tId);
+				}
 				if (perm < permTmp) {
 					perm = permTmp;
 				}
 			}
-			
+
 			model.put(Constants.ATT_USER_ID, userUid);
 			model.put(Constants.ATT_PM, perm);
-			
+
 			File directory = new File(this.getPortletContext().getRealPath(temporaryStoragePath));
 			String prefix = "user_" + userUid + "_";
 			File[] listFiles = directory.listFiles(new PrefixFilter(prefix));
 			String filesNames = "";
 			for (File file : listFiles) {
-			    String filename = file.getName();
-			    filename = filename.substring(prefix.length(), filename.lastIndexOf("."));
-			    filesNames += filename + ",";
+				String filename = file.getName();
+				filename = filename.substring(prefix.length(), filename.lastIndexOf("."));
+				filesNames += filename + ",";
 			}
 			model.put("existingFileNames", filesNames);
-			
+
 			return model;
 
 		} else {
@@ -519,11 +545,24 @@ public class ItemAddController extends AbstractWizardFormController implements I
 				Category category = this.cm.getCategoryById(cId);
 				entityId = category.getEntityId();
 				model.put(Constants.OBJ_CATEGORY, category);
-				perm = RolePerm.valueOf(this.um.getUserRoleInCtx(cId, NewsConstants.CTX_C, userUid)).getMask();
+				final String p = this.um.getUserRoleInCtx(cId, NewsConstants.CTX_C, userUid);
+				LOGGER.debug("User " + userUid +" Role : " + p + " In cat id " + cId);
+				if (p != null) {
+					perm = RolePerm.valueOf(p).getMask();
+				} else {
+					LOGGER.warn("User " + userUid + " don't have rights to create Item in Category context with id " +  cId);
+				}
 			}
 			if (tId != null && tId != -1) {
 				model.put(Constants.OBJ_TOPIC, this.tm.getTopicById(tId));
-				int permTmp = RolePerm.valueOf(this.um.getUserRoleInCtx(tId, NewsConstants.CTX_T, userUid)).getMask();
+				final String p = this.um.getUserRoleInCtx(tId, NewsConstants.CTX_T, userUid);
+				LOGGER.debug("User " + userUid +" Role : " + p + " In topic id " + tId);
+				int permTmp = 0;
+				if (p != null) {
+					perm = RolePerm.valueOf(p).getMask();
+				} else {
+					LOGGER.warn("User " + userUid + " don't have rights to create Item in Topic context with id " +  tId);
+				}
 				if (perm < permTmp) {
 					perm = permTmp;
 				}
@@ -541,17 +580,17 @@ public class ItemAddController extends AbstractWizardFormController implements I
 				Item selectedItem = im.getItemById(selectedItemId);
 				Topic selectedTopic = tm.getTopicById(topicId);
 				Category selectedCat = cm.getCategoryById(selectedTopic.getCategoryId());
-				
+
 				// existing attachments
 				List<Attachment> attachments = itemForm.getAttachments();
 				Map<String, String> mapIds = new HashMap<String, String>();
 				for (Attachment existingAtt : attachments) {
-				    if (StringUtils.isNotEmpty(existingAtt.getId())) {
-					mapIds.put(existingAtt.getId(), existingAtt.getId());	
-				    }
+					if (StringUtils.isNotEmpty(existingAtt.getId())) {
+					mapIds.put(existingAtt.getId(), existingAtt.getId());
+					}
 				}
 				model.put("existingIdsMap", mapIds);
-				
+
 				// list of  selected item's attachments
 				List<org.cmis.portlets.news.domain.Attachment> attachmentsListByItem = am
 				.getAttachmentsListByItem(selectedItem.getItemId());
@@ -568,8 +607,12 @@ public class ItemAddController extends AbstractWizardFormController implements I
 				Topic selectedTopic = tm.getTopicById(topicId);
 				Category selectedCat = cm.getCategoryById(selectedTopic.getCategoryId());
 				List<Item> itemsList = new ArrayList<Item>();
-				if (RolePerm.valueOf(this.um.getUserRoleInCtx(topicId, NewsConstants.CTX_T, request.getRemoteUser()))
-						.getMask() > 0) {
+				final String p = this.um.getUserRoleInCtx(topicId, NewsConstants.CTX_T, request.getRemoteUser());
+				LOGGER.debug("User " + request.getRemoteUser() +" Role : " + p + " In topic id " + topicId);
+				if (p == null) {
+					LOGGER.warn("User " + request.getRemoteUser() + " don't have rights to create Item in Topic context with id " +  topicId);
+				}
+				if (p != null && RolePerm.valueOf(p).getMask() > 0) {
 					Long currentItemId = itemForm.getItem().getItemId();
 					for (Item item : items) {
 						if (item.getItemId() != currentItemId) {
@@ -590,8 +633,12 @@ public class ItemAddController extends AbstractWizardFormController implements I
 				List<Topic> topicsList = new ArrayList<Topic>();
 				for (Topic topic : topics) {
 					Long id = topic.getTopicId();
-					if (RolePerm.valueOf(this.um.getUserRoleInCtx(id, NewsConstants.CTX_T, request.getRemoteUser()))
-							.getMask() > 0) {
+					final String p = this.um.getUserRoleInCtx(id, NewsConstants.CTX_T, request.getRemoteUser());
+					LOGGER.debug("User " + request.getRemoteUser() +" Role : " + p + " In topic id " + id);
+					if (p == null) {
+						LOGGER.warn("User " + request.getRemoteUser() + " don't have rights to create Item in Topic context with id " +  id);
+					}
+					if (p != null && RolePerm.valueOf(p).getMask() > 0) {
 						int nb = im.countItemsWithAttachmentByTopic(id);
 						topic.setCount(nb);
 						topicsList.add(topic);
@@ -607,8 +654,12 @@ public class ItemAddController extends AbstractWizardFormController implements I
 				List<Category> categoriesList = new ArrayList<Category>();
 				for (Category category : categories) {
 					Long id = category.getCategoryId();
-					if (RolePerm.valueOf(this.um.getUserRoleInCtx(id, NewsConstants.CTX_C, request.getRemoteUser()))
-							.getMask() > 0) {
+					final String p = this.um.getUserRoleInCtx(id, NewsConstants.CTX_C, request.getRemoteUser());
+					LOGGER.debug("User " + request.getRemoteUser() +" Role : " + p + " In category id " + id);
+					if (p == null) {
+						LOGGER.warn("User " + request.getRemoteUser() + " don't have rights to create Item in category context with id " +  id);
+					}
+					if (p != null && RolePerm.valueOf(p).getMask() > 0) {
 						categoriesList.add(category);
 					}
 				}
@@ -642,26 +693,26 @@ public class ItemAddController extends AbstractWizardFormController implements I
 	public String getTemporaryStoragePath() {
 		return temporaryStoragePath;
 	}
-	
-	
-       /**
-	* 
-	* Implementation of FilenameFilter 
-	* 
+
+
+	/**
+	*
+	* Implementation of FilenameFilter
+	*
 	*/
-	public class PrefixFilter implements FilenameFilter { 
-		String prefix; 
-		/** 
-		 * Constructor 
+	public class PrefixFilter implements FilenameFilter {
+		String prefix;
+		/**
+		 * Constructor
 		 * @param prefix a file prefix
 		 */
 		@SuppressWarnings("hiding")
-		public PrefixFilter(String prefix) { 
-		    this.prefix = prefix; 
-		} 
-		public boolean accept(File dir, String name) { 
-		    return name.startsWith(prefix); 
-		} 
+		public PrefixFilter(String prefix) {
+			this.prefix = prefix;
+		}
+		public boolean accept(File dir, String name) {
+			return name.startsWith(prefix);
+		}
 	}
 
 }
