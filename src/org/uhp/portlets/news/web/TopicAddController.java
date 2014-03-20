@@ -45,7 +45,6 @@ import org.uhp.portlets.news.NewsConstants;
 import org.uhp.portlets.news.domain.Category;
 import org.uhp.portlets.news.domain.RolePerm;
 import org.uhp.portlets.news.domain.Topic;
-import org.uhp.portlets.news.domain.UserRole;
 import org.uhp.portlets.news.service.CategoryManager;
 import org.uhp.portlets.news.service.TopicManager;
 import org.uhp.portlets.news.web.support.Constants;

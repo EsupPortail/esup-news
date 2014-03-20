@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import org.cmis.portlets.news.services.AttachmentManager;
 import org.esco.portlets.news.domain.Entity;
 import org.esco.portlets.news.services.EntityManager;
-import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -64,28 +65,38 @@ import org.uhp.portlets.news.web.ItemForm.Attachment;
 import org.uhp.portlets.news.web.support.Constants;
 import org.uhp.portlets.news.web.validator.ItemValidator;
 
+/**
+ * modified by GIP RECIA - Julien Gribonvald
+ * 4 mai 2012
+ */
 public class ItemEditController extends AbstractWizardFormController implements InitializingBean {
 
-	@Autowired
-	private ItemManager im;
-	@Autowired
-	private TopicManager tm;
-	@Autowired
-	private CategoryManager cm;
-	@Autowired
-	private UserManager um;
-	@Autowired
-	private AttachmentManager am;
+	/** Logger. */
+	private static final Log LOGGER = LogFactory.getLog(ItemEditController.class);
 
+	/** */
+	@Autowired private ItemManager im;
+	/** */
+	@Autowired private TopicManager tm;
+	/** */
+	@Autowired private CategoryManager cm;
+	/** */
+	@Autowired private PermissionManager pm;
+	/** */
+	@Autowired private AttachmentManager am;
 	/** Manager of an Entity. */
-	@Autowired
-	private EntityManager em;
+	@Autowired private EntityManager em;
 
+	/** */
 	private Long itemId;
+	/** */
 	private Long ctxTopicId;
+	/** */
 	private String temporaryStoragePath;
 
-	private static final Log LOGGER = LogFactory.getLog(ItemEditController.class);
+	/**
+	 * Contructor of the object ItemEditController.java.
+	 */
 
 	public ItemEditController() {
 		super();
@@ -97,12 +108,18 @@ public class ItemEditController extends AbstractWizardFormController implements 
 				Constants.ACT_EDIT_INTERNAL_ATTACHMENT, Constants.ACT_EDIT_UPDATE_ATTACHMENT});
 	}
 
+	/**
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
 	public void afterPropertiesSet() throws Exception {
-		if ((this.im == null) || (this.tm == null) || (this.cm == null) || (this.um == null) || (em == null))
+		if ((this.im == null) || (this.tm == null) || (this.cm == null) || (this.am == null) || (em == null) || (pm == null))
 			throw new IllegalArgumentException(
-			"A ItemManager, a TopicManager, a categoryManager, a entityManager and a userManager are required");
+					"A ItemManager, a TopicManager, a categoryManager, a entityManager, a PermissionManager and a AttachmentManager are required");
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#processFinish(javax.portlet.ActionRequest, javax.portlet.ActionResponse, java.lang.Object, org.springframework.validation.BindException)
+	 */
 	@Override
 	protected void processFinish(ActionRequest request, ActionResponse response, Object command, BindException errors)
 	throws Exception {
@@ -135,6 +152,9 @@ public class ItemEditController extends AbstractWizardFormController implements 
 
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#processCancel(javax.portlet.ActionRequest, javax.portlet.ActionResponse, java.lang.Object, org.springframework.validation.BindException)
+	 */
 	@Override
 	protected void processCancel(ActionRequest request, ActionResponse response, Object command, BindException errors)
 	throws Exception {
@@ -176,6 +196,9 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		}
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#renderCancel(javax.portlet.RenderRequest, javax.portlet.RenderResponse, java.lang.Object, org.springframework.validation.BindException)
+	 */
 	@Override
 	protected ModelAndView renderCancel(RenderRequest request, RenderResponse response, Object command,
 			BindException errors) throws Exception {
@@ -184,11 +207,13 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		request.getPortletSession().removeAttribute("_globalCancel");
 		if (!isGlobalCancel) {
 			return showForm(request, response, errors);
-		} else {
-			return super.renderFinish(request, response, command, errors);
 		}
+		return super.renderFinish(request, response, command, errors);
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#validatePage(java.lang.Object, org.springframework.validation.Errors, int, boolean)
+	 */
 	@Override
 	protected void validatePage(Object command, Errors errors, int page, boolean finish) {
 		ItemForm itemForm = (ItemForm) command;
@@ -219,6 +244,9 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		}
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#postProcessPage(javax.portlet.ActionRequest, java.lang.Object, org.springframework.validation.Errors, int)
+	 */
 	@Override
 	protected void postProcessPage(javax.portlet.ActionRequest request, Object command, Errors errors, int page) {
 		ItemForm itemForm = (ItemForm) command;
@@ -316,15 +344,20 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		}
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#getTargetPage(javax.portlet.PortletRequest, java.lang.Object, org.springframework.validation.Errors, int)
+	 */
 	@Override
 	protected int getTargetPage(PortletRequest request, Object command, Errors errors, int currentPage) {
 		if (errors.getErrorCount() > 0) {
 			return currentPage;
-		} else {
-			return super.getTargetPage(request, command, errors, currentPage);
 		}
+		return super.getTargetPage(request, command, errors, currentPage);
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#showForm(javax.portlet.RenderRequest, javax.portlet.RenderResponse, org.springframework.validation.BindException)
+	 */
 	@Override
 	protected ModelAndView showForm(RenderRequest request, RenderResponse response, BindException errors)
 	throws Exception {
@@ -339,7 +372,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		}
 
 		if (currentPage == 0) {
-			if (!this.um.canEditItem(request.getRemoteUser(), this.im.getItemById(itemId))) {
+			if (!this.pm.canEditItem(this.im.getItemById(itemId))) {
 				ModelAndView mav = new ModelAndView("notAuthorized");
 				mav.addObject("msgError", getMessageSourceAccessor().getMessage("news.alert.notAuthorizedAction"));
 				throw new ModelAndViewDefiningException(mav);
@@ -356,6 +389,9 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		}
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractFormController#formBackingObject(javax.portlet.PortletRequest)
+	 */
 	@Override
 	protected Object formBackingObject(PortletRequest request) throws Exception {
 		ItemForm itemForm = new ItemForm();
@@ -392,6 +428,9 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		return itemForm;
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.BaseCommandController#initBinder(javax.portlet.PortletRequest, org.springframework.web.portlet.bind.PortletRequestDataBinder)
+	 */
 	@Override
 	protected void initBinder(PortletRequest request, PortletRequestDataBinder binder) throws Exception {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(getMessageSourceAccessor().getMessage(Constants.DATE_FORMAT));
@@ -399,6 +438,9 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		binder.registerCustomEditor(Date.class, null, new CustomDateEditor(dateFormat, true));
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#referenceData(javax.portlet.PortletRequest, java.lang.Object, org.springframework.validation.Errors, int)
+	 */
 	@Override
 	protected Map<String, Object> referenceData(PortletRequest request, Object command, Errors errors, int page)
 	throws Exception {
@@ -413,24 +455,23 @@ public class ItemEditController extends AbstractWizardFormController implements 
 			if (tId != null) {
 				ctxTopicId = tId;
 			}
-			final String uid = request.getRemoteUser();
 			int perm = 0;
 
 			if (ctxTopicId != null) {
 				model.put(Constants.ATT_TOPIC_ID, ctxTopicId);
 				model.put(Constants.OBJ_TOPIC, this.tm.getTopicById(ctxTopicId));
-				perm = RolePerm.valueOf(this.um.getUserRoleInCtx(ctxTopicId, NewsConstants.CTX_T, uid)).getMask();
+				perm = RolePerm.valueOf(this.pm.getRoleInCtx(ctxTopicId, NewsConstants.CTX_T)).getMask();
 			}
 			if (cId != null) {
 				final Category category = this.cm.getCategoryById(cId);
 				model.put(Constants.OBJ_CATEGORY, category);
 				model.put(Constants.OBJ_ENTITY, this.em.getEntityById(category.getEntityId()));
 				model.put(Constants.ATT_NB_DAYS, this.im.getNbDays());
-				int permTmp = RolePerm.valueOf(this.um.getUserRoleInCtx(cId, NewsConstants.CTX_C, uid)).getMask();
+				int permTmp = RolePerm.valueOf(this.pm.getRoleInCtx(cId, NewsConstants.CTX_C)).getMask();
 				if (perm < permTmp) {
 					perm = permTmp;
 				}
-				model.put(Constants.ATT_T_LIST, this.tm.getTopicListForCategoryByUser(cId, uid));
+				model.put(Constants.ATT_T_LIST, this.tm.getTopicListForCategoryByUser(cId, request.getRemoteUser()));
 			}
 
 			model.put(Constants.ATT_A_LIST, itemForm.getAttachments());
@@ -444,22 +485,21 @@ public class ItemEditController extends AbstractWizardFormController implements 
 
 			final Long cId = itemForm.getItem().getCategoryId();
 			final Long tId = ctxTopicId;
-			final String userUid = request.getRemoteUser();
 			int perm = 0;
 
 			if (cId != null && cId != -1) {
 				Category category = this.cm.getCategoryById(cId);
 				model.put(Constants.OBJ_CATEGORY, category);
-				perm = RolePerm.valueOf(this.um.getUserRoleInCtx(cId, NewsConstants.CTX_C, userUid)).getMask();
+				perm = RolePerm.valueOf(this.pm.getRoleInCtx(cId, NewsConstants.CTX_C)).getMask();
 			}
 			if (tId != null && tId != -1) {
 				model.put(Constants.OBJ_TOPIC, this.tm.getTopicById(tId));
-				int permTmp = RolePerm.valueOf(this.um.getUserRoleInCtx(tId, NewsConstants.CTX_T, userUid)).getMask();
+				int permTmp = RolePerm.valueOf(this.pm.getRoleInCtx(tId, NewsConstants.CTX_T)).getMask();
 				if (perm < permTmp) {
 					perm = permTmp;
 				}
 			}
-			model.put(Constants.ATT_USER_ID, userUid);
+			model.put(Constants.ATT_USER_ID, request.getRemoteUser());
 			model.put(Constants.ATT_PM, perm);
 
 			File directory = new File(this.getPortletContext().getRealPath(temporaryStoragePath));
@@ -479,7 +519,6 @@ public class ItemEditController extends AbstractWizardFormController implements 
 
 			final Long cId = itemForm.getItem().getCategoryId();
 			final Long tId = ctxTopicId;
-			final String userUid = request.getRemoteUser();
 
 			Long entityId = (long) -1;
 			int perm = 0;
@@ -488,16 +527,16 @@ public class ItemEditController extends AbstractWizardFormController implements 
 				Category category = this.cm.getCategoryById(cId);
 				entityId = category.getEntityId();
 				model.put(Constants.OBJ_CATEGORY, category);
-				perm = RolePerm.valueOf(this.um.getUserRoleInCtx(cId, NewsConstants.CTX_C, userUid)).getMask();
+				perm = RolePerm.valueOf(this.pm.getRoleInCtx(cId, NewsConstants.CTX_C)).getMask();
 			}
 			if (tId != null && tId != -1) {
 				model.put(Constants.OBJ_TOPIC, this.tm.getTopicById(tId));
-				int permTmp = RolePerm.valueOf(this.um.getUserRoleInCtx(tId, NewsConstants.CTX_T, userUid)).getMask();
+				int permTmp = RolePerm.valueOf(this.pm.getRoleInCtx(tId, NewsConstants.CTX_T)).getMask();
 				if (perm < permTmp) {
 					perm = permTmp;
 				}
 			}
-			model.put(Constants.ATT_USER_ID, userUid);
+			model.put(Constants.ATT_USER_ID, request.getRemoteUser());
 			model.put(Constants.ATT_PM, perm);
 
 			Long categoryId = itemForm.getCategoryId();
@@ -535,11 +574,11 @@ public class ItemEditController extends AbstractWizardFormController implements 
 				Topic selectedTopic = tm.getTopicById(topicId);
 				Category selectedCat = cm.getCategoryById(selectedTopic.getCategoryId());
 				List<Item> itemsList = new ArrayList<Item>();
-				if (RolePerm.valueOf(this.um.getUserRoleInCtx(topicId, NewsConstants.CTX_T, userUid)).getMask() > 0) {
-					Long currentItemId = itemForm.getItem().getItemId();
+				if (RolePerm.valueOf(this.pm.getRoleInCtx(topicId, NewsConstants.CTX_T)).getMask() > 0) {
+					final Long currentItemId = itemForm.getItem().getItemId();
 					for (Item item : items) {
-						Long itemId = item.getItemId();
-						if (itemId.compareTo(currentItemId) != 0) {
+						final Long iId = item.getItemId();
+						if (iId.compareTo(currentItemId) != 0) {
 							itemsList.add(item);
 						}
 					}
@@ -559,7 +598,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 				List<Topic> topicsList = new ArrayList<Topic>();
 				for (Topic topic : topics) {
 					Long id = topic.getTopicId();
-					if (RolePerm.valueOf(this.um.getUserRoleInCtx(id, NewsConstants.CTX_T, userUid)).getMask() > 0) {
+					if (RolePerm.valueOf(this.pm.getRoleInCtx(id, NewsConstants.CTX_T)).getMask() > 0) {
 						int nb = im.countItemsWithAttachmentByTopic(id);
 						for (String currentTopicId : currenttopicIds) {
 							if (currentTopicId.equalsIgnoreCase(Long.toString(id))) {
@@ -579,7 +618,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 
 			} else {
 				// Category list
-				List<Category> categories = cm.getListCategoryOfEntityByUser(userUid, entityId);
+				List<Category> categories = cm.getListCategoryOfEntityByUser(request.getRemoteUser(), entityId);
 				List<Category> categoriesList = new ArrayList<Category>();
 				for (Category category : categories) {
 					Long id = category.getCategoryId();
@@ -594,11 +633,17 @@ public class ItemEditController extends AbstractWizardFormController implements 
 		return model;
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#renderInvalidSubmit(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
+	 */
 	@Override
 	protected ModelAndView renderInvalidSubmit(RenderRequest request, RenderResponse response) throws Exception {
 		return null;
 	}
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#handleInvalidSubmit(javax.portlet.ActionRequest, javax.portlet.ActionResponse)
+	 */
 	@Override
 	protected void handleInvalidSubmit(ActionRequest request, ActionResponse response) throws Exception {
 		response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_NEWSSTORE);
@@ -626,15 +671,18 @@ public class ItemEditController extends AbstractWizardFormController implements 
 	*
 	*/
 	public class PrefixFilter implements FilenameFilter {
+		/** */
 		String prefix;
 		/**
 		 * Constructor
 		 * @param prefix a file prefix
 		 */
-		@SuppressWarnings("hiding")
 		public PrefixFilter(String prefix) {
 			this.prefix = prefix;
 		}
+		/**
+		 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+		 */
 		public boolean accept(File dir, String name) {
 			return name.startsWith(prefix);
 		}

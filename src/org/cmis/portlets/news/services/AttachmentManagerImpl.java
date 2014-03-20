@@ -1,3 +1,8 @@
+/**
+* ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+* For any information please refer to http://esup-helpdesk.sourceforge.net
+* You may obtain a copy of the licence at http://www.esup-portail.org/license/
+*/
 package org.cmis.portlets.news.services;
 
 import java.io.File;
@@ -27,24 +32,27 @@ import org.springframework.transaction.annotation.Transactional;
 import org.uhp.portlets.news.web.ItemForm;
 
 /**
- * 
+ *
  * created by Anyware Services - Delphine Gavalda.
- * 
+ *
  * 10 mai 2010
  */
-
 @Service("attachmentManager")
 @Transactional(readOnly = true)
 public class AttachmentManagerImpl implements AttachmentManager {
 
+	/** */
 	private static final Log LOG = LogFactory.getLog(AttachmentManagerImpl.class);
-
+	/** attachmentdao. */
 	@Autowired
 	private AttachmentDao attachmentDao;
+	/** attachmentOptionsDao. */
 	@Autowired
 	private AttachmentOptionsDao attachmentOptionsDao;
+	/** cmisServerdao. */
 	@Autowired
 	private CmisServerParamsDao cmisServerDao;
+	/** cmisDao. */
 	@Autowired
 	private CmisAttachmentDao cmisDao;
 
@@ -56,87 +64,131 @@ public class AttachmentManagerImpl implements AttachmentManager {
 		super();
 	}
 
-	/******************************************
+	/***************************
 	 * Cmis server methods.
+	 ***************************/
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#getApplicationServer()
 	 */
 	public CmisServer getApplicationServer() {
 		return cmisServerDao.getApplicationServer();
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#getEntityServer(java.lang.Long)
+	 */
 	public CmisServer getEntityServer(final Long entityId) {
 		return cmisServerDao.getEntityServer(entityId);
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#insertServerParams(org.cmis.portlets.news.domain.CmisServer)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Long insertServerParams(final CmisServer serverParams) {
 		Long newID = cmisServerDao.insertServerParams(serverParams);
 		return newID;
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#linkServerToEntity(java.lang.Long, java.lang.Long)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void linkServerToEntity(final Long serverId, final Long entityId) {
 		cmisServerDao.linkServerToEntity(serverId, entityId);
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#updateServerInfos(org.cmis.portlets.news.domain.CmisServer)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void updateServerInfos(final CmisServer serverParams) {
 		cmisServerDao.updateServerInfos(serverParams);
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#deleteServerLinkToEntity(java.lang.Long)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void deleteServerLinkToEntity(final Long entityId) {
 		cmisServerDao.deleteServerLinkToEntity(entityId);
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#deleteServerParams(java.lang.Long)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void deleteServerParams(final Long serverId) {
 		cmisServerDao.deleteServerParams(serverId);
 	}
 
-	/******************************************
+	/********************************************
 	 * Attachement parameters management methods.
+	 ********************************************/
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#getApplicationAttachmentOptions()
 	 */
-
 	public AttachmentOptions getApplicationAttachmentOptions() {
 		return attachmentOptionsDao.getApplicationOptions();
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#getEntityAttachmentOptions(java.lang.Long)
+	 */
 	public AttachmentOptions getEntityAttachmentOptions(final Long entityId) {
 		return attachmentOptionsDao.getEntityOptions(entityId);
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#updateAttachmentOptions(org.cmis.portlets.news.domain.AttachmentOptions)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void updateAttachmentOptions(final AttachmentOptions options) {
 		attachmentOptionsDao.updateAttachmentOptions(options);
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#insertAttachmentOptions(org.cmis.portlets.news.domain.AttachmentOptions)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Long insertAttachmentOptions(final AttachmentOptions options) {
 		Long newID = attachmentOptionsDao.insertAttachmentOptions(options);
 		return newID;
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#linkAttachmentOptionsToEntity(java.lang.Long, java.lang.Long)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void linkAttachmentOptionsToEntity(final Long optionsId, final Long entityId) {
 		attachmentOptionsDao.linkAttachmentOptionsToEntity(optionsId, entityId);
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#deleteAttachmentOptsLinkToEntity(java.lang.Long)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void deleteAttachmentOptsLinkToEntity(final Long entityId) {
 		attachmentOptionsDao.deleteAttachmentOptsLinkToEntity(entityId);
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#deleteAttachmentOptions(java.lang.Long)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void deleteAttachmentOptions(final Long optionsId) {
 		attachmentOptionsDao.deleteAttachmentOptions(optionsId);
 	}
 
-	/**********************************
+	/***************************************
 	 * Attachement management methods.
-	 * 
+	 *
 	 * @throws CmisException
-	 */
+	 ***************************************/
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#addAttachmentToItem(org.uhp.portlets.news.web.ItemForm, java.lang.Long, java.lang.Long, java.lang.String)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void addAttachmentToItem(final ItemForm itemForm, final Long itemId, final Long entityId, final String userID)
 	throws DataAccessException, CmisException {
@@ -158,7 +210,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
 				}
 				// remove the postfix
 				originalFilename = originalFilename.substring(0, originalFilename.lastIndexOf("."));
-				
+
 				Map<String, Object> prop = new HashMap<String, Object>();
 				prop.put(CmisPathFinderHelper.FILE_NAME, originalFilename);
 				prop.put(CmisPathFinderHelper.INSERT_DATE, insertDate);
@@ -181,8 +233,11 @@ public class AttachmentManagerImpl implements AttachmentManager {
 		}
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#updateItemAttachment(org.uhp.portlets.news.web.ItemForm, java.lang.Long, java.lang.Long)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void updateItemAttachment(final ItemForm itemForm, final Long itemId, 
+	public void updateItemAttachment(final ItemForm itemForm, final Long itemId,
 			final Long entityId) throws DataAccessException,
 			CmisException {
 		// Current list of attachments
@@ -234,14 +289,14 @@ public class AttachmentManagerImpl implements AttachmentManager {
 					params.put("description", formAtt.getDesc());
 					attachmentDao.updateAttachment(params);
 				}
-				
+
 			} else {
 				// save the new file and get the sqlMap object
 				Long categoryId = itemForm.getCategoryId();
 				String[] topicIds = itemForm.getTopicIds();
 				Date insertDate = formAtt.getInsertDate();
 				String originalFilename = formAtt.getTempDiskStoredFile().getName();
-				
+
 				String prefix = String.valueOf(itemId) + "_";
 				if (originalFilename.startsWith(prefix)) {
 				    // remove the item id prefix
@@ -249,7 +304,7 @@ public class AttachmentManagerImpl implements AttachmentManager {
 				}
 				// remove the postfix
 				originalFilename = originalFilename.substring(0, originalFilename.lastIndexOf("."));
-				
+
 				Map<String, Object> prop = new HashMap<String, Object>();
 				prop.put(CmisPathFinderHelper.FILE_NAME, originalFilename);
 				prop.put(CmisPathFinderHelper.INSERT_DATE, insertDate);
@@ -273,16 +328,25 @@ public class AttachmentManagerImpl implements AttachmentManager {
 
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#getAttachmentsListByItem(java.lang.Long)
+	 */
 	public List<Attachment> getAttachmentsListByItem(final Long itemId) throws DataAccessException {
 		return this.attachmentDao.getAttachmentsListByItem(itemId);
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#getAttachmentById(java.lang.Long)
+	 */
 	public Attachment getAttachmentById(final Long id) throws DataAccessException {
 		return this.attachmentDao.getAttachmentById(id);
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#deleteAttachment(org.cmis.portlets.news.domain.Attachment, java.lang.Long, java.lang.Long)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void deleteAttachment(final Attachment attachment, final Long itemId, 
+	public void deleteAttachment(final Attachment attachment, final Long itemId,
 			final Long entityId) throws DataAccessException,
 			CmisException {
 		// remove the link between this item and the attachment
@@ -305,8 +369,11 @@ public class AttachmentManagerImpl implements AttachmentManager {
 		}
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#deleteItemAttachments(java.lang.Long, java.lang.Long)
+	 */
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void deleteItemAttachments(final Long itemId, final Long entityId) 
+	public void deleteItemAttachments(final Long itemId, final Long entityId)
 	throws DataAccessException, CmisException {
 		List<Attachment> attachments = getAttachmentsListByItem(itemId);
 		if (attachments != null) {
@@ -332,11 +399,17 @@ public class AttachmentManagerImpl implements AttachmentManager {
 		}
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#cleanTempStorageDirectory(java.lang.String)
+	 */
 	public void cleanTempStorageDirectory(final String path) {
 	    cleanTempStorageDirectory(path, null);
 	}
-	
-	public void cleanTempStorageDirectory(final String path, String prefix) {
+
+	/**
+	 * @see org.cmis.portlets.news.services.AttachmentManager#cleanTempStorageDirectory(java.lang.String, java.lang.String)
+	 */
+	public void cleanTempStorageDirectory(final String path, final String prefix) {
 		try {
 		    	if(prefix != null){
 		    	    File dir = new File(path);
@@ -366,5 +439,5 @@ public class AttachmentManagerImpl implements AttachmentManager {
 			LOG.error("Unable to delete temporary files from " + path, e);
 		}
 	}
-	
+
 }

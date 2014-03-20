@@ -16,7 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.domain.Entity;
 import org.esco.portlets.news.services.EntityManager;
-import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -37,9 +37,9 @@ public class EntityDeleteController extends AbstractController implements Initia
     /** The Entity Manager.*/
     @Autowired 
     private EntityManager em;
-    /** The User manager. */
+    /** The Permission manager. */
     @Autowired 
-    private UserManager um;
+    private PermissionManager pm;
     
     /** Result of the delete's action. */
     private boolean deleted;
@@ -64,7 +64,7 @@ public class EntityDeleteController extends AbstractController implements Initia
     public void handleActionRequest(final ActionRequest request,
             final ActionResponse response) throws Exception {
         Long entityId = Long.valueOf(request.getParameter(Constants.ATT_ENTITY_ID));
-        if (!this.um.isSuperAdmin(request.getRemoteUser())) {
+        if (!this.pm.isSuperAdmin()) {
             msgKey = "news.alert.superUserOnly";
         } else if (this.em.deleteEntity(entityId)) {
             if (LOG.isDebugEnabled()) {
@@ -142,7 +142,7 @@ public class EntityDeleteController extends AbstractController implements Initia
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.getEm(), "The property EntityManager em in class " + getClass().getSimpleName()
                 + " must not be null.");
-        Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
+        Assert.notNull(this.getPm(), "The property PermissionManager pm in class " + getClass().getSimpleName()
                 + " must not be null.");
     }
 }

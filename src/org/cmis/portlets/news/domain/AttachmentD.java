@@ -5,93 +5,88 @@ import java.io.Serializable;
 import org.apache.chemistry.opencmis.client.api.Document;
 
 /**
- * Attachment to download
- * 
- * created by Anyware Services - Delphine Gavalda.
- * 
- * 4 juin 2010
+ * @author GIP RECIA - Julien Gribonvald
+ * 23 mai 2012
  */
 public class AttachmentD implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	/** */
+	private static final long serialVersionUID = 1L;
 
-    private Long attachmentId;
+	/** Id of attachment. */
+	private Long attachmentId;
+	/** CMIS UID. */
+	private String cmisUid;
+	/** FileName. */
+	private String fileName;
+	/** CMISDocument. */
+	private Document cmisDocument;
 
-    private String cmisUid;
+	/**
+	 * Constructor of the AttachmentD object.
+	 */
+	public AttachmentD() {
+		super();
+	}
 
-    private String fileName;
+	/**
+	 * @return the attachmentId
+	 */
+	public Long getAttachmentId() {
+		return attachmentId;
+	}
 
-    private Document cmisDocument;
+	/**
+	 * @param attachmentId
+	 *            the attachmentId to set
+	 */
+	public void setAttachmentId(final Long attachmentId) {
+		this.attachmentId = attachmentId;
+	}
 
-    /**
-     * Constructor of the AttachmentD object.
-     */
-    public AttachmentD() {
-	 super();
-    }
-    
-    /**
-     * @return the attachmentId
-     */
-    public Long getAttachmentId() {
-	return attachmentId;
-    }
+	/**
+	 * @return the cmisUid
+	 */
+	public String getCmisUid() {
+		return cmisUid;
+	}
 
-    /**
-     * @param attachmentId
-     *            the attachmentId to set
-     */
-    @SuppressWarnings("hiding")
-    public void setAttachmentId(final Long attachmentId) {
-	this.attachmentId = attachmentId;
-    }
+	/**
+	 * @param cmisUid
+	 *            the cmisUid to set
+	 */
+	public void setCmisUid(final String cmisUid) {
+		this.cmisUid = cmisUid;
+	}
 
-    /**
-     * @return the cmisUid
-     */
-    public String getCmisUid() {
-	return cmisUid;
-    }
+	/**
+	 * @return the fileName
+	 */
+	public String getFileName() {
+		return fileName;
+	}
 
-    /**
-     * @param cmisUid
-     *            the cmisUid to set
-     */
-    @SuppressWarnings("hiding")
-    public void setCmisUid(final String cmisUid) {
-	this.cmisUid = cmisUid;
-    }
+	/**
+	 * @param fileName
+	 *            the fileName to set
+	 */
+	public void setFileName(final String fileName) {
+		this.fileName = fileName;
+	}
 
-    /**
-     * @return the fileName
-     */
-    public String getFileName() {
-	return fileName;
-    }
+	/**
+	 * Get the Cmis document.
+	 * @return Document
+	 */
+	public Document getCmisDocument() {
+		return cmisDocument;
+	}
 
-    /**
-     * @param fileName
-     *            the fileName to set
-     */
-    @SuppressWarnings("hiding")
-    public void setFileName(final String fileName) {
-	this.fileName = fileName;
-    }
-
-    /**
-     * Get the Cmis document.
-     * @return Document
-     */
-    public Document getCmisDocument() {
-	return cmisDocument;
-    }
-
-    /**
-     * Set the Cmis document.
-     * @param cmisDocument
-     */
-    @SuppressWarnings("hiding")
-    public void setCmisDocument(final Document cmisDocument) {
-	this.cmisDocument = cmisDocument;
-    }
+	/**
+	 * Set the Cmis document.
+	 * @param cmisDocument
+	 */
+	public void setCmisDocument(final Document cmisDocument) {
+		this.cmisDocument = cmisDocument;
+	}
 }

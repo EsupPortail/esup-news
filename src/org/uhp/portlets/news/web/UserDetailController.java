@@ -27,6 +27,7 @@ import javax.portlet.RenderResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.domain.IEscoUser;
+import org.esco.portlets.news.services.RoleManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,8 @@ public class UserDetailController extends AbstractController implements Initiali
     /** */
     @Autowired
     private UserManager um;
+    /** */
+	@Autowired private RoleManager rm;
 
     /** */
     private static final Log LOGGER = LogFactory.getLog(UserDetailController.class);
@@ -54,39 +57,18 @@ public class UserDetailController extends AbstractController implements Initiali
      * @throws Exception
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
+    @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(um, "A userManager is required in the class " + this.getClass().getName());
     }
 
+    /**
+     * @see org.springframework.web.portlet.mvc.AbstractController#handleRenderRequestInternal(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
+     */
     @Override
     protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
         boolean isSuperAdmin = false;
-        //boolean isAdmin = false;
         final String uid = request.getParameter(Constants.ATT_USER_ID);
-        //final Long cid = PortletRequestUtils.getLongParameter(request, Constants.CATID);
-        //final Long tid = PortletRequestUtils.getLongParameter(request, Constants.TID);
-        // Difficile avec l'item id.
-        //final Long iid = PortletRequestUtils.getLongParameter(request, "iId");
-        /*if(id == null || id.trim().equals("")) {
-			     return new ModelAndView("Errors", "message", "Illegal argument");
-			   }
-			   if (cid != null && cid > 0) {
-			       if (tid != null && tid > 0) {
-			           if (this.um.isUserAdminInCtx(tid, NewsConstants.CTX_T, request.getRemoteUser())) {
-			               isAdmin = true;
-			           }
-			       } else {
-			           if (this.um.isUserAdminInCtx(cid, NewsConstants.CTX_C, request.getRemoteUser())) {
-                           isAdmin = true;
-                       }
-			       }
-			   }*/
-
-        /*if(this.um.isSuperAdmin(request.getRemoteUser())) {
-		        	isSuperAdmin = true;
-
-		        }*/
-        //if(isSuperAdmin || isAdmin || request.getRemoteUser().equals(id)) {
         final IEscoUser user = this.um.findUserByUid(uid);
         if (user == null) {
             if (LOGGER.isWarnEnabled()) {
@@ -99,25 +81,20 @@ public class UserDetailController extends AbstractController implements Initiali
         mav.addObject(Constants.OBJ_USER, user);
         List<String> list = new ArrayList<String>(this.um.getLdapUserService().getSearchDisplayedAttributes());
         list.remove(this.um.getLdapUserService().getIdAttribute());
-        list.remove(this.um.getUserDao().getDisplayName());
-        list.remove(this.um.getUserDao().getMail());
+        list.remove(this.um.getAttrDisplayName());
+        list.remove(this.um.getAttrMail());
         mav.addObject(Constants.ATT_LDAP_DISPLAY, list);
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("User added to view : " + user);
         }
-        if (this.um.isSuperAdmin(uid)) {
+        if ("1".equals(user.getIsSuperAdmin())) {
             mav.addObject(Constants.ATT_PU, RolePerm.ROLE_ADMIN.getMask());
         } else {
-            mav.addObject(Constants.ATT_E_ROLEMAP, this.um.loadUserEntityRoleMaps(uid));
-            mav.addObject(Constants.ATT_C_ROLEMAP, this.um.loadUserCategoryRoleMaps(uid));
-            mav.addObject(Constants.ATT_T_ROLEMAP, this.um.loadUserTopicRoleMaps(uid));
+            mav.addObject(Constants.ATT_E_ROLEMAP, this.rm.loadUserEntityRoleMaps(uid));
+            mav.addObject(Constants.ATT_C_ROLEMAP, this.rm.loadUserCategoryRoleMaps(uid));
+            mav.addObject(Constants.ATT_T_ROLEMAP, this.rm.loadUserTopicRoleMaps(uid));
         }
         return mav;
-        /*}
-				else {
-					return new ModelAndView(Constants.ACT_VIEW_NOT_AUTH, Constants.MSG_ERROR, getMessageSourceAccessor().getMessage("news.alert.superUserOrUserOwnOnly"));
-				}*/
-
     }
 
 }

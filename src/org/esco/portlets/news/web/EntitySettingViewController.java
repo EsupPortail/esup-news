@@ -13,7 +13,7 @@ import javax.portlet.RenderResponse;
 
 import org.esco.portlets.news.domain.Entity;
 import org.esco.portlets.news.services.EntityManager;
-import org.esco.portlets.news.services.TypeManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +33,15 @@ import org.uhp.portlets.news.web.support.Constants;
  */
 public class EntitySettingViewController extends AbstractController implements InitializingBean {
 
-    /** Manager d'une Entity. */
+    /** Manager of Entity. */
     @Autowired
     private EntityManager em;
-    /** Manager d'un type. */
-    @Autowired
-    private TypeManager tm;
-    /** Manager des Users. */
+    /** Manager of users. */
     @Autowired
     private UserManager um;
+    /** Manager of Permission. */
+    @Autowired
+    private PermissionManager pm;
 	
 	/**
      * Constructeur de l'objet ShowCategorySettingController.java.
@@ -71,8 +71,7 @@ public class EntitySettingViewController extends AbstractController implements I
 		ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_E_SETTING);
 		mav.addObject(Constants.OBJ_ENTITY, entity);
 		mav.addObject(Constants.ATT_TYPE_LIST, this.getEm().getAutorizedTypesOfEntity(entity.getEntityId()));
-		mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.um.getUserRoleInCtx(
-		        entity.getEntityId(), NewsConstants.CTX_E, request.getRemoteUser())).getMask());
+		mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.getPm().getRoleInCtx(entity.getEntityId(), NewsConstants.CTX_E)).getMask());
 		mav.addObject(Constants.ATT_USER_LIST, this.um.getUsersByListUid(usersUid));
 		 // Usefull for xml and opm links
         mav.addObject(Constants.ATT_PORTAL_URL,  HostUtils.getHostUrl(request));
@@ -132,7 +131,7 @@ public class EntitySettingViewController extends AbstractController implements I
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.getTm(), "The property TypeManager tm in class " 
+        Assert.notNull(this.getPm(), "The property TypeManager tm in class " 
                 + getClass().getSimpleName() + " must not be null.");
         Assert.notNull(this.getUm(), "The property UserManager um in class " 
                 + getClass().getSimpleName() + " must not be null.");

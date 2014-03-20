@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
 <sqlMap namespace="UserRoleSQL">
-	<typeAlias type="org.uhp.portlets.news.domain.UserRole" alias="userRole" />
+	<typeAlias type="org.esco.portlets.news.domain.EntityRole" alias="userRole" />
 	<typeAlias type="org.esco.portlets.news.domain.EscoUser" alias="user" />
 	<typeAlias type="org.uhp.portlets.news.domain.Role" alias="role" />
 	<resultMap id="userRoleResult" class="userRole">
@@ -27,83 +27,66 @@
 		<result property="roleName" column="role_name" />
 		<result property="descKey" column="role_desc_key" />
 	</resultMap>
-	<statement id="insertUserRole" parameterClass="userRole"> insert into news_user_role (principal, role_name, is_group,
-		ctx_id, ctx_type) values (#principal#, #role#, #isGroup#, #ctxId#, #ctxType#)</statement>
-	<statement id="getAllUserRolesByCtxIdAndRole" resultMap="userRoleResult" parameterClass="map"> select principal,
-		ctx_id, ctx_type, role_name, is_group from news_user_role where ctx_id=#ctxId# AND ctx_type=#ctxType# AND
-		role_name=#roleName# order by is_group</statement>
-	<statement id="getUserRolesByCategory" resultMap="userRoleResult" parameterClass="map"> select principal, ctx_id,
-		ctx_type, role_name, is_group from news_user_role where ctx_id=#ctxId# AND ctx_type=#ctxType# AND user_id=#userId# and
-		is_group='0'</statement>
-	<statement id="getUsersRolesForCtx" resultMap="userRoleResult" parameterClass="map"> select principal, ctx_id,
-		ctx_type, role_name, is_group from news_user_role where ctx_id=#ctxId# AND ctx_type=#ctxType#</statement>
-	<statement id="getUserRolesInTopicsByItem" resultClass="java.lang.String" parameterClass="map"> SELECT role_name
-		FROM news_user_role WHERE ctx_type='T' and principal=#principal# and ctx_id in (SELECT topic_id FROM news_topic_item
-		WHERE item_id =#itemId#)</statement>
-	<select id="getUserById" parameterClass="java.lang.String" resultMap="userResult"> select user_id, is_sup_adm, enabled,
-		register_date, last_access from news_user where user_id=#value#</select>
-	<update id="updateUserStatus" parameterClass="map"> update news_user set enabled=#enabled# where user_id=#userId#
-	</update>
-	<update id="updateUserLastAccess" parameterClass="map"> update news_user set last_access=#lastAccess# where
-		user_id=#userId#</update>
-	<update id="updateUserRoleForCtx" parameterClass="map"> update news_user_role set role_name=#role# where
-		principal=#userId# and ctx_id=#ctxId# and ctx_type=#ctxType#</update>
-	<update id="updateUser" parameterClass="user"> update news_user set is_sup_adm=#isSuperAdmin#,
-		enabled=#enabled#, register_date=#registerDate#, last_access=#lastAccess# where user_id=#userId#</update>
+
+	<!-- Checked -->
 	<insert id="insertUser" parameterClass="user"> insert into news_user (user_id, is_sup_adm, register_date, last_access,
 		enabled) values (#userId#, #isSuperAdmin#, #registerDate#, #lastAccess#, #enabled#)</insert>
+	<update id="updateUser" parameterClass="user"> update news_user set is_sup_adm=#isSuperAdmin#,
+		enabled=#enabled#, register_date=#registerDate#, last_access=#lastAccess# where user_id=#userId#</update>
+	<update id="updateUserStatus" parameterClass="map"> update news_user set enabled=#enabled# where user_id=#userId#</update>
+	<update id="updateUserLastAccess" parameterClass="map"> update news_user set last_access=#lastAccess# where	user_id=#userId#</update>
+	<delete id="deleteUser" parameterClass="java.lang.String"> delete from news_user where user_id=#value#</delete>
+	<delete id="removeAllRolesForUser" parameterClass="java.lang.String"> delete from news_user_role where principal=#value# AND is_group='0'</delete>
+	<select id="getUserById" parameterClass="java.lang.String" resultMap="userResult"> select user_id, is_sup_adm, enabled,
+		register_date, last_access from news_user where user_id=#value#</select>
+	<select id="getUserSuperAdmin" parameterClass="java.lang.String" resultClass="java.lang.String"> select is_sup_adm from news_user
+		where user_id=#value#</select>
+	<!-- <select id="getUserAccountEnable" parameterClass="java.lang.String" resultClass="java.lang.String"> select enabled from news_user
+		where user_id=#value#</select> -->
 	<select id="getAllUsers" resultMap="userResult"> select user_id, is_sup_adm, enabled, register_date, last_access from
 		news_user order by user_id</select>
-	<select id="getAllRoles" resultMap="roleResult"> select role_id, role_name, role_desc_key from news_role order by role_id
-	</select>
-	<delete id="removeUserRoleForCtx" parameterClass="map"> delete from news_user_role where principal=#userId# and
-		ctx_id=#ctxId# and ctx_type=#ctxType#</delete>
-	<delete id="removeUsersRoleForCtx" parameterClass="map"> delete from news_user_role where ctx_id=#ctxId# and
-		ctx_type=#ctxType#</delete>
-	<delete id="removeAllUserRolesForTopics" parameterClass="map"> delete from news_user_role where ctx_id=#ctxId# and
-		ctx_type=#ctxType#</delete>
-	<delete id="removeAllRolesForUser" parameterClass="java.lang.String"> delete from news_user_role where principal=#value#</delete>
-	<delete id="deleteUser" parameterClass="java.lang.String"> delete from news_user where user_id=#value#</delete>
-	<select id="getUserRoleForEntity" parameterClass="map" resultClass="java.lang.String"> SELECT ur.role_name FROM news_entity as e,
-		news_user_role as ur WHERE e.entity_id=ur.ctx_id and ur.ctx_type='E' and e.entity_id=#ctxId# and
-		ur.principal=#principal#</select>
-	<select id="getUserRoleForCategory" parameterClass="map" resultClass="java.lang.String"> SELECT ur.role_name FROM news_category as
-		c, news_user_role as ur WHERE c.cat_id=ur.ctx_id and ur.ctx_type='C' and c.cat_id=#ctxId# and ur.principal=#principal#
-	</select>
-	<select id="getUserRoleForTopic" parameterClass="map" resultClass="java.lang.String"> SELECT ur.role_name FROM news_topic as t,
-		news_user_role as ur WHERE t.topic_id=ur.ctx_id and ur.ctx_type='T' and t.topic_id=#ctxId# and
-		ur.principal=#principal#</select>
-	<select id="isUserRoleExistForEntity" parameterClass="map" resultClass="java.lang.String"> SELECT count(ur.role_name) FROM
-		news_entity as e, news_user_role as ur WHERE e.entity_id=ur.ctx_id and ur.ctx_type='E' and e.entity_id=#ctxId# and
-		ur.principal=#principal#</select>
-	<select id="isUserRoleExistForCategory" parameterClass="map" resultClass="java.lang.String"> SELECT count(ur.role_name) FROM
-		news_category as c, news_user_role as ur WHERE c.cat_id=ur.ctx_id and ur.ctx_type='C' and c.cat_id=#ctxId# and
-		ur.principal=#principal#</select>
-	<select id="isUserRoleExistForTopic" parameterClass="map" resultClass="java.lang.String"> SELECT count(ur.role_name) FROM
-		news_topic as t, news_user_role as ur WHERE t.topic_id=ur.ctx_id and ur.ctx_type='T' and t.topic_id=#ctxId# and
-		ur.principal=#principal#</select>
-	<select id="userHasAnyRole" parameterClass="java.lang.String" resultClass="java.lang.String"> SELECT count(role_name) FROM
-		news_user_role WHERE principal=#value#</select>
-	<statement id="isUserRoleExistInTopics" resultClass="java.lang.String" parameterClass="map"> SELECT count(ctx_id)
-		FROM news_user_role WHERE principal=#principal# and ctx_type='T' and ctx_id IN (select topic_id from news_topic nt
-		where nt.category_id=#categoryId#)</statement>
-	<statement id="isUserRoleExistInCategories" resultClass="java.lang.String" parameterClass="map"> SELECT
-		count(ctx_id) FROM news_user_role WHERE principal=#principal# and ctx_type='C' and ctx_id IN (select cat_id from
-		news_category nc where nc.entity_id=#entityId#)</statement>
-	<select id="isUserSuperAdmin" parameterClass="java.lang.String" resultClass="java.lang.String"> select is_sup_adm from news_user
-		where user_id=#value#</select>
-	<select id="isUserAccountEnabled" parameterClass="java.lang.String" resultClass="java.lang.String"> select enabled from news_user
-		where user_id=#value#</select>
-	<select id="isPermitted" parameterClass="java.lang.String" resultClass="java.lang.String"> SELECT count(u.user_id) FROM news_user u
-		WHERE u.user_id=#value#</select>
+	<select id="getAllRoles" resultMap="roleResult"> select role_id, role_name, role_desc_key from news_role order by role_id</select>
 	<select id="getAllSuperUsers" resultMap="userResult"> SELECT user_id, is_sup_adm, enabled, register_date, last_access FROM
-		news_user WHERE is_sup_adm='1'</select>
-	<select id="getManagersForCategory" resultMap="userResult" parameterClass="java.lang.Long"> SELECT user_id, is_sup_adm, enabled,
-		register_date, last_access FROM news_user as u, news_user_role as ur WHERE ur.principal=u.user_id and
-		ur.ctx_id=#value# and ur.ctx_type='C' and ur.role_name="ROLE_MANAGER" and u.enabled='1'</select>
-	<select id="getManagersForTopic" resultMap="userResult" parameterClass="java.lang.Long"> SELECT user_id, is_sup_adm, enabled,
-		register_date, last_access FROM news_user as u, news_user_role as ur WHERE ur.principal=u.user_id and
-		ur.ctx_id=#value# and ur.ctx_type='T' and ur.role_name='ROLE_MANAGER' and u.enabled='1'</select>
+		news_user WHERE is_sup_adm='1' order by user_id</select>
+	<select id="userHasAnyRole" parameterClass="java.lang.String" resultClass="java.lang.String"> SELECT count(role_name) FROM
+		news_user_role WHERE principal=#value# and is_group= '0'</select>
+
+	<!-- Modif : statement to insert -->
+	<insert id="insertEntityRole" parameterClass="userRole"> insert into news_user_role (principal, role_name, is_group,
+		ctx_id, ctx_type) values (#principal#, #role#, #isGroup#, #ctxId#, #ctxType#)</insert>
+	<update id="updateEntityRoleInCtx" parameterClass="map"> update news_user_role set role_name=#role# where
+		principal=#userId# and ctx_id=#ctxId# and ctx_type=#ctxType# and is_group=#isGroup#</update>
+	<delete id="removeEntityRoleInCtx" parameterClass="map"> delete from news_user_role where principal=#userId# and
+		ctx_id=#ctxId# and ctx_type=#ctxType# and is_group=#isGroup#</delete>
+	<delete id="removeAllEntityRoleInCtx" parameterClass="map"> delete from news_user_role where ctx_id=#ctxId# and
+		ctx_type=#ctxType#</delete>
+	<select id="getAllEntityRoleOfRoleInCtx" resultMap="userRoleResult" parameterClass="map"> select principal, ctx_id,
+		ctx_type, role_name, is_group from news_user_role where ctx_id=#ctxId# AND ctx_type=#ctxType# AND role_name=#role# order by is_group ASC</select>
+	<select id="getAllEntityRoleInCtx" resultMap="userRoleResult" parameterClass="map"> select principal, ctx_id,
+		ctx_type, role_name, is_group from news_user_role where ctx_id=#ctxId# AND ctx_type=#ctxType#order by role_name DESC,is_group ASC</select>
+	<select id="getAllEntityRoleInTopicsByItem" resultClass="userRoleResult" parameterClass="map"> select principal, ctx_id,
+		ctx_type, role_name, is_group FROM news_user_role WHERE role_name=#role# and ctx_type='T' and ctx_id in (SELECT topic_id FROM news_topic_item
+		WHERE item_id =#itemId#) order by is_group ASC</select>
+	<select id="getEntityRoleInEntity" parameterClass="map" resultClass="java.lang.String"> SELECT ur.role_name FROM news_entity as e,
+		news_user_role as ur WHERE e.entity_id=ur.ctx_id and ur.ctx_type='E' and e.entity_id=#ctxId# and ur.principal=#principal# and is_group=#isGroup#</select>
+	<select id="getEntityRoleInCategory" parameterClass="map" resultClass="java.lang.String"> SELECT ur.role_name FROM news_category as c,
+		news_user_role as ur WHERE c.cat_id=ur.ctx_id and ur.ctx_type='C' and c.cat_id=#ctxId# and ur.principal=#principal# and is_group=#isGroup#</select>
+	<select id="getEntityRoleInTopic" parameterClass="map" resultClass="java.lang.String"> SELECT ur.role_name FROM news_topic as t,
+		news_user_role as ur WHERE t.topic_id=ur.ctx_id and ur.ctx_type='T' and t.topic_id=#ctxId# and ur.principal=#principal# and is_group=#isGroup#</select>
+
+	<select id="isEntityRoleExistInCategoriesOfEntity" resultClass="java.lang.String" parameterClass="map"> SELECT count(ctx_id)
+		FROM news_user_role WHERE principal=#principal# and is_group=#isGroup# and ctx_type='C' and ctx_id IN (select cat_id from
+		news_category nc where nc.entity_id=#entityId#)</select>
+	<select id="isEntityRoleExistInTopicsOfCategory" resultClass="java.lang.String" parameterClass="map"> SELECT count(ctx_id)
+		FROM news_user_role WHERE principal=#principal# and is_group=#isGroup# and ctx_type='T' and ctx_id IN (select topic_id from news_topic nt
+		where nt.category_id=#categoryId#)</select>
+
+	<!-- NOT USED  <statement id="getEntityRolesForCtx" resultMap="userRoleResult" parameterClass="map"> select principal, ctx_id,
+		ctx_type, role_name, is_group from news_user_role where ctx_id=#ctxId# AND ctx_type=#ctxType# order by is_group ASC</statement>-->
+
+	<!-- ********************************
+	************* DEPRECATED ************
+	**********************************-->
 	<select id="getManagersForTopics" resultMap="userResult" parameterClass="map">
 		SELECT DISTINCT u.user_id, u.is_sup_adm, u.enabled, u.register_date, u.last_access FROM news_user u INNER JOIN
 		news_user_role ur ON ur.principal = u.user_id
@@ -117,7 +100,55 @@
 				ur2.ctx_id=#cId#)</isNotEmpty>
 		</dynamic>
 	</select>
-	<statement id="getUserRolesInTopicsByTopics" resultClass="java.lang.String" parameterClass="map">
+	<select id="isTopicManager" parameterClass="map" resultClass="int"> SELECT count(ur.role_name) FROM news_topic as t,
+		news_user_role as ur WHERE t.topic_id=ur.ctx_id and ur.ctx_type='T' and t.topic_id=#topicId# and ur.principal=#uid#
+		and ur.role_name='ROLE_MANAGER'</select>
+	<select id="getManagersForCategory" resultMap="userResult" parameterClass="java.lang.Long"> SELECT user_id, is_sup_adm, enabled,
+		register_date, last_access FROM news_user as u, news_user_role as ur WHERE ur.principal=u.user_id and
+		ur.ctx_id=#value# and ur.ctx_type='C' and ur.role_name="ROLE_MANAGER" and u.enabled='1'</select>
+
+	<!-- *****************************
+	********* Not Checked ************
+	****************************** -->
+
+	<statement id="getAllEntityRolesByCtxIdAndRole" resultMap="userRoleResult" parameterClass="map"> select principal,
+		ctx_id, ctx_type, role_name, is_group from news_user_role where ctx_id=#ctxId# AND ctx_type=#ctxType# AND
+		role_name=#roleName# order by is_group</statement>
+	<statement id="getEntityRolesByCategory" resultMap="userRoleResult" parameterClass="map"> select principal, ctx_id,
+		ctx_type, role_name, is_group from news_user_role where ctx_id=#ctxId# AND ctx_type=#ctxType# AND user_id=#userId# and
+		is_group='0'</statement>
+
+
+
+
+
+
+
+	<!-- NOT USED ? WRONG ! <delete id="removeAllEntityRolesForTopics" parameterClass="map"> delete from news_user_role where ctx_id=#ctxId# and
+		ctx_type=#ctxType#</delete>-->
+
+	<select id="isEntityRoleExistForEntity" parameterClass="map" resultClass="java.lang.String"> SELECT count(ur.role_name) FROM
+		news_entity as e, news_user_role as ur WHERE e.entity_id=ur.ctx_id and ur.ctx_type='E' and e.entity_id=#ctxId# and
+		ur.principal=#principal#</select>
+	<select id="isEntityRoleExistForCategory" parameterClass="map" resultClass="java.lang.String"> SELECT count(ur.role_name) FROM
+		news_category as c, news_user_role as ur WHERE c.cat_id=ur.ctx_id and ur.ctx_type='C' and c.cat_id=#ctxId# and
+		ur.principal=#principal#</select>
+	<select id="isEntityRoleExistForTopic" parameterClass="map" resultClass="java.lang.String"> SELECT count(ur.role_name) FROM
+		news_topic as t, news_user_role as ur WHERE t.topic_id=ur.ctx_id and ur.ctx_type='T' and t.topic_id=#ctxId# and
+		ur.principal=#principal#</select>
+
+
+
+
+	<select id="isPermitted" parameterClass="java.lang.String" resultClass="java.lang.String"> SELECT count(u.user_id) FROM news_user u
+		WHERE u.user_id=#value#</select>
+
+
+	<select id="getManagersForTopic" resultMap="userResult" parameterClass="java.lang.Long"> SELECT user_id, is_sup_adm, enabled,
+		register_date, last_access FROM news_user as u, news_user_role as ur WHERE ur.principal=u.user_id and
+		ur.ctx_id=#value# and ur.ctx_type='T' and ur.role_name='ROLE_MANAGER' and u.enabled='1'</select>
+
+	<statement id="getEntityRolesInTopicsByTopics" resultClass="java.lang.String" parameterClass="map">
 		SELECT role_name FROM news_user_role
 		<dynamic prepend="WHERE">
 			<iterate property="topicIds" open="ctx_id IN (" close=")" conjunction="," prepend="BOGUS"> #topicIds[]#</iterate>
@@ -125,9 +156,6 @@
 			<isNotEmpty property="ctxType" prepend="AND"> ctx_type=#ctxType#</isNotEmpty>
 		</dynamic>
 	</statement>
-	<select id="isTopicManager" parameterClass="map" resultClass="int"> SELECT count(ur.role_name) FROM news_topic as t,
-		news_user_role as ur WHERE t.topic_id=ur.ctx_id and ur.ctx_type='T' and t.topic_id=#topicId# and ur.principal=#uid#
-		and ur.role_name='ROLE_MANAGER'</select>
 	<!--
 		<select id="getUserByListUid" resultMap="userResult"
 		parameterClass="list" > SELECT DISTINCT user_id, user_name, email,

@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.service;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
  * Copyright (C) 2007-2008 University Nancy 1
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * 
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -48,8 +48,8 @@ public class SubscribeServiceImpl implements SubscribeService, InitializingBean 
 	private GroupService groupService;
 
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public void addSubscriber(final Subscriber subscriber) {
+	@Transactional(propagation = Propagation.REQUIRED) 
+	public void addSubscriber(final Subscriber subscriber) {		
 		this.subscriberDao.insertSubscriber(subscriber);
 	}
 
@@ -61,14 +61,14 @@ public class SubscribeServiceImpl implements SubscribeService, InitializingBean 
 					LOG.warn("This principal exists in the context, subscriber insertion is ignored...");
 				}
 			}
-			else {
+			else {  
 				subscriber.setPrincipal(sk);
 				addSubscriber(subscriber);
 			}
 		}
 	}
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true) 
 	private List<Subscriber> getSubscribersByCtxIdSubType(final Long target, final String targetCtx, final String subType) {
 		return this.subscriberDao.getSubscribers(target, targetCtx, subType);
 	}
@@ -88,8 +88,8 @@ public class SubscribeServiceImpl implements SubscribeService, InitializingBean 
 		this.subscriberDao.deleteSubscriberByCtxId(id, target,  targetCtx);
 	}
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Map<String, List<Subscriber>> getSubscribersByCtxId(final Long target, final String targetCtx) {
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true) 
+	public Map<String, List<Subscriber>> getSubscribersByCtxId(final Long target, final String targetCtx) {                                   
 		Map<String, List<Subscriber>> subLists = new HashMap<String, List<Subscriber>>();
 		final SubscribeType[] subTypes = SubscribeType.values();
 		for (SubscribeType s : subTypes ) {
@@ -101,17 +101,17 @@ public class SubscribeServiceImpl implements SubscribeService, InitializingBean 
 				if (sb.getIsGroup() == 1) {
 					getPortalGroupById(sb);
 				}
-			}
+			}			
 			subLists.put(s.toString(), list);
 		}
 		return subLists;
 	}
-
+	
 	public boolean isSubscriberExistInCtx(final String sk, final Subscriber subscriber) {
 	    return this.subscriberDao.isSubscriberExistInCtx(sk, subscriber);
 	}
 
-
+	
 	private void getPortalGroupById(final Subscriber sb) throws ResourceNotFoundException {
 		try {
 			PortalGroup pg = this.getGroupService().getPortalGroupById(sb.getPrincipal());
@@ -121,12 +121,21 @@ public class SubscribeServiceImpl implements SubscribeService, InitializingBean 
 			    sb.setDisplayName(null);
 			}
 		} catch (PortalErrorException e) {
-			LOG.warn("SubscribeService::getSubscribersByCtxId():: principal=" + sb.getPrincipal()
+			LOG.warn("SubscribeService::getSubscribersByCtxId():: principal=" + sb.getPrincipal() 
 			        + " PortalErrorException " + e.getMessage());
-			throw new ResourceNotFoundException("Is web service for uportal groups correctly installed? "
+			throw new ResourceNotFoundException("Is web service for uportal groups correctly installed? " 
 			        + e.getMessage());
 		}
 	}
+
+    public List<PortalGroup> searchGroups(final String token) {
+        try {
+            return this.getGroupService().searchPortalGroups(token);
+        } catch (PortalErrorException e) {
+            throw new ResourceNotFoundException("Is web service for uportal groups correctly installed ? " 
+                    + e.getMessage());
+        }
+    }
 
     /**
      * Getter du membre groupService.
@@ -138,20 +147,20 @@ public class SubscribeServiceImpl implements SubscribeService, InitializingBean 
 
     /**
      * Setter du membre groupService.
-     * @param groupService la nouvelle valeur du membre groupService.
+     * @param groupService la nouvelle valeur du membre groupService. 
      */
     public void setGroupService(final GroupService groupService) {
         this.groupService = groupService;
-    }
+    }	
 
     /**
      * @throws Exception
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-       Assert.notNull(this.groupService, "The property groupService in class "
+       Assert.notNull(this.groupService, "The property groupService in class " 
                + this.getClass().getSimpleName() + " must not be null.");
-       Assert.notNull(this.subscriberDao, "The property subscriberDao in class "
+       Assert.notNull(this.subscriberDao, "The property subscriberDao in class " 
                + this.getClass().getSimpleName() + " must not be null.");
     }
 }

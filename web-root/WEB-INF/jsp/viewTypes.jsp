@@ -5,7 +5,7 @@
 <c:set var="currentMainMenu" value="admin"/>
 <%@ include file="/WEB-INF/jsp/header1_adminView.jsp"%>
 
-<div id="news_headerA"> <IMG align="absmiddle" alt="" src="<html:imagesPath/>icone_admin.gif" border="0"/> 
+<div id="news_headerA"> <IMG align="absmiddle" alt="" src="<html:imagesPath/>icone_admin.gif" border="0"/>
 <SPAN class="newsTitle"><fmt:message key="menu.admin"/> </SPAN>
 </div>
 <c:set var="currentHeaderSM" value="type" />
@@ -40,7 +40,7 @@
 			</d:column>
 			<d:column href="${delTypeActionURL}" paramId="${portletParamPrefixe}${pltc_target}typId" paramProperty="typeId">
 				<img title="<fmt:message key="news.alert.delete.type"/>"
-					src="<html:imagesPath/>delete.gif" border=0 
+					src="<html:imagesPath/>delete.gif" border=0
 					onClick="return confirm('<fmt:message key="news.alert.delete.type"/>');"/>
 			</d:column>
 			<d:column>
@@ -49,7 +49,6 @@
 					title="<fmt:message key='news.img.title.export.type'/>"
 					src="<html:imagesPath/>xml.gif" border="0" /></a>
 			</d:column>
-
 			<d:setProperty name="paging.banner.item_name" value="${tit}" />
 			<d:setProperty name="paging.banner.items_name" value="${tit}s" />
 		</d:table>
@@ -58,7 +57,7 @@
 		<br />
 		<div id="new_add_link">
 			<a href="${addTypeRenderURL}">
-				<img title="<fmt:message key="news.img.title.add.newType"/>" 
+				<img title="<fmt:message key="news.img.title.add.newType"/>"
 					src="<html:imagesPath/>add.gif" border=0 />
 				<fmt:message key="menu.newType" />
 			</a>

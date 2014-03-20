@@ -1,3 +1,8 @@
+/**
+* ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+* For any information please refer to http://esup-helpdesk.sourceforge.net
+* You may obtain a copy of the licence at http://www.esup-portail.org/license/
+*/
 package org.cmis.portlets.news.dao.opencmis;
 
 import java.util.HashMap;
@@ -19,19 +24,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * 
+ *
  * created by Anyware Services - Delphine Gavalda.
- * 
+ *
  * 19 mai 2010
  */
 @Service("sessionFactory")
 public class BasicSessionFactory implements CmisSessionFactory {
 
+	/** Logger. */
 	private static final Log LOG = LogFactory.getLog(BasicSessionFactory.class);
 
+	/** Attachmentmanager. */
 	@Autowired
 	private AttachmentManager am;
 
+	/** sessionsMap. */
 	private Map<Long, Session> sessionsMap;
 
 	/** Constructeur.  */
@@ -39,6 +47,9 @@ public class BasicSessionFactory implements CmisSessionFactory {
 		super();
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.dao.CmisSessionFactory#getSession(java.lang.Long)
+	 */
 	public Session getSession(final Long entityId) throws CmisException {
 
 		if (sessionsMap == null) {
@@ -51,6 +62,11 @@ public class BasicSessionFactory implements CmisSessionFactory {
 		return sessionsMap.get(entityId);
 	}
 
+	/**
+	 * @param entityId
+	 * @return <code>Session</code>
+	 * @throws CmisException
+	 */
 	private Session createSession(final Long entityId) throws CmisException {
 
 		CmisServer server = am.getEntityServer(entityId);
@@ -104,12 +120,9 @@ public class BasicSessionFactory implements CmisSessionFactory {
 			if (useDefault) {
 				sessionsMap.put((long) -1, session);
 				return sessionsMap.get((long) -1);
-
-			} else {
-				sessionsMap.put(entityId, session);
-				return sessionsMap.get(entityId);
 			}
-
+			sessionsMap.put(entityId, session);
+			return sessionsMap.get(entityId);
 		} catch (Exception e) {
 			LOG.error("BasicSessionFactory : An error occurs trying to connect to the cmis server at : " + serverUrl);
 			LOG.error(e, e.fillInStackTrace());
@@ -118,6 +131,9 @@ public class BasicSessionFactory implements CmisSessionFactory {
 		}
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.dao.CmisSessionFactory#removeSession(java.lang.Long)
+	 */
 	public void removeSession(final Long entityId) throws CmisException {
 		if (sessionsMap != null) {
 			if (sessionsMap.get(entityId) != null) {
@@ -126,6 +142,9 @@ public class BasicSessionFactory implements CmisSessionFactory {
 		}
 	}
 
+	/**
+	 * @see org.cmis.portlets.news.dao.CmisSessionFactory#removeDefaultSession()
+	 */
 	public void removeDefaultSession() throws CmisException {
 		if (sessionsMap != null) {
 			if (sessionsMap.get((long) -1) != null) {

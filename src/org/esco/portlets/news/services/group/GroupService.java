@@ -32,7 +32,7 @@ public interface GroupService {
      * @return List<PortalGroup>
      * @throws PortalErrorException
      */
-    public List<PortalGroup> searchPortalGroups(final String filter, final String token) throws PortalErrorException;
+    List<PortalGroup> searchPortalGroups(final String filter, final String token) throws PortalErrorException;
 
     /**
      * Looking for a group.
@@ -41,5 +41,23 @@ public interface GroupService {
      * @throws PortalErrorException
      */
     PortalGroup getPortalGroupById(final String id) throws PortalErrorException;
+
+    /**
+     * Tell if a user is a member of a group.
+     * @param userId
+     * @param groupId
+     * @return boolean
+     * @throws PortalErrorException
+     */
+    boolean isMemberOf(final String userId, final String groupId) throws PortalErrorException;
+
+    /**
+     * Tell if a group is containing the groupMember.
+     * @param groupId
+     * @param groupMemberId
+     * @return boolean
+     * @throws PortalErrorException
+     */
+    boolean isContainingGroup(final String groupId, final String groupMemberId) throws PortalErrorException;
 
 }

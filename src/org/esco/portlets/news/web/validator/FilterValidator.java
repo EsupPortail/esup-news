@@ -6,7 +6,6 @@
 package org.esco.portlets.news.web.validator;
 
 import java.util.Arrays;
-
 import org.esco.portlets.news.dao.FilterDAO;
 import org.esco.portlets.news.domain.Filter;
 import org.esco.portlets.news.domain.FilterOperator;

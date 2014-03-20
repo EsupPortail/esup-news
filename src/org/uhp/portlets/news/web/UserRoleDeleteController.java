@@ -25,7 +25,8 @@ import javax.portlet.PortletSecurityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.PermissionManager;
+import org.esco.portlets.news.services.RoleManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.portlet.mvc.AbstractController;
@@ -41,7 +42,9 @@ public class UserRoleDeleteController extends AbstractController implements Init
     /** */
     private static final Log LOG = LogFactory.getLog(UserRoleDeleteController.class);
 	/** */
-	@Autowired private UserManager um;
+	@Autowired private RoleManager rm;
+	/** */
+	@Autowired private PermissionManager pm;
 	
 	/**
      * Constructeur de l'objet UserRoleDeleteController.java.
@@ -55,8 +58,8 @@ public class UserRoleDeleteController extends AbstractController implements Init
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		 if (this.um == null) {
-		     throw new IllegalArgumentException("A userManager is required");
+		 if (this.rm == null) {
+		     throw new IllegalArgumentException("A roleManager is required");
 		 }
 	}
 
@@ -73,14 +76,17 @@ public class UserRoleDeleteController extends AbstractController implements Init
         final Long ctxId = Long.valueOf(request.getParameter(Constants.ATT_CTX_ID));
         final String ctx = request.getParameter(Constants.ATT_CTX);
  
-        if (!this.um.isUserAdminInCtx(ctxId, ctx, request.getRemoteUser())) {
+        if (!this.pm.isAdminInCtx(ctxId, ctx)) {
      		LOG.warn("UserRoleDeleteController:: user " + request.getRemoteUser() + " has no role admin");
  			throw new PortletSecurityException(
  			        getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
     	}
-        String role = this.um.getUserRoleInCtx(ctxId, ctx, request.getParameter(Constants.ATT_USER_ID));
-        this.um.removeUserRoleForCtx(request.getParameter(Constants.ATT_USER_ID), ctxId, ctx);
-        String role2 = this.um.getUserRoleInCtx(ctxId, ctx, request.getParameter(Constants.ATT_USER_ID));
+        String role = this.rm.getRoleOfEntityInCtx(request.getParameter(Constants.ATT_USER_ID),
+        		"1".equals(request.getParameter(Constants.ATT_IS_GRP)), ctxId, ctx);
+        this.rm.removeRoleForEntityInCtx(request.getParameter(Constants.ATT_USER_ID),
+        		"1".equals(request.getParameter(Constants.ATT_IS_GRP)), ctxId, ctx);
+        String role2 = this.rm.getRoleOfEntityInCtx(request.getParameter(Constants.ATT_USER_ID),
+        		"1".equals(request.getParameter(Constants.ATT_IS_GRP)), ctxId, ctx);
 		response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_PERM + ctx);
 		response.setRenderParameter(Constants.ATT_CTX_ID, String.valueOf(ctxId));
 		if (role2 != null && RolePerm.valueOf(role2).getMask() < RolePerm.valueOf(role).getMask()) {

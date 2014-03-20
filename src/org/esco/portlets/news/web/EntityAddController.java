@@ -22,7 +22,10 @@ import javax.portlet.RenderResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.domain.Entity;
+import org.esco.portlets.news.domain.EntityRole;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.PermissionManager;
+import org.esco.portlets.news.services.RoleManager;
 import org.esco.portlets.news.services.TypeManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
@@ -36,7 +39,6 @@ import org.springframework.web.portlet.mvc.SimpleFormController;
 import org.uhp.portlets.news.NewsConstants;
 import org.uhp.portlets.news.domain.Category;
 import org.uhp.portlets.news.domain.RolePerm;
-import org.uhp.portlets.news.domain.UserRole;
 import org.uhp.portlets.news.service.CategoryManager;
 import org.uhp.portlets.news.web.support.Constants;
 
@@ -62,6 +64,12 @@ public class EntityAddController extends SimpleFormController implements Initial
     /** Manager of Users. */
     @Autowired
     private UserManager um;
+    /** Manager of Users. */
+    @Autowired
+    private RoleManager rm;
+    /** Manager of Permission. */
+    @Autowired
+    private PermissionManager pm;
 
     /**
      * Constructor of the object TypeAddController.java.
@@ -110,7 +118,7 @@ public class EntityAddController extends SimpleFormController implements Initial
             LOG.trace("List of Type to associate with the Entity :" + entF.getTypesIds());
             LOG.trace("List of categories associated :" + entF.getCategoriesIds());
         }
-        if (!this.um.isSuperAdmin(request.getRemoteUser())) {            
+        if (!this.pm.isSuperAdmin()) {
             throw new PortletSecurityException(
                     getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
         }
@@ -135,9 +143,9 @@ public class EntityAddController extends SimpleFormController implements Initial
                 this.getCm().addAuthorizedTypeToCategory(new ArrayList<Long>(tIds), cat.getCategoryId());
                 displayOrder++;
                 
-                List<UserRole> users = this.getUm().getUsersRolesForCtx(cat.getCategoryId(), NewsConstants.CTX_C);
-                for (UserRole u : users) {
-                    this.um.migrationUserCtxRole(this.um.findUserByUid(u.getPrincipal()), cat.getEntityId());
+                List<EntityRole> ers = this.rm.getEntityRolesInCtx(cat.getCategoryId(), NewsConstants.CTX_C);
+                for (EntityRole er : ers) {
+                    this.rm.migrateEntityRoleInCtxEntity(er.getPrincipal(), "1".equals(er.getIsGroup()), cat.getEntityId());
                 }
             }
         }
@@ -159,7 +167,7 @@ public class EntityAddController extends SimpleFormController implements Initial
         if (LOG.isTraceEnabled()) {
             LOG.trace("Entering show form.");
         }
-        if (!this.getUm().isSuperAdmin(request.getRemoteUser())) {            
+        if (!this.pm.isSuperAdmin()) {
             ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
             mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage("news.alert.superUserOnly"));
             throw new ModelAndViewDefiningException(mav);
@@ -183,7 +191,7 @@ public class EntityAddController extends SimpleFormController implements Initial
         if (LOG.isTraceEnabled()) {
             LOG.trace("Entering reference data.");
         }
-        if (this.um.isSuperAdmin(request.getRemoteUser())) {
+        if (this.pm.isSuperAdmin()) {
             model.put(Constants.ATT_TYPE_LIST, this.getTm().getAllTypes());
             model.put(Constants.ATT_C_LIST, this.getCm().getAloneCategory());
             model.put(Constants.ATT_PM, RolePerm.ROLE_ADMIN.getMask());
@@ -302,7 +310,11 @@ public class EntityAddController extends SimpleFormController implements Initial
                 + getClass().getSimpleName() + " must not be null.");
         Assert.notNull(this.getUm(), "The property UserManager um in class " 
                 + getClass().getSimpleName() + " must not be null.");
-        Assert.notNull(this.getEm(), "The property EntityManager em in class " 
+        Assert.notNull(this.getEm(), "The property EntityManager em in class "
+                + getClass().getSimpleName() + " must not be null.");
+        Assert.notNull(this.getRm(), "The property RoleManager rm in class "
+                + getClass().getSimpleName() + " must not be null.");
+        Assert.notNull(this.getPm(), "The property PermissionManager pm in class "
                 + getClass().getSimpleName() + " must not be null.");
     }
 }

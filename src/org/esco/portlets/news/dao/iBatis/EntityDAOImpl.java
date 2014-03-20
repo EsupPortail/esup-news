@@ -29,10 +29,10 @@ import org.uhp.portlets.news.dao.Constants;
  */
 @Repository("entityDao")
 public class EntityDAOImpl extends SqlMapClientDaoSupport implements EntityDAO {
-    
+
     /** Logger. */
     private static final Log LOG = LogFactory.getLog(EntityDAOImpl.class);
-    
+
     /** Constructeur.  */
     public EntityDAOImpl() {
         super();
@@ -51,9 +51,9 @@ public class EntityDAOImpl extends SqlMapClientDaoSupport implements EntityDAO {
         }
         return e;
     }
-    
+
     /**
-     * Permet de savoir si une entité peut être supprimée. 
+     * Permet de savoir si une entité peut être supprimée.
      * Cela est possible quand aucune catégorie n'est liée à cette entité.
      * @param entityId
      * @return <code>boolean</code> vrai si cela est possible faux sinon.
@@ -68,9 +68,9 @@ public class EntityDAOImpl extends SqlMapClientDaoSupport implements EntityDAO {
      * Delete une Entity.
      * @param entityId Identifiant de l'entité à supprimer.
      * @return <code>boolean</code> True si supprimé, false sinon ou si non trouvé.
-     * @throws DataAccessException 
+     * @throws DataAccessException
      */
-    public boolean deleteEntityById(final Long entityId) throws DataAccessException {  
+    public boolean deleteEntityById(final Long entityId) throws DataAccessException {
         if (this.canDeleteEntity(entityId)) {
             getSqlMapClientTemplate().delete("deleteAllAuthorizedTypeOnEntity", entityId);
             getSqlMapClientTemplate().delete("deleteAllFilterOnEntity", entityId);
@@ -83,7 +83,7 @@ public class EntityDAOImpl extends SqlMapClientDaoSupport implements EntityDAO {
     /**
      * Mettre à jour complètement l'entité.
      * @param entity L'entité à mettre à jour.
-     * @throws DataAccessException 
+     * @throws DataAccessException
      */
     private void updateEntityById(final Entity entity) throws DataAccessException {
         getSqlMapClientTemplate().update("updateEntityById", entity);
@@ -92,13 +92,13 @@ public class EntityDAOImpl extends SqlMapClientDaoSupport implements EntityDAO {
     /**
      * Ajoute une nouvelle entité avec gestion automatique de l'identifiant.
      * @param entity L'entité à ajouter.
-     * @throws DataAccessException 
+     * @throws DataAccessException
      */
     private void insertEntity(final Entity entity) throws DataAccessException {
         entity.setCreationDate(Calendar.getInstance().getTime());
         getSqlMapClientTemplate().insert("insertEntity", entity);
     }
-    
+
     /**
      * Ajoute ou mets à jour une entité.
      * @param entity L'entité à sauvegarder.
@@ -112,7 +112,7 @@ public class EntityDAOImpl extends SqlMapClientDaoSupport implements EntityDAO {
             updateEntityById(entity);
         }
     }
-    
+
     /**
      * Lie une entité à une liste de type.
      * @param typeIds
@@ -122,13 +122,13 @@ public class EntityDAOImpl extends SqlMapClientDaoSupport implements EntityDAO {
      */
     public void addAuthorizedTypesToEntity(final List<Long> typeIds, final Long entityId) throws DataAccessException {
         for (Long tId : typeIds) {
-            Map<String, Object> params = new HashMap<String, Object>();
+            Map<String, Object> params = new HashMap<String, Object>(2);
             params.put(NewsConstants.TYPE_ID, tId );
             params.put(NewsConstants.ENTITY_ID, entityId);
             try {
                 getSqlMapClientTemplate().insert("insertOneAuthorizedTypeOfEntity", params);
             } catch (DataAccessException e) {
-                LOG.warn("EntityDaoImpl:: insertOneAuthorizedTypeOfEntity : Error : " + e.getMessage()); 
+                LOG.warn("EntityDaoImpl:: insertOneAuthorizedTypeOfEntity : Error : " + e.getMessage());
                 throw e;
             }
         }
@@ -141,16 +141,16 @@ public class EntityDAOImpl extends SqlMapClientDaoSupport implements EntityDAO {
      * @throws DataAccessException
      * @see org.esco.portlets.news.dao.EntityDAO#deleteAuthorizedTypesToEntity(java.util.List, java.lang.Long)
      */
-    public void deleteAuthorizedTypesToEntity(final List<Long> typeIds, final Long entityId) 
+    public void deleteAuthorizedTypesToEntity(final List<Long> typeIds, final Long entityId)
     throws DataAccessException {
         for (Long tId : typeIds) {
-            Map<String, Object> params = new HashMap<String, Object>();
+            Map<String, Object> params = new HashMap<String, Object>(2);
             params.put(NewsConstants.TYPE_ID, tId );
             params.put(NewsConstants.ENTITY_ID, entityId);
             try {
                 getSqlMapClientTemplate().delete("deleteOneAuthorizedTypeOnEntity", params);
             } catch (DataAccessException e) {
-                LOG.warn("EntityDaoImpl:: deleteOneAuthorizedTypeOnEntity : Error : " + e.getMessage()); 
+                LOG.warn("EntityDaoImpl:: deleteOneAuthorizedTypeOnEntity : Error : " + e.getMessage());
                 throw e;
             }
         }
@@ -166,7 +166,7 @@ public class EntityDAOImpl extends SqlMapClientDaoSupport implements EntityDAO {
     public List<Entity> getAllEntities() throws DataAccessException {
         return getSqlMapClientTemplate().queryForList("getAllEntity");
     }
-    
+
     /**
      * Liste les entités autorisées à un utilisateur.
      * @param uid Identifiant de l'utilisateur.
@@ -177,7 +177,7 @@ public class EntityDAOImpl extends SqlMapClientDaoSupport implements EntityDAO {
     public List<Entity> getEntitiesByUser(final String uid) throws DataAccessException {
         return getSqlMapClientTemplate().queryForList("getEntityByUser", uid);
     }
-    
+
     /**
      * Liste les entités autorisées à un type.
      * @param typeId Identifiant du type.
@@ -213,8 +213,8 @@ public class EntityDAOImpl extends SqlMapClientDaoSupport implements EntityDAO {
         if (id == null || id < 1) {
             return ((Integer) getSqlMapClientTemplate().queryForObject("existEntityName", name)) > 0;
         }
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put(Constants.NAME, name);   
+        Map<String, Object> params = new HashMap<String, Object>(2);
+        params.put(Constants.NAME, name);
         params.put(Constants.ID, id);
         return ((Integer) getSqlMapClientTemplate().queryForObject("sameEntityNameExist", params)) > 0;
     }

@@ -15,9 +15,8 @@ import javax.portlet.RenderResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.domain.Type;
-import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.esco.portlets.news.services.TypeManager;
-import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectRetrievalFailureException;
@@ -39,12 +38,9 @@ public class TypeDeleteController extends AbstractController implements Initiali
     /** The Type Manager.*/
     @Autowired 
     private TypeManager tm;
-    /** The Entity Manager.*/
-    @Autowired 
-    private EntityManager em;
-    /** The User manager. */
-    @Autowired 
-    private UserManager um;
+ 	/** The Permission Manager. */
+    @Autowired
+    private PermissionManager pm;
     
     /** Permet de savoir si l'action du delete a été effectuée correctement. */
     private boolean deleted;
@@ -69,7 +65,7 @@ public class TypeDeleteController extends AbstractController implements Initiali
     public void handleActionRequest(final ActionRequest request,
             final ActionResponse response) throws Exception {
         Long typeId = Long.valueOf(request.getParameter(Constants.ATT_TYPE_ID));
-        if (!this.um.isSuperAdmin(request.getRemoteUser())) {
+        if (!this.getPm().isSuperAdmin()) {
             msgKey = "news.alert.superUserOnly";
         } else if (this.tm.deleteType(typeId)) {
             if (LOG.isDebugEnabled()) {
@@ -164,9 +160,7 @@ public class TypeDeleteController extends AbstractController implements Initiali
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.getTm(), "The property TypeManager tm in class " + getClass().getSimpleName()
                 + " must not be null.");
-        Assert.notNull(this.getEm(), "The property EntityManager em in class " + getClass().getSimpleName()
-                + " must not be null.");
-        Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
+        Assert.notNull(this.getPm(), "The property PermissionManager pm in class " + getClass().getSimpleName()
                 + " must not be null.");
     }
 }

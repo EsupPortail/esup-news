@@ -42,6 +42,7 @@ import org.esco.portlets.news.dao.TypeDAO;
 import org.esco.portlets.news.domain.Entity;
 import org.esco.portlets.news.domain.IEscoUser;
 import org.esco.portlets.news.domain.Type;
+import org.esco.portlets.news.services.RoleManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +63,6 @@ import org.uhp.portlets.news.domain.Subscriber;
 import org.uhp.portlets.news.domain.Topic;
 import org.uhp.portlets.news.publisher.Constants;
 import org.uhp.portlets.news.service.exception.NoSuchItemException;
-
-
 
 
 /**
@@ -118,19 +117,20 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	/** CMIS dao. */
 	@Autowired
 	private CmisAttachmentDao cmisDao;
+	/** Manager of Users. */
+    @Autowired
+    private RoleManager rm;
 
 	/** Timeout in paramters */
 	private Integer timeout;
 
 	/** Group Store key to remove from resource generation when used with user attributes.*/
 	private String groupStoreName = "smartldap.";
-
 	/**
 	 * Constructor of BasicFeedService.java.
 	 */
 	public BasicFeedService() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -367,7 +367,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 			entry.setTitle(item.getTitle());
 			entry.setLink(urlEntry + getItemPath(item.getItemId(), path)
 					+ "item?c=1&itemID=" + item.getItemId());
-			entry.setAuthor(um.getUserNameByUid(item.getPostedBy()));
+			entry.setAuthor(um.getUserNameById(item.getPostedBy()));
 			entry.setPublishedDate(item.getPostDate());
 			entry.setUpdatedDate(item.getLastUpdatedDate());
 			SyndContent description = new SyndContentImpl();
@@ -526,7 +526,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 */
 	public ItemsView getItems(final Long id,  final int status, final String uid) {
 		try {
-			if (um.isUserRoleExistForContext(id, NewsConstants.CTX_T, uid)) {
+			if (rm.isEntityHasRoleInCtx(uid, false, id, NewsConstants.CTX_T)) {
 				final Topic t = topicDao.getTopicById(id);
 				return getItems(categoryDao.getCategoryById(t.getCategoryId()), t, status);
 			}

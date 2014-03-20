@@ -1,22 +1,33 @@
+/**
+* ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+* For any information please refer to http://esup-helpdesk.sourceforge.net
+* You may obtain a copy of the licence at http://www.esup-portail.org/license/
+*/
 package org.cmis.portlets.news.domain;
 
 import java.io.Serializable;
 
 /**
- * 
+ *
  * created by Anyware Services - Delphine Gavalda.
- * 
+ *
  * 11 juin 2010
  */
 public class CmisServer implements Serializable {
 
+	/** */
     private static final long serialVersionUID = 1L;
-
+    /** server Id. */
     private Long serverId;
+    /** global Server. */
     private String globalServer;
+    /** serverUrl. */
     private String serverUrl;
+    /** serverLogin. */
     private String serverLogin;
+    /** serverPwd. */
     private String serverPwd;
+    /** repository Id. */
     private String repositoryId;
 
     /**
@@ -25,7 +36,7 @@ public class CmisServer implements Serializable {
     public CmisServer() {
 	 super();
     }
-    
+
     /**
      * Get the server ID.
      * @return Long
@@ -38,7 +49,6 @@ public class CmisServer implements Serializable {
      * Set the server ID.
      * @param serverId
      */
-    @SuppressWarnings("hiding")
     public void setServerId(final Long serverId) {
 	this.serverId = serverId;
     }
@@ -55,7 +65,6 @@ public class CmisServer implements Serializable {
      * Set "1" if these parameters are the defaults values for the application.
      * @param globalServer
      */
-    @SuppressWarnings("hiding")
     public void setGlobalServer(final String globalServer) {
 	this.globalServer = globalServer;
     }
@@ -72,7 +81,6 @@ public class CmisServer implements Serializable {
      * Get the server Url.
      * @param serverUrl
      */
-    @SuppressWarnings("hiding")
     public void setServerUrl(final String serverUrl) {
 	this.serverUrl = serverUrl;
     }
@@ -89,7 +97,6 @@ public class CmisServer implements Serializable {
      * Set the login to connect to the server.
      * @param serverLogin
      */
-    @SuppressWarnings("hiding")
     public void setServerLogin(final String serverLogin) {
 	this.serverLogin = serverLogin;
     }
@@ -106,7 +113,6 @@ public class CmisServer implements Serializable {
      * Set the server connection password.
      * @param serverPwd
      */
-    @SuppressWarnings("hiding")
     public void setServerPwd(final String serverPwd) {
 	this.serverPwd = serverPwd;
     }
@@ -123,7 +129,6 @@ public class CmisServer implements Serializable {
      * Set the Id of the repository.
      * @param repositoryId
      */
-    @SuppressWarnings("hiding")
     public void setRepositoryId(final String repositoryId) {
 	this.repositoryId = repositoryId;
     }

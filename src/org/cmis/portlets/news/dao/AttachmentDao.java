@@ -1,3 +1,8 @@
+/**
+* ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+* For any information please refer to http://esup-helpdesk.sourceforge.net
+* You may obtain a copy of the licence at http://www.esup-portail.org/license/
+*/
 package org.cmis.portlets.news.dao;
 
 import java.util.List;
@@ -8,16 +13,16 @@ import org.springframework.dao.DataAccessException;
 
 /**
  * Attachment DAO
- * 
+ *
  * created by Anyware Services - Delphine Gavalda.
- * 
+ *
  * 10 mai 2010
  */
 public interface AttachmentDao {
 
     /**
      * Retrieve an attachment with its id.
-     * 
+     *
      * @param id
      * @return Attachment
      * @throws DataAccessException
@@ -26,7 +31,7 @@ public interface AttachmentDao {
 
     /**
      * Retrieve all attachment for an item.
-     * 
+     *
      * @param itemId
      * @return <code> List&lt;Attachment&gt; </code>
      * @throws DataAccessException
@@ -35,7 +40,7 @@ public interface AttachmentDao {
 
     /**
      * Get items linked to a given attachment.
-     * 
+     *
      * @param attachmentId
      * @return <code> List&lt;Long&gt; </code>
      * @throws DataAccessException
@@ -44,7 +49,7 @@ public interface AttachmentDao {
 
     /**
      * Insert an attachment.
-     * 
+     *
      * @param attachment
      * @return Long
      * @throws DataAccessException
@@ -53,15 +58,15 @@ public interface AttachmentDao {
 
     /**
      * Update an attachment.
-     * 
+     *
      * @param params
      * @throws DataAccessException
      */
-    void updateAttachment(final Map params) throws DataAccessException;
-    
+    void updateAttachment(final Map<String, Object> params) throws DataAccessException;
+
     /**
      * Add an attachment to a item.
-     * 
+     *
      * @param attachmentId
      * @param itemId
      * @throws DataAccessException
@@ -70,7 +75,7 @@ public interface AttachmentDao {
 
     /**
      * Delete an attachment.
-     * 
+     *
      * @param attachmentId
      * @throws DataAccessException
      */
@@ -78,7 +83,7 @@ public interface AttachmentDao {
 
     /**
      * Delete an attachmentfor a item.
-     * 
+     *
      * @param attachmentId
      * @param itemId
      * @throws DataAccessException

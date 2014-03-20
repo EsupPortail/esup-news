@@ -55,4 +55,6 @@ p:configLocation="classpath:/properties/cache/ehcache.xml" />
 
 <bean id="feedService" class="org.uhp.portlets.news.service.BasicFeedService" p:timeout="${access.feeds.timeout}" p:groupStoreName="smartldap."/>
 
+<bean id="portletService" class="org.esco.portlets.news.utils.PortletServiceImpl" />
+
 </beans>

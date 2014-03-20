@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.service;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.dao.EscoUserDao;
 import org.esco.portlets.news.domain.IEscoUser;
+import org.esco.portlets.news.services.RoleManager;
 import org.springframework.dao.DataAccessException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
@@ -39,18 +40,24 @@ import org.uhp.portlets.news.dao.TopicDao;
 import org.uhp.portlets.news.domain.Category;
 import org.uhp.portlets.news.domain.Topic;
 
+/**
+ * modified by GIP RECIA - Julien Gribonvald
+ * 11 mai 2012
+ */
 @Service
+@Deprecated
 public class NotificationServiceImpl implements NotificationService {
-    
+
     private static final Log LOG = LogFactory.getLog(NotificationServiceImpl.class);
-    
+
     private MailSender mailSender;
     private SimpleMailMessage templateMessage;
 
-    private TopicDao topicDao;	
+    private TopicDao topicDao;
     private ItemDao itemDao;
     private EscoUserDao userDao;
     private CategoryDao categoryDao;
+    private RoleManager rm;
 
     private boolean enableNotification;
 
@@ -89,16 +96,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private void sendDailyEmailForTopics(final Category category) {
-
         final List<Topic> topicsForToday = this.getPendingTopics(category.getCategoryId());
-
         if (topicsForToday.size() < 1) {		
             return;
         }
-
-        final List<IEscoUser> managers = 
+        final List<IEscoUser> managers =
             this.getOnlyTopicManagersForTopics(category.getCategoryId(), topicsForToday);
-
         if (managers.isEmpty()) {
             return;
         } 
@@ -119,24 +122,20 @@ public class NotificationServiceImpl implements NotificationService {
                     sb.append(k + "]\n");
 
                 }
-
-                text = StringUtils.replace(text, "%NB%", 
+                text = StringUtils.replace(text, "%NB%",
                         Integer.toString(this.itemDao.getPendingItemsCountByTopics(tIds)));
-                text = StringUtils.replace(text, "%CATEGORY%", category.getName());	
+                text = StringUtils.replace(text, "%CATEGORY%", category.getName());
                 text = StringUtils.replace(text, "%TOPICS%", sb.toString());
                 message.setText(text);
-
                 try {
                     LOG.debug(message);
-                    this.mailSender.send(message);	        	
+                    this.mailSender.send(message);
                 } catch (MailException e) {
-                    LOG.error("Notification Service:: An exception occured when sending mail, " 
+                    LOG.error("Notification Service:: An exception occured when sending mail, "
                             + "have you correctly configured your mail engine ?" + e);
-
-                }  	
+                }
             }
         }
-
     }
 
     private void sendDailyEmailForCategory(final Category category) {
@@ -145,12 +144,11 @@ public class NotificationServiceImpl implements NotificationService {
         LOG.debug("sendDailyEmailForCategory " + category.getName());
         List<Topic> topicsForToday = this.getPendingTopics(cId);
         if (topicsForToday.size() < 1) {
-            LOG.debug("send Daily Email For Category [" + category.getName() 
+            LOG.debug("send Daily Email For Category [" + category.getName()
                     + "] : nothing new, no notification sent");
             return;
         }
-        Set<IEscoUser> managers = this.getManagersForCategory(category);		
-        
+        Set<IEscoUser> managers = this.getManagersForCategory(category);
         if (managers.isEmpty()) {
             return;
         }
@@ -172,23 +170,19 @@ public class NotificationServiceImpl implements NotificationService {
                 recip[nb++] = user.getEmail();
             }
         }
-
         message.setTo(recip);
-
         String text = message.getText();
         text = StringUtils.replace(text, "%NB%", n);
         text = StringUtils.replace(text, "%CATEGORY%", category.getName());
         text = StringUtils.replace(text, "%TOPICS%", this.getPendingTopicsForCategory(cId));
         message.setText(text);
-
         try {
             LOG.info(message);
-            mailSender.send(message);			
+            mailSender.send(message);
         } catch (MailException e) {
-            LOG.error("Notification Service:: An exception occured when sending mail," 
+            LOG.error("Notification Service:: An exception occured when sending mail,"
                     + " have you correctly configured your mail engine ?" + e);
-        }  
-
+        }
     }
 
 
@@ -219,10 +213,10 @@ public class NotificationServiceImpl implements NotificationService {
         String[] tIds = new String[topics.size()];
         int i = 0;
         for (final Topic t : topics) {
-            tIds[i++] = String.valueOf(t.getTopicId());			
+            tIds[i++] = String.valueOf(t.getTopicId());
         }
         try {
-            managers = this.userDao.getManagersForTopics(cId, toInteger(tIds));
+        managers = this.userDao.getManagersForTopics(cId, toInteger(tIds));
         } catch (DataAccessException e) {
             LOG.error("Erreur : pb de connexion de la base de donnees " + e.getMessage());
         }
@@ -243,7 +237,7 @@ public class NotificationServiceImpl implements NotificationService {
     private Integer[] toInteger(final String[] arr) {
         if (arr == null) {
             return null;
-        } 
+        }
 
         final Integer[] res = new Integer[arr.length];
         for (int i = 0; i < arr.length; i++) {
@@ -253,9 +247,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     public void sendDailyEmailForCategories() {
-        for (Category c : this.categoryDao.getAllCategory()) {			
+        for (Category c : this.categoryDao.getAllCategory()) {
             this.sendDailyEmailForCategory(c);
             this.sendDailyEmailForTopics(c);
-        }		
-    }				
+        }
+    }
 }

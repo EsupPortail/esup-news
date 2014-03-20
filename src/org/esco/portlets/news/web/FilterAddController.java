@@ -21,6 +21,7 @@ import org.esco.portlets.news.domain.Filter;
 import org.esco.portlets.news.domain.FilterOperator;
 import org.esco.portlets.news.domain.FilterType;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +48,12 @@ public class FilterAddController extends SimpleFormController implements Initial
     /** Manager d'une Entity. */
     @Autowired
     private EntityManager em;
-    /** Manager des Users. */
+    /** Manager des Permissions. */
     @Autowired
-    private UserManager um;
+    private PermissionManager pm;
+    /** Manager of users. */
+   /* @Autowired
+    private UserManager um;*/
 
     /**
      * Constructor of FilterAddController.java.
@@ -97,13 +101,13 @@ public class FilterAddController extends SimpleFormController implements Initial
         if (LOG.isTraceEnabled()) {
             LOG.trace("Filter given in parameter :" + filter);
         }
-        if (!this.um.isSuperAdmin(request.getRemoteUser())) {
+        if (!this.pm.isSuperAdmin()) {
             throw new PortletSecurityException(
                     getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));
         }
-        /*if (filter.getType().equals(FilterType.Group)) {
+        if (filter.getType().equals(FilterType.Group)) {
             filter.setOperator(FilterOperator.CONTAINS);
-        }*/
+        }
         this.getEm().addFilterToEntity(filter);
         response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_FILTERS);
         response.setRenderParameter(Constants.ATT_ENTITY_ID, String.valueOf(filter.getEntityId()));
@@ -125,7 +129,7 @@ public class FilterAddController extends SimpleFormController implements Initial
             LOG.trace("Entering show form.");
         }
         ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
-        if (!this.getUm().isSuperAdmin(request.getRemoteUser())) {
+        if (!this.pm.isSuperAdmin()) {
             mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage("news.alert.superUserOnly"));
             throw new ModelAndViewDefiningException(mav);
         }
@@ -152,7 +156,7 @@ public class FilterAddController extends SimpleFormController implements Initial
         model.put(Constants.ATT_FILTER_OPERATOR_LDAP, FilterOperator.getLdapOperators());
         model.put(Constants.ATT_FILTER_OPERATOR_GROUP, FilterOperator.getGroupOperators());
         model.put(Constants.ATT_FILTER_LDAP_ATTRS, this.um.getLdapUserService().getFilterSearchAttributes());
-        if (this.um.isSuperAdmin(request.getRemoteUser())) {
+        if (this.pm.isSuperAdmin()) {
             model.put(Constants.ATT_PM, RolePerm.ROLE_ADMIN.getMask());
         } else {
             model.put(Constants.ATT_PM, RolePerm.ROLE_USER.getMask());
@@ -228,6 +232,8 @@ public class FilterAddController extends SimpleFormController implements Initial
         Assert.notNull(this.getUm(), "The property UserManager um in class "
                 + getClass().getSimpleName() + " must not be null.");
         Assert.notNull(this.getEm(), "The property EntityManager em in class "
+                + getClass().getSimpleName() + " must not be null.");
+        Assert.notNull(this.pm, "The property PermissionManager pm in class "
                 + getClass().getSimpleName() + " must not be null.");
     }
 }

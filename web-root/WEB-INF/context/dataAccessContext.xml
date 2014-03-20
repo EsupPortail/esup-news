@@ -14,7 +14,7 @@ http://www.springframework.org/schema/jee http://www.springframework.org/schema/
         <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="dataSource"/>                 
         <bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean" p:configLocation="classpath:../context/sql-map-config.xml"  p:dataSource-ref="dataSource"/>                                                                   
         <bean id="sqlUserDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientUserDaoImpl" p:sqlMapClient-ref="sqlMapClient"/>
-        <bean id="userDao" class="org.esco.portlets.news.dao.EscoUserDaoImpl" p:userDao-ref="sqlUserDao" p:ldapUserService-ref="ldapUserService" p:displayName="${ldap.userDisplayName}" p:mail="${ldap.userEmail}"/>
+        <bean id="userDao" class="org.esco.portlets.news.dao.EscoUserDaoImpl" p:portletService-ref="portletService" p:userDao-ref="sqlUserDao" p:ldapUserService-ref="ldapUserService" p:displayName="${ldap.userDisplayName}" p:mail="${ldap.userEmail}"/>
         <bean id="entityDao" class="org.esco.portlets.news.dao.iBatis.EntityDAOImpl" p:sqlMapClient-ref="sqlMapClient" />
 		<bean id="typeDao" class="org.esco.portlets.news.dao.iBatis.TypeDAOImpl" p:sqlMapClient-ref="sqlMapClient" />
 		<bean id="filterDao" class="org.esco.portlets.news.dao.iBatis.FilterDAOImpl" p:sqlMapClient-ref="sqlMapClient" />
@@ -63,7 +63,7 @@ http://www.springframework.org/schema/jee http://www.springframework.org/schema/
 			p:testFilter="cn=*ced*"/> 
 			
 		<bean id="escoUserManager" class="org.esco.portlets.news.services.UserManagerImpl"
-			p:ldapUserService-ref="ldapUserService" p:userDao-ref="userDao" />			
+			p:ldapUserService-ref="ldapUserService" p:userDao-ref="userDao" p:portalService-ref="portalService"/>
 		<bean id="entityManager" class="org.esco.portlets.news.services.EntityManagerImpl"
 			p:entityDao-ref="entityDao" p:catDao-ref="categoryDao" p:typeDao-ref="typeDao" p:filterDao-ref="filterDao" p:userDao-ref="userDao" p:subDao-ref="subscriberDao"/>
 		<bean id="typeManager" class="org.esco.portlets.news.services.TypeManagerImpl"

@@ -27,8 +27,11 @@ import javax.portlet.RenderResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.esco.portlets.news.domain.EntityRole;
 import org.esco.portlets.news.domain.IEscoUser;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.PermissionManager;
+import org.esco.portlets.news.services.RoleManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +44,6 @@ import org.uhp.portlets.news.domain.Category;
 import org.uhp.portlets.news.domain.RolePerm;
 import org.uhp.portlets.news.domain.Topic;
 import org.uhp.portlets.news.domain.User;
-import org.uhp.portlets.news.domain.UserRole;
 import org.uhp.portlets.news.service.CategoryManager;
 import org.uhp.portlets.news.service.TopicManager;
 import org.uhp.portlets.news.web.support.Constants;
@@ -59,6 +61,11 @@ public class PermissionViewController extends AbstractController implements Init
 	/** The User Manager.*/
 	@Autowired
 	private UserManager um;
+	/** The Permission Manager.*/
+	@Autowired
+	private PermissionManager pm;
+	@Autowired
+	private RoleManager rm;
 	/** The Entity Manager. */
 	@Autowired
 	private EntityManager em;
@@ -88,7 +95,7 @@ public class PermissionViewController extends AbstractController implements Init
 	   throws Exception {
         List<String> usersUid = new ArrayList<String>();
 		final Long ctxId = Long.valueOf(request.getParameter(Constants.ATT_CTX_ID));
-		if (!this.getUm().isUserAdminInCtx(ctxId, getCtx(), request.getRemoteUser())) {
+		if (!this.pm.isAdminInCtx(ctxId, getCtx())) {
 			LOG.debug("PermissionView: user has no role admin");
 			ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
 			//String msg = "you are not authorized for this action";
@@ -116,10 +123,11 @@ public class PermissionViewController extends AbstractController implements Init
 			mav.addObject(Constants.OBJ_ENTITY, this.em.getEntityById(c.getEntityId()));
 		}
 		// get uid List from users in role
-		Map<String, List<UserRole>> usersRoles = this.um.getUserRolesByCtxId(ctxId, this.getCtx());
-		for (Map.Entry<String, List<UserRole>> lr : usersRoles.entrySet()) {
-			for (UserRole ur : lr.getValue()) {
-				if (!usersUid.contains(ur.getPrincipal())) {
+		Map<String, List<EntityRole>> usersRoles = this.rm.getEntityRolesInCtxOrderedByRole(ctxId, this.getCtx());
+		for (Map.Entry<String, List<EntityRole>> lr : usersRoles.entrySet()) {
+			for (EntityRole ur : lr.getValue()) {
+				boolean isGrp = "1".equals(ur.getIsGroup()) ;
+				if (!isGrp && !usersUid.contains(ur.getPrincipal())) {
 		            usersUid.add(ur.getPrincipal());
 		        }
 			}
@@ -132,8 +140,7 @@ public class PermissionViewController extends AbstractController implements Init
 		    usersUid.add(u.getUserId());
 		}
 		mav.addObject(Constants.ATT_SUSER_LIST, this.um.getAllSuperUsers());
-		mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.um.getUserRoleInCtx(ctxId,
-		        this.getCtx(), request.getRemoteUser())).getMask());
+		mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.pm.getRoleInCtx(ctxId, this.getCtx())).getMask());
 		mav.addObject(Constants.ATT_LDAP_DISPLAY, this.um.getLdapUserService().getSearchDisplayedAttributes());
 		mav.addObject(Constants.ATT_USER_LIST, this.um.getUsersByListUid(usersUid));
 		if (LOG.isTraceEnabled()) {
@@ -142,8 +149,9 @@ public class PermissionViewController extends AbstractController implements Init
 		return mav;
 	}
 
+
     /**
-     * @throws Exception
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
@@ -155,8 +163,9 @@ public class PermissionViewController extends AbstractController implements Init
                 + " must not be null.");
         Assert.notNull(this.getEm(), "The property EntityManager em in class " + getClass().getSimpleName()
                 + " must not be null.");
+        Assert.notNull(this.pm, "The property PermissionManager pm in class " + getClass().getSimpleName()
+                + " must not be null.");
     }
-
 
     /**
      * Getter du membre um.
@@ -228,8 +237,6 @@ public class PermissionViewController extends AbstractController implements Init
     public void setTm(final TopicManager tm) {
         this.tm = tm;
     }
-
-
     /**
      * Getter du membre ctx.
      * @return <code>String</code> le membre ctx.
@@ -237,8 +244,6 @@ public class PermissionViewController extends AbstractController implements Init
     public String getCtx() {
         return ctx;
     }
-
-
     /**
      * Setter du membre ctx.
      * @param ctx la nouvelle valeur du membre ctx.

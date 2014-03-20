@@ -1,6 +1,8 @@
 /**
- * 
- */
+* ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+* For any information please refer to http://esup-helpdesk.sourceforge.net
+* You may obtain a copy of the licence at http://www.esup-portail.org/license/
+*/
 package org.cmis.portlets.news.services;
 
 import java.util.List;
@@ -14,14 +16,14 @@ import org.uhp.portlets.news.web.ItemForm;
 
 /**
  * created by Anyware Services - Delphine Gavalda.
- * 
+ *
  * 10 mai 2010
  */
 public interface AttachmentManager {
 
     /**
      * Get an attachment with its id.
-     * 
+     *
      * @param id
      * @return Attachment
      * @throws DataAccessException
@@ -30,7 +32,7 @@ public interface AttachmentManager {
 
     /**
      * Get all the attachments for an item.
-     * 
+     *
      * @param itemId
      * @return <code> List&lt;Attachment&gt; </code>
      * @throws DataAccessException
@@ -39,7 +41,7 @@ public interface AttachmentManager {
 
     /**
      * Add an attachement to an item.
-     * 
+     *
      * @param itemForm
      * @param itemId
      * @param entityId
@@ -47,12 +49,12 @@ public interface AttachmentManager {
      * @throws DataAccessException
      * @throws CmisException
      */
-    void addAttachmentToItem(ItemForm itemForm, Long itemId, Long entityId, String userID) 
+    void addAttachmentToItem(ItemForm itemForm, Long itemId, Long entityId, String userID)
     	throws DataAccessException, CmisException;
 
     /**
      * Update an attachement.
-     * 
+     *
      * @param itemForm
      * @param itemId
      * @param entityId
@@ -63,7 +65,7 @@ public interface AttachmentManager {
 
     /**
      * Delete a given attachement for an item.
-     * 
+     *
      * @param attachment
      * @param itemId
      * @param entityId
@@ -74,7 +76,7 @@ public interface AttachmentManager {
 
     /**
      * Delete attachements for an item.
-     * 
+     *
      * @param itemId
      * @param entityId
      * @throws DataAccessException
@@ -84,7 +86,7 @@ public interface AttachmentManager {
 
     /**
      * Get attachments options defined for an entity.
-     * 
+     *
      * @param entityId
      * @return AttachmentOptions
      */
@@ -92,21 +94,21 @@ public interface AttachmentManager {
 
     /**
      * Get attachments options defined for the application.
-     * 
+     *
      * @return AttachmentOptions
      */
     AttachmentOptions getApplicationAttachmentOptions();
 
     /**
      * Update attachments options.
-     * 
+     *
      * @param options
      */
     void updateAttachmentOptions(AttachmentOptions options);
 
     /**
      * Save attachments options.
-     * 
+     *
      * @param options
      * @return Long
      */
@@ -114,7 +116,7 @@ public interface AttachmentManager {
 
     /**
      * Add attachments options to an entity.
-     * 
+     *
      * @param optionsId
      * @param entityId
      */
@@ -122,7 +124,7 @@ public interface AttachmentManager {
 
     /**
      * Delete attachments options.
-     * 
+     *
      * @param optionsId
      */
     void deleteAttachmentOptions(Long optionsId);
@@ -134,14 +136,14 @@ public interface AttachmentManager {
 
     /**
      * Get the CMIS server params defined for the application.
-     * 
+     *
      * @return CmisServer
      */
     CmisServer getApplicationServer();
 
     /**
      * Get the CMIS server params defined for a given entity.
-     * 
+     *
      * @param entityId
      * @return CmisServer
      */
@@ -149,28 +151,28 @@ public interface AttachmentManager {
 
     /**
      * Delete CMIS server params.
-     * 
+     *
      * @param serverId
      */
     void deleteServerParams(Long serverId);
 
     /**
      * Delete CMIS server params for a given entity.
-     * 
+     *
      * @param entityId
      */
     void deleteServerLinkToEntity(Long entityId);
 
     /**
      * Update CMIS server params.
-     * 
+     *
      * @param serverParams
      */
     void updateServerInfos(CmisServer serverParams);
 
     /**
      * Add CMIS server params to a given entity.
-     * 
+     *
      * @param serverId
      * @param entityId
      */
@@ -178,7 +180,7 @@ public interface AttachmentManager {
 
     /**
      * Save CMIS server params.
-     * 
+     *
      * @param serverParams
      * @return Long
      */
@@ -186,14 +188,14 @@ public interface AttachmentManager {
 
     /**
      * Clean the temporary directory : delete all olders files.
-     * 
+     *
      * @param path
      */
     void cleanTempStorageDirectory(String path);
 
     /**
      * Clean the temporary directory : delete all olders files.
-     * 
+     *
      * @param path
      * @param prefix
      */

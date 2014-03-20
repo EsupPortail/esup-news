@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.domain.Filter;
 import org.esco.portlets.news.domain.FilterType;
 import org.esco.portlets.news.services.EntityManager;
-import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectRetrievalFailureException;
@@ -42,9 +42,9 @@ public class FilterDeleteController extends AbstractController implements Initia
     /** The Entity Manager.*/
     @Autowired 
     private EntityManager em;
-    /** The User manager. */
+    /** Manager des Permissions. */
     @Autowired 
-    private UserManager um;
+    private PermissionManager pm;
     
     /** Permet de savoir si l'action du delete a été effectuée correctement. */
     private boolean deleted;
@@ -72,7 +72,7 @@ public class FilterDeleteController extends AbstractController implements Initia
             final ActionResponse response) throws Exception {
         Long filterId = Long.valueOf(request.getParameter(Constants.ATT_FILTER_ID));
         entityId = Long.valueOf(request.getParameter(Constants.ATT_ENTITY_ID));
-        if (!this.um.isSuperAdmin(request.getRemoteUser())) {
+        if (!this.pm.isSuperAdmin()) {
             msgKey = "news.alert.superUserOnly";
         } else if (this.em.deleteFilterOfEntity(filterId, entityId)) {
             if (LOG.isDebugEnabled()) {
@@ -109,7 +109,7 @@ public class FilterDeleteController extends AbstractController implements Initia
                 mav.addObject(Constants.ATT_FILTER_MAP, filters);
                 mav.addObject(Constants.OBJ_ENTITY, this.em.getEntityById(entityId));
                 mav.addObject(Constants.ATT_PM, RolePerm.valueOf(
-                        this.um.getUserRoleInCtx(entityId, NewsConstants.CTX_E, request.getRemoteUser())).getMask());
+                        this.getPm().getRoleInCtx(entityId, NewsConstants.CTX_E)).getMask());
                 return mav;
             } 
             throw new ObjectRetrievalFailureException(Filter.class, "entityId=" + entityId);
@@ -156,7 +156,7 @@ public class FilterDeleteController extends AbstractController implements Initia
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.getEm(), "The property EntityManager em in class " + getClass().getSimpleName()
                 + " must not be null.");
-        Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
+        Assert.notNull(this.getPm(), "The property PermissionManager pm in class " + getClass().getSimpleName()
                 + " must not be null.");
     }
 }

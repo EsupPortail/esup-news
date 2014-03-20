@@ -189,7 +189,7 @@
 					</fmt:message>
 				</c:otherwise>
 			</c:choose></d:column>
-			<d:column property="lastUpdatedDate" titleKey="item.label.updated.time" 
+			<d:column property="lastUpdatedDate" titleKey="item.label.updated.time"
 				format="{0,date,long}" sortable="true" headerClass="sortable" />
 		</c:otherwise>
 	</c:choose>

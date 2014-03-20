@@ -36,16 +36,17 @@ import javax.portlet.RenderResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.esco.portlets.news.domain.Entity;
 import org.esco.portlets.news.domain.EscoUser;
 import org.esco.portlets.news.domain.Filter;
 import org.esco.portlets.news.domain.FilterType;
 import org.esco.portlets.news.domain.IEscoUser;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.esco.portlets.news.services.UserManager;
 import org.esco.portlets.news.services.group.GroupService;
 import org.esupportail.portal.ws.client.PortalGroup;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.support.filter.AbstractFilter;
 import org.springframework.ldap.support.filter.AndFilter;
@@ -76,22 +77,33 @@ import org.uhp.portlets.news.web.validator.SubValidator;
  * Subscribe controller.
  * modified by GIP RECIA - Gribonvald Julien
  */
-public class SubcribeController extends AbstractWizardFormController {
+public class SubcribeController extends AbstractWizardFormController implements InitializingBean {
 
+	/** */
     private static final Log LOG = LogFactory.getLog(SubcribeController.class);
+	/** */
     private static final int DEFAULT_NB = 10;
 
+	/** */
     @Autowired private TopicManager tm;
+	/** */
     @Autowired private CategoryManager cm;
+	/** */
     @Autowired private UserManager um;
+	/** */
+    @Autowired private PermissionManager pm;
+	/** */
     @Autowired private SubscribeService subService;
     @Autowired private GroupService gs;
     /** The Entity Manager. */
     @Autowired
     private EntityManager em;
+	/** */
     private int nbItemsToShow;
 
+	/** */
     private List<IEscoUser> users;
+	/** */
     private List<PortalGroup> groups;
 
     /**
@@ -108,17 +120,24 @@ public class SubcribeController extends AbstractWizardFormController {
 
     }
 
+	/**
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.subService, "A SubscribeService is required.");
         Assert.notNull(this.cm, "A CategoryManager is required.");
         Assert.notNull(this.tm, "A TopicManager is required.");
         Assert.notNull(this.um, "A UserManager is required.");
+		Assert.notNull(this.pm, "A PermissionManager is required.");
         Assert.notNull(this.em, "A EntityManager is required.");
         if (this.nbItemsToShow <= 0) {
             this.nbItemsToShow = DEFAULT_NB;
         }
     }
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#processFinish(javax.portlet.ActionRequest, javax.portlet.ActionResponse, java.lang.Object, org.springframework.validation.BindException)
+	 */
     @Override
     protected void processFinish(
             ActionRequest request, ActionResponse response,
@@ -129,11 +148,13 @@ public class SubcribeController extends AbstractWizardFormController {
         response.setRenderParameter(Constants.ATT_CTX_ID, String.valueOf(cmd.getSubscriber().getCtxId()));
         response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_AUDIENCE + cmd.getSubscriber().getCtxType());
         response.setRenderParameter(Constants.ATT_PM,
-                Integer.toString(RolePerm.valueOf(this.um.getUserRoleInCtx(
-                        cmd.getSubscriber().getCtxId(), cmd.getSubscriber().getCtxType(),
-                        request.getRemoteUser())).getMask()));
+				Integer.toString(RolePerm.valueOf(
+						this.pm.getRoleInCtx(cmd.getSubscriber().getCtxId(), cmd.getSubscriber().getCtxType())).getMask()));
     }
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#processCancel(javax.portlet.ActionRequest, javax.portlet.ActionResponse, java.lang.Object, org.springframework.validation.BindException)
+	 */
     @Override
     protected void processCancel(
             ActionRequest request, ActionResponse response,
@@ -143,11 +164,13 @@ public class SubcribeController extends AbstractWizardFormController {
         response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_AUDIENCE + cmd.getSubscriber().getCtxType());
         response.setRenderParameter(Constants.ATT_CTX_ID, String.valueOf(cmd.getSubscriber().getCtxId()));
         response.setRenderParameter(Constants.ATT_PM,
-                Integer.toString(RolePerm.valueOf(this.um.getUserRoleInCtx(
-                        cmd.getSubscriber().getCtxId(), cmd.getSubscriber().getCtxType(),
-                        request.getRemoteUser())).getMask()));
+				Integer.toString(RolePerm.valueOf(this.pm.getRoleInCtx(
+						cmd.getSubscriber().getCtxId(), cmd.getSubscriber().getCtxType())).getMask()));
     }
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#validatePage(java.lang.Object, org.springframework.validation.Errors, int, boolean)
+	 */
     @Override
     protected void validatePage(
             Object command, Errors errors, int page, boolean finish) {
@@ -167,6 +190,9 @@ public class SubcribeController extends AbstractWizardFormController {
 
     }
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractFormController#formBackingObject(javax.portlet.PortletRequest)
+	 */
     @Override
     protected Object formBackingObject(PortletRequest request) throws Exception {
         SubForm subForm = new SubForm();
@@ -176,15 +202,17 @@ public class SubcribeController extends AbstractWizardFormController {
         return subForm;
     }
 
-    @SuppressWarnings("unchecked")
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#referenceData(javax.portlet.PortletRequest, java.lang.Object, org.springframework.validation.Errors, int)
+	 */
     @Override
-    protected Map referenceData(PortletRequest request, Object command, Errors errors, int page) throws Exception {
+	protected Map<String, Object> referenceData(PortletRequest request, Object command, Errors errors, int page) throws Exception {
 
         boolean isGrp = ((SubForm) command).getSubscriber().getIsGroup() == 1 ? true : false;
         Long ctxId = ((SubForm) command).getSubscriber().getCtxId();
         String ctx = ((SubForm) command).getSubscriber().getCtxType();
 
-        if (!this.um.isUserAdminInCtx(ctxId, ctx, request.getRemoteUser())) {
+		if (!this.pm.isAdminInCtx(ctxId, ctx)) {
             LOG.warn("SubcribeController:: user " + request.getRemoteUser() + " has no role admin");
             throw new PortletSecurityException(
                     getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));
@@ -230,7 +258,7 @@ public class SubcribeController extends AbstractWizardFormController {
         }
 
         model.put(Constants.ATT_PM,
-                RolePerm.valueOf(this.um.getUserRoleInCtx(ctxId, ctx, request.getRemoteUser())).getMask());
+				RolePerm.valueOf(this.pm.getRoleInCtx(ctxId, ctx)).getMask());
         String[] keys = ((SubForm) command).getSubKey();
         if (keys != null && keys.length > 0) {
             Set<String> skeys = new HashSet<String>(Arrays.asList(keys));
@@ -257,7 +285,7 @@ public class SubcribeController extends AbstractWizardFormController {
                 	tmpList.addAll(this.gs.searchPortalGroups(token));
                 }
                 groups = new ArrayList<PortalGroup>(tmpList);
-                model.put("grps", groups);
+                model.put(Constants.ATT_GROUP_LIST, groups);
             } else {
                 users = this.um.findPersonsByTokenAndFilter(((SubForm) command).getToken(), ldapFilter);
                 model.put(Constants.ATT_USER_LIST, users);
@@ -303,11 +331,17 @@ public class SubcribeController extends AbstractWizardFormController {
         return ftmp;
     }
 
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#renderInvalidSubmit(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
+	 */
     @Override
     protected ModelAndView renderInvalidSubmit(RenderRequest request, RenderResponse response)
     throws Exception {
         return null;
     }
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#handleInvalidSubmit(javax.portlet.ActionRequest, javax.portlet.ActionResponse)
+	 */
     @Override
     protected void handleInvalidSubmit(ActionRequest request, ActionResponse response)
     throws Exception {
@@ -318,6 +352,9 @@ public class SubcribeController extends AbstractWizardFormController {
 
 
 
+	/**
+	 * @param nbItemsToShow
+	 */
     public void setNbItemsToShow(final int nbItemsToShow) {
         this.nbItemsToShow = nbItemsToShow;
     }
@@ -354,11 +391,13 @@ public class SubcribeController extends AbstractWizardFormController {
         this.groups = groups;
     }
 
-    @SuppressWarnings("unchecked")
+	/**
+	 * @see org.springframework.web.portlet.mvc.AbstractWizardFormController#isFormSubmission(javax.portlet.PortletRequest)
+	 */
     @Override
     protected boolean isFormSubmission(PortletRequest request) {
-        for (Enumeration params = request.getParameterNames(); params.hasMoreElements();) {
-            String paramName = (String) params.nextElement ();
+		for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
+			String paramName = params.nextElement ();
             if (paramName.startsWith(PARAM_TARGET) || paramName.equals(PARAM_FINISH) || paramName.equals(PARAM_FINISH))   {
                 return true;
             }

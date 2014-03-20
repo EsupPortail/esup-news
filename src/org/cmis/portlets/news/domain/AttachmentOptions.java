@@ -1,15 +1,21 @@
+/**
+* ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+* For any information please refer to http://esup-helpdesk.sourceforge.net
+* You may obtain a copy of the licence at http://www.esup-portail.org/license/
+*/
 package org.cmis.portlets.news.domain;
 
 import java.io.Serializable;
 
 /**
- * 
+ *
  * created by Anyware Services - Delphine Gavalda.
- * 
+ *
  * 8 juin 2010
  */
 public class AttachmentOptions implements Serializable {
 
+	/** */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -39,7 +45,7 @@ public class AttachmentOptions implements Serializable {
     public AttachmentOptions() {
 	 super();
     }
-    
+
     /**
      * Get the Id.
      * @return Long
@@ -49,10 +55,9 @@ public class AttachmentOptions implements Serializable {
     }
 
     /**
-     * Set the Id. 
+     * Set the Id.
      * @param optionId
      */
-    @SuppressWarnings("hiding")
     public void setOptionId(final Long optionId) {
 	this.optionId = optionId;
     }
@@ -69,7 +74,6 @@ public class AttachmentOptions implements Serializable {
      * Set "1" if these values are the defaults ones defined for the application.
      * @param globalOptions
      */
-    @SuppressWarnings("hiding")
     public void setGlobalOptions(final String globalOptions) {
 	this.globalOptions = globalOptions;
     }
@@ -86,7 +90,6 @@ public class AttachmentOptions implements Serializable {
      * Set the max size for files upload.
      * @param maxSize
      */
-    @SuppressWarnings("hiding")
     public void setMaxSize(final Long maxSize) {
 	this.maxSize = maxSize;
     }
@@ -103,7 +106,6 @@ public class AttachmentOptions implements Serializable {
      * Set the authorized extensions, separated by ";".
      * @param authorizedFilesExtensions
      */
-    @SuppressWarnings("hiding")
     public void setAuthorizedFilesExtensions(final String authorizedFilesExtensions) {
 	this.authorizedFilesExtensions = authorizedFilesExtensions;
     }
@@ -120,7 +122,6 @@ public class AttachmentOptions implements Serializable {
      * Set the forbidden extensions, separated by ";".
      * @param forbiddenFilesExtensions
      */
-    @SuppressWarnings("hiding")
     public void setForbiddenFilesExtensions(final String forbiddenFilesExtensions) {
 	this.forbiddenFilesExtensions = forbiddenFilesExtensions;
     }

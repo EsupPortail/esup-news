@@ -9,14 +9,15 @@ package org.esco.portlets.news.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.esco.portlets.news.domain.EntityRole;
 import org.esco.portlets.news.domain.IEscoUser;
 import org.esupportail.commons.services.ldap.LdapException;
 import org.springframework.dao.DataAccessException;
 import org.uhp.portlets.news.domain.Role;
 import org.uhp.portlets.news.domain.RoleEnum;
+import org.uhp.portlets.news.domain.RolePerm;
 import org.uhp.portlets.news.domain.Topic;
 import org.uhp.portlets.news.domain.User;
-import org.uhp.portlets.news.domain.UserRole;
 
 /**
  * Modifications of the interface.
@@ -38,189 +39,30 @@ public interface EscoUserDao {
     void update(final User user) throws DataAccessException;
 
     /**
-     * @param enabled
-     * @param uid
+     * @param userId
      * @throws DataAccessException
      */
-    void activateUser(int enabled, final String uid) throws DataAccessException;
+    void deleteUser(final String userId) throws DataAccessException;
 
     /**
-     * @param uid
-     * @param rar
-     * @throws DataAccessException
-     */
-    void deleteUser(final String uid, final boolean rar) throws DataAccessException;
-
-    /**
-     * @param user
-     * @throws DataAccessException
-     */
-    void deleteUser(final User user) throws DataAccessException;
-
-    /**
-     * @param uid
+     * @param userId
      * @return <code>IEscoUser</code>
      * @throws DataAccessException
      */
-    IEscoUser getUserById(final String uid) throws DataAccessException;
+    IEscoUser getUserById(final String userId) throws DataAccessException;
 
     /**
-     * @param uid
+     * @param userId
+     * @return <code>String</code>
+     * @throws LdapException
+     */
+    String getUserNameById(final String userId) throws LdapException;
+    /**
+     * @param userId
      * @return <code>String</code>
      * @throws DataAccessException
      */
-    String getUserNameById(final String uid) throws DataAccessException;
-
-    /**
-     * @param uid
-     * @return <code>boolean</code>
-     * @throws DataAccessException
-     */
-    boolean isSuperAdmin(final String uid) throws DataAccessException;
-
-    /**
-     * @param uid
-     * @return <code>String</code>
-     * @throws DataAccessException
-     */
-    boolean isUserInDB(final String uid) throws DataAccessException;
-
-    /**
-     * @param uid
-     * @return <code>boolean</code>
-     * @throws DataAccessException
-     */
-    boolean isUserAccountEnabled(final String uid) throws DataAccessException;
-
-    /**
-     * @param userRole
-     * @throws DataAccessException
-     */
-    void addUserRole(final UserRole userRole) throws DataAccessException;
-
-    /**
-     * @param user
-     * @param role
-     * @param ctx
-     * @param ctxId
-     * @throws DataAccessException
-     */
-    void addUserRole(final User user, final String role, final String ctx, final Long ctxId) throws DataAccessException;
-
-    /**
-     * @param uid
-     * @param role
-     * @param ctx
-     * @param ctxId
-     * @param isGroup
-     * @throws DataAccessException
-     */
-    void addUserRole(final String uid, final String role, final String ctx,
-            final Long ctxId, final String isGroup) throws DataAccessException;
-
-    /**
-     * Update the role of the user in the context.
-     * @param uid
-     * @param role
-     * @param ctx
-     * @param ctxId
-     * @throws DataAccessException
-     */
-    void updateUserRoleForCtx(final String uid, final String role, final String ctx, final Long ctxId)
-    throws DataAccessException;
-
-    /**
-     * @param target
-     * @param targetCtx
-     * @param role
-     * @return <code>List< UserRole ></code>
-     * @throws DataAccessException
-     */
-    List<UserRole> getUsersByRole(final Long target, final String targetCtx,
-            final RoleEnum role) throws DataAccessException;
-
-    /**
-     * @param uid
-     * @param target
-     * @param targetCtx
-     * @throws DataAccessException
-     */
-    void removeUserRoleForCtx(final String uid, final Long target, final String targetCtx) throws DataAccessException;
-
-    /**
-     * @param uid
-     * @param cId
-     * @throws DataAccessException
-     */
-    void removeAllUserRolesForTopics(final String uid, final Long cId) throws DataAccessException;
-
-    /**
-     * @param ctxId
-     * @param ctxType
-     * @return <code>List< UserRole ></code>
-     * @throws DataAccessException
-     */
-    List<UserRole> loadCtxUsersRolesMap(final Long ctxId, final String ctxType) throws DataAccessException;
-
-    /**
-     * @param uid
-     * @param ctxId
-     * @param ctxType
-     * @return <code>String</code>
-     * @throws DataAccessException
-     */
-    String getUserRoleForCtx(final String uid, final Long ctxId, final String ctxType) throws DataAccessException;
-
-    /**
-     * @param categoryId
-     * @return <code>List< IEscoUser ></code>
-     * @throws DataAccessException
-     * @throws LdapException
-     */
-    List<IEscoUser> getManagersForCategory(final Long categoryId) throws DataAccessException, LdapException;
-
-    /**
-     * @param topicId
-     * @return <code>List< IEscoUser ></code>
-     * @throws DataAccessException
-     * @throws LdapException
-     */
-    List<IEscoUser> getManagersForTopic(final Long topicId) throws DataAccessException, LdapException;
-
-    /**
-     * @param topicIds
-     * @return <code>List< IEscoUser ></code>
-     * @throws DataAccessException
-     * @throws LdapException
-     */
-    List<IEscoUser> getManagersForTopics(final Integer[] topicIds) throws DataAccessException, LdapException;
-
-    /**
-     * @param cId
-     * @param topicIds
-     * @return <code>List< IEscoUser ></code>
-     * @throws DataAccessException
-     * @throws LdapException
-     */
-    List<IEscoUser> getManagersForTopics(final Long cId,
-            final Integer[] topicIds) throws DataAccessException, LdapException;
-
-    /**
-     * @param topic
-     * @param user
-     * @return <code>boolean</code>
-     * @throws DataAccessException
-     */
-    boolean isTopicManager(final Topic topic, final User user) throws DataAccessException;
-    /**
-     * @param ctxId
-     * @param ctxType
-     * @param uid
-     * @return <code>boolean</code>
-     * @throws DataAccessException
-     */
-    boolean isUserRoleExistForContext(final Long ctxId, final String ctxType, final String uid)
-        throws DataAccessException;
+    boolean isUserInDB(final String userId) throws DataAccessException;
 
     /**
      * @return <code>List< IEscoUser ></code>
@@ -230,45 +72,17 @@ public interface EscoUserDao {
     List<IEscoUser> getAllUsers() throws DataAccessException, LdapException;
 
     /**
-     * @return <code>List< Role ></code>
-     * @throws DataAccessException
-     */
-    List<Role> getAllRoles() throws DataAccessException;
-
-    /**
-     * @param ctxId
-     * @param ctxType
-     * @throws DataAccessException
-     */
-    void removeUsersRoleForCtx(final Long ctxId, final String ctxType) throws DataAccessException;
-
-    /**
-     * @param uid
+     * @param userId
      * @param enabled
      * @throws DataAccessException
      */
-    void updateUserStatus(final String uid, final String enabled) throws DataAccessException;
+    void updateUserStatus(final String userId, final String enabled) throws DataAccessException;
 
     /**
-     * @param uid
+     * @param userId
      * @throws DataAccessException
      */
-    void updateUserLastAccess(final String uid) throws DataAccessException;
-
-    /**
-     * @param ctxId
-     * @param ctxType
-     * @return <code>List< UserRole ></code>
-     * @throws DataAccessException
-     */
-    List<UserRole> getUsersRolesForCtx(final Long ctxId, final String ctxType) throws DataAccessException;
-
-    /**
-     * @param uid
-     * @return <code>boolean</code>
-     * @throws DataAccessException
-     */
-    boolean isPermitted(final String uid) throws DataAccessException;
+    void updateLastUserAccess(final String userId) throws DataAccessException;
 
     /**
      * @return <code>List< IEscoUser ></code>
@@ -278,43 +92,19 @@ public interface EscoUserDao {
     List<IEscoUser> getAllSuperUsers() throws DataAccessException, LdapException;
 
     /**
-     * @param uid
-     * @param categoryId
+     * Tell if a user is a super Admin from his userid.
+     * @param userId
      * @return <code>boolean</code>
      * @throws DataAccessException
      */
-    boolean userRolesExistInTopicsOfcategory(final String uid, final Long categoryId) throws DataAccessException;
+    boolean isUserSuperAdmin(final String userId) throws DataAccessException;
 
     /**
-     * @param uid
-     * @param itemId
-     * @return <code>List< String ></code>
-     * @throws DataAccessException
-     */
-    List<String> getUserRolesInTopicsByItem(final String uid, final Long itemId) throws DataAccessException;
-
-    /**
-     * @param uid
-     * @param tIds
-     * @return <code>List< String ></code>
-     * @throws DataAccessException
-     */
-    List<String> getUserRolesInTopicsByTopics(final String uid, final Integer[] tIds) throws DataAccessException;
-
-    /**
-     * @param uid
-     * @param entityId
+     * Tell if a user has roles.
+     * @param userId
      * @return <code>boolean</code>
-     * @throws DataAccessException
      */
-    boolean userRolesExistInCategoriesOfEntity(final String uid, final Long entityId) throws DataAccessException;
-
-    /**
-     * @param uid
-     * @return <code>boolean</code>
-     * @throws DataAccessException
-     */
-    boolean userRoleExist(final String uid) throws DataAccessException;
+    boolean isUserHasAnyRole(final String userId);
 
     /**
      * @param token Search value.
@@ -334,8 +124,8 @@ public interface EscoUserDao {
 
     /**
      * Get user's details from a list of user's id.
-     * @param usersUid a list of id/uid to retrieve in the LDAP.
-     * @return <code>Map< String, IEscoUser ></code> A Map of IEscoUser (details of users) with id/uid as key.
+     * @param usersUid a list of id/userId to retrieve in the LDAP.
+     * @return <code>Map< String, IEscoUser ></code> A Map of IEscoUser (details of users) with id/userId as key.
      * @throws LdapException
      */
     Map<String, IEscoUser> findPersonsByListUid(final List<String> usersUid) throws LdapException;
@@ -351,6 +141,216 @@ public interface EscoUserDao {
      * @return <code>String</code>
      */
     String getMail();
+
+
+    /**
+     * @param enabled
+     * @param userId
+     * @throws DataAccessException
+     */
+//    void activateUser(int enabled, final String userId) throws DataAccessException;
+
+    /**
+     * @param userId
+     * @param rar
+     * @throws DataAccessException
+     */
+//    void deleteUser(final String userId, final boolean rar) throws DataAccessException;
+
+
+
+
+
+    /**
+     * @param userRole
+     * @throws DataAccessException
+     */
+//    void addEntityRole(final EntityRole userRole) throws DataAccessException;
+
+    /**
+     * @param user
+     * @param role
+     * @param ctx
+     * @param ctxId
+     * @throws DataAccessException
+     */
+//    void addEntityRole(final User user, final String role, final String ctx, final Long ctxId) throws DataAccessException;
+
+    /**
+     * @param userId
+     * @param role
+     * @param ctx
+     * @param ctxId
+     * @param isGroup
+     * @throws DataAccessException
+     */
+//    void addEntityRole(final String userId, final String role, final String ctx, final Long ctxId, final String isGroup) throws DataAccessException;
+
+    /**
+     * Update the role of the user in the context.
+     * @param userId
+     * @param role
+     * @param ctx
+     * @param ctxId
+     * @throws DataAccessException
+     */
+//    void updateEntityRoleForCtx(final String userId, final String role, final String ctx, final Long ctxId) throws DataAccessException;
+
+    /**
+     * @param target
+     * @param targetCtx
+     * @param role
+     * @return <code>List< EntityRole ></code>
+     * @throws DataAccessException
+     */
+//    List<EntityRole> getUsersByRole(final Long target, final String targetCtx, final RoleEnum role) throws DataAccessException;
+
+    /**
+     * @param userId
+     * @param target
+     * @param targetCtx
+     * @throws DataAccessException
+     */
+//    void removeEntityRoleForCtx(final String userId, final Long target, final String targetCtx) throws DataAccessException;
+
+    /**
+     * @param userId
+     * @param cId
+     * @throws DataAccessException
+     */
+//    void removeAllEntityRolesForTopics(final String userId, final Long cId) throws DataAccessException;
+
+    /**
+     * @param ctxId
+     * @param ctxType
+     * @return <code>List< EntityRole ></code>
+     * @throws DataAccessException
+     */
+//    List<EntityRole> loadCtxUsersRolesMap(final Long ctxId, final String ctxType) throws DataAccessException;
+
+    /**
+     * @param userId
+     * @param ctxId
+     * @param ctxType
+     * @return <code>String</code>
+     * @throws DataAccessException
+     */
+//    String getEntityRoleForCtx(final String userId, final Long ctxId, final String ctxType) throws DataAccessException;
+
+    /**
+     *  WARNING doesn't works with groups.
+     * @param categoryId
+     * @return <code>List< IEscoUser ></code>
+     * @throws DataAccessException
+     * @throws LdapException
+     */
+    @Deprecated
+    List<IEscoUser> getManagersForCategory(final Long categoryId) throws DataAccessException, LdapException;
+
+    /**
+     * @param topicId
+     * @return <code>List< IEscoUser ></code>
+     * @throws DataAccessException
+     * @throws LdapException
+     */
+//    List<IEscoUser> getManagersForTopic(final Long topicId) throws DataAccessException, LdapException;
+
+    /**
+     * @param topicIds
+     * @return <code>List< IEscoUser ></code>
+     * @throws DataAccessException
+     * @throws LdapException
+     */
+//    List<IEscoUser> getManagersForTopics(final Integer[] topicIds) throws DataAccessException, LdapException;
+
+    /**
+     * WARNING doesn't works with groups.
+     * @param cId
+     * @param topicIds
+     * @return <code>List< IEscoUser ></code>
+     * @throws DataAccessException
+     * @throws LdapException
+     */
+    @Deprecated
+    List<IEscoUser> getManagersForTopics(final Long cId, final Integer[] topicIds) throws DataAccessException, LdapException;
+
+    /**
+     * WARNING doesn't works with groups.
+     * @param topic
+     * @param user
+     * @return <code>boolean</code>
+     * @throws DataAccessException
+     */
+    @Deprecated
+    boolean isTopicManager(final Topic topic, final User user) throws DataAccessException;
+    /**
+     * @param ctxId
+     * @param ctxType
+     * @param userId
+     * @return <code>boolean</code>
+     * @throws DataAccessException
+     */
+//    boolean isEntityRoleExistForContext(final Long ctxId, final String ctxType, final String userId) throws DataAccessException;
+
+    /**
+     * @return <code>List< Role ></code>
+     * @throws DataAccessException
+     */
+    //List<Role> getAllRoles() throws DataAccessException;
+
+    /**
+     * @param ctxId
+     * @param ctxType
+     * @throws DataAccessException
+     */
+//    void removeUsersRoleForCtx(final Long ctxId, final String ctxType) throws DataAccessException;
+
+    /**
+     * @param ctxId
+     * @param ctxType
+     * @return <code>List< EntityRole ></code>
+     * @throws DataAccessException
+     */
+//    List<EntityRole> getEntityRolesForCtx(final Long ctxId, final String ctxType) throws DataAccessException;
+
+    /**
+     * @param userId
+     * @return <code>boolean</code>
+     * @throws DataAccessException
+     */
+//    boolean isPermitted(final String userId) throws DataAccessException;
+
+    /**
+     * @param userId
+     * @param categoryId
+     * @return <code>boolean</code>
+     * @throws DataAccessException
+     */
+//    boolean userRolesExistInTopicsOfcategory(final String userId, final Long categoryId) throws DataAccessException;
+
+    /**
+     * @param role
+     * @param itemId
+     * @return <code>List< String ></code>
+     * @throws DataAccessException
+     */
+    //boolean isUserHasRoleInTopicsByItem(final Long itemId, final RolePerm role) throws DataAccessException;
+
+    /**
+     * @param userId
+     * @param entityId
+     * @return <code>boolean</code>
+     * @throws DataAccessException
+     */
+//    boolean userRolesExistInCategoriesOfEntity(final String userId, final Long entityId) throws DataAccessException;
+
+    /**
+     * @param userId
+     * @return <code>boolean</code>
+     * @throws DataAccessException
+     */
+//    boolean userRoleExist(final String userId) throws DataAccessException;
+
 
 
 }

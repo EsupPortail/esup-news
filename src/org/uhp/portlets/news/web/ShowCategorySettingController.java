@@ -1,16 +1,16 @@
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -24,6 +24,7 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,15 +45,18 @@ import org.uhp.portlets.news.web.support.Constants;
  */
 public class ShowCategorySettingController extends AbstractController implements InitializingBean {
     /** */
-	@Autowired 
+	@Autowired
 	private CategoryManager cm;
 	/** */
-	@Autowired  
+	@Autowired
 	private UserManager um;
 	/** Manager of an Entity. */
     @Autowired
     private EntityManager em;
-	
+    /** */
+	@Autowired
+	private PermissionManager pm;
+
 	/**
      * Constructeur de l'objet ShowCategorySettingController.java.
      */
@@ -69,8 +73,8 @@ public class ShowCategorySettingController extends AbstractController implements
 	 * handleRenderRequestInternal(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
 	 */
 	@Override
-	protected ModelAndView handleRenderRequestInternal(final RenderRequest request, final RenderResponse response) 
-	throws Exception {		 
+	protected ModelAndView handleRenderRequestInternal(final RenderRequest request, final RenderResponse response)
+	throws Exception {
 		Category c = this.cm.getCategoryById(Long.valueOf(request.getParameter(Constants.ATT_CAT_ID)));
 		if (c == null) {
 			throw new ObjectRetrievalFailureException(Category.class, "Category does not exist.");
@@ -81,13 +85,12 @@ public class ShowCategorySettingController extends AbstractController implements
 		mav.addObject(Constants.OBJ_CATEGORY, c);
 		mav.addObject(Constants.ATT_TYPE_LIST, this.cm.getTypesOfCategory(c.getCategoryId()));
 		mav.addObject(Constants.OBJ_ENTITY, this.getEm().getEntityById(c.getEntityId()));
-		mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.getUm().getUserRoleInCtx(
-		        c.getCategoryId(), NewsConstants.CTX_C, request.getRemoteUser())).getMask());
+		mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.pm.getRoleInCtx(
+		        c.getCategoryId(), NewsConstants.CTX_C)).getMask());
 		mav.addObject(Constants.ATT_USER_LIST, this.um.getUsersByListUid(usersUid));
-		return mav;					
+		return mav;
 	}
-
-    /**
+   /**
      * Getter du membre cm.
      * @return <code>CategoryManager</code> le membre cm.
      */
@@ -133,7 +136,7 @@ public class ShowCategorySettingController extends AbstractController implements
      */
     public void setEm(final EntityManager em) {
         this.em = em;
-    }
+	}
 
     /**
      * @throws Exception
@@ -144,9 +147,11 @@ public class ShowCategorySettingController extends AbstractController implements
                 + " must not be null.");
         Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
                 + " must not be null.");
-        Assert.notNull(this.getUm(), "The property EntityManager em in class " + getClass().getSimpleName()
+        Assert.notNull(this.getEm(), "The property EntityManager em in class " + getClass().getSimpleName()
+                + " must not be null.");
+        Assert.notNull(this.pm, "The property PermissionManager pm in class " + getClass().getSimpleName()
                 + " must not be null.");
     }
 
-	
+
 }

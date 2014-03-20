@@ -16,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.domain.Filter;
 import org.esco.portlets.news.domain.FilterType;
 import org.esco.portlets.news.services.EntityManager;
-import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectRetrievalFailureException;
@@ -42,9 +42,9 @@ public class FilterViewController extends AbstractController implements Initiali
     /** The Entity Manager.*/
     @Autowired 
     private EntityManager em;
-    /** The User Manager. */
+    /** Manager des Permissions. */
     @Autowired 
-    private UserManager um; 
+    private PermissionManager pm;
 
     /**
      * Constructor of FilterViewController.java.
@@ -74,7 +74,7 @@ public class FilterViewController extends AbstractController implements Initiali
             mav.addObject(Constants.ATT_FILTER_MAP, filters);
             mav.addObject(Constants.OBJ_ENTITY, this.em.getEntityById(entityId));
             mav.addObject(Constants.ATT_PM, RolePerm.valueOf(
-                    this.um.getUserRoleInCtx(entityId, NewsConstants.CTX_E, request.getRemoteUser())).getMask());
+                    this.getPm().getRoleInCtx(entityId, NewsConstants.CTX_E)).getMask());
             return mav;
         } 
         throw new ObjectRetrievalFailureException(Filter.class, entityId);
@@ -119,7 +119,7 @@ public class FilterViewController extends AbstractController implements Initiali
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.getEm(), "The property EntityManager em in class " + getClass().getSimpleName()
                 + " must not be null.");
-        Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
-                + " must not be null.");
+        Assert.notNull(this.getPm(), "The property PermissionManager pm in class "
+                + getClass().getSimpleName() + " must not be null.");
     }
 }

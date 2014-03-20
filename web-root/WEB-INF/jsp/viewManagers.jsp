@@ -14,7 +14,7 @@
 
 <c:set var="currentMainMenu" value="admin"/>
 <%@ include file="/WEB-INF/jsp/header1_adminView.jsp"%>
-<div id="news_headerA"> <IMG align="absmiddle" alt="" src="<html:imagesPath/>icone_admin.gif" border="0"> 
+<div id="news_headerA"> <IMG align="absmiddle" alt="" src="<html:imagesPath/>icone_admin.gif" border="0">
 <SPAN class="newsTitle"><fmt:message key="menu.admin"/> </SPAN>
 </div>
 <c:set var="currentHeaderSM" value="manager" />
@@ -90,10 +90,9 @@
 			</d:column>
 			<d:column href="${delUserURL}" paramId="${portletParamPrefixe}${pltc_target}userId" paramProperty="userId">
 				<img title="<fmt:message key="news.alert.delete.user"/>"
-					src="<html:imagesPath/>delete.gif" border=0 
+					src="<html:imagesPath/>delete.gif" border=0
 					onClick="return confirm('<fmt:message key="news.alert.delete.user"/>');"/>
 			</d:column>
-			
 			<d:setProperty name="paging.banner.item_name" value="${tit}" />
 			<d:setProperty name="paging.banner.items_name" value="${tit}s" />
 		</d:table>
@@ -102,7 +101,7 @@
 		<br />
 		<div id="new_add_link">
 			<a href="${addSuperAdmRenderUrl}">
-				<img title="<fmt:message key="news.img.title.add.superAdm"/>" 
+				<img title="<fmt:message key="news.img.title.add.superAdm"/>"
 					src="<html:imagesPath/>add.gif" border=0 />
 				<fmt:message key="menu.addSuperAdm" />
 			</a>

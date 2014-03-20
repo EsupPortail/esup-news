@@ -1,15 +1,20 @@
+/**
+* ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+* For any information please refer to http://esup-helpdesk.sourceforge.net
+* You may obtain a copy of the licence at http://www.esup-portail.org/license/
+*/
 package org.cmis.portlets.news.utils;
 
 /**
  * created by Anyware Services - Delphine Gavalda.
- * 
+ *
  * 16 juin 2010
- * 
+ *
  * A very simple way to perform data encryption/decryption without using a
- * {@link Key} or a {@link Certificate}
+ * Key or a Certificate
  */
 public final class SimpleXOREncryption {
-    // The key to be used for both encryption and decryption
+    /** The key to be used for both encryption and decryption. */
     private static final int KEY = 129;
 
     /** Define a private constructor. */

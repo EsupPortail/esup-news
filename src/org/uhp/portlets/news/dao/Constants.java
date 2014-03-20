@@ -41,5 +41,6 @@ public final class Constants {
     public static final String ISGRP = "isGroup";
     public static final String CAT_ID = "categoryId";
     public static final String ENTITY_ID = "entityId";
+	public static final String ROLE = "role";
 
 }

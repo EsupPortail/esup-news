@@ -36,21 +36,37 @@ import org.uhp.portlets.news.domain.Topic;
 import org.uhp.portlets.news.service.CategoryManager;
 import org.uhp.portlets.news.service.TopicManager;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.esco.portlets.news.services.UserManager;
 
+/**
+ * modified by  GIP RECIA - Julien Gribonvald
+ * 4 mai 2012
+ */
 public class ShowTopicSettingController extends AbstractController implements InitializingBean {	
-    @Autowired private TopicManager tm = null;	 
-    @Autowired private CategoryManager cm=null;
-    @Autowired private UserManager um=null;
+	/** */
+    @Autowired private TopicManager tm;
+    /** */
+    @Autowired private CategoryManager cm;
+    /** */
+    @Autowired private PermissionManager pm;
+    /** */
+    @Autowired private UserManager um;
     /** Manager of an Entity. */
     @Autowired
     private EntityManager em;
 
+    /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
     public void afterPropertiesSet() throws Exception {
-        if ((this.tm == null) || (this.cm == null) || (this.um == null) || (this.em == null))
-            throw new IllegalArgumentException("A TopicManager, categoryManager and a userManager are required");
+        if ((this.tm == null) || (this.cm == null) || (this.um == null) || (this.pm == null) || (this.em == null))
+            throw new IllegalArgumentException("A TopicManager, a categoryManager, a userManager and a PermissionManager are required");
     }
 
+    /**
+     * @see org.springframework.web.portlet.mvc.AbstractController#handleRenderRequestInternal(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
+     */
     @Override
     protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {	
         Topic topic=this.tm.getTopicById(Long.valueOf(request.getParameter(Constants.ATT_TOPIC_ID)));
@@ -65,7 +81,7 @@ public class ShowTopicSettingController extends AbstractController implements In
         usersUid.add(c.getCreatedBy());
         mav.addObject(Constants.OBJ_CATEGORY, c);
         mav.addObject(Constants.OBJ_ENTITY, this.em.getEntityById(c.getEntityId()));
-        mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.um.getUserRoleInCtx(topic.getTopicId(), NewsConstants.CTX_T, request.getRemoteUser())).getMask());
+        mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.pm.getRoleInCtx(topic.getTopicId(), NewsConstants.CTX_T)).getMask());
         mav.addObject(Constants.ATT_USER_LIST, this.um.getUsersByListUid(usersUid));
         return mav;			
     }

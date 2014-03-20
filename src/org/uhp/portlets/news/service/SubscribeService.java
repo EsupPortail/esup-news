@@ -33,4 +33,5 @@ public interface SubscribeService {
 	public void removeAllSubscribersByCtxId(Long target, String targetCtx);
 	public void removeAllSubscribersByCtxIdForSubType(Long target, String targetCtx, String subType);
 	public boolean isSubscriberExistInCtx(String sk, Subscriber subscriber);
+	public List<PortalGroup> searchGroups(String token);
 }

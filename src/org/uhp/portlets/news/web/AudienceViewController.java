@@ -1,25 +1,24 @@
 package org.uhp.portlets.news.web;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +28,7 @@ import javax.portlet.RenderResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,6 @@ import org.uhp.portlets.news.domain.Category;
 import org.uhp.portlets.news.domain.RolePerm;
 import org.uhp.portlets.news.domain.Subscriber;
 import org.uhp.portlets.news.domain.Topic;
-import org.uhp.portlets.news.domain.UserRole;
 import org.uhp.portlets.news.service.CategoryManager;
 import org.uhp.portlets.news.service.SubscribeService;
 import org.uhp.portlets.news.service.TopicManager;
@@ -67,8 +66,10 @@ public class AudienceViewController extends AbstractController implements Initia
     @Autowired private TopicManager tm;
     /** */
     @Autowired private UserManager um;
+    /** */
+    @Autowired private PermissionManager pm;
     /** The Entity Manager. */
-    @Autowired 
+    @Autowired
     private EntityManager em;
 
     /**
@@ -85,6 +86,7 @@ public class AudienceViewController extends AbstractController implements Initia
         Assert.notNull(this.getSubService(), "A SubscribeService is required.");
         Assert.notNull(this.getCm(), "A CategoryManager is required.");
         Assert.notNull(this.getTm(), "A TopicManager is required.");
+		Assert.notNull(this.getPm(), "A PermissionManager is required.");
         Assert.notNull(this.getUm(), "A UserManager is required.");
         Assert.notNull(this.getEm(), "A EntityManager is required.");
         Assert.hasLength(this.getCtx(), "ctx property should be defined...");
@@ -99,7 +101,7 @@ public class AudienceViewController extends AbstractController implements Initia
      * handleRenderRequestInternal(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
      */
     @Override
-    protected ModelAndView handleRenderRequestInternal(final RenderRequest request, 
+    protected ModelAndView handleRenderRequestInternal(final RenderRequest request,
             final RenderResponse response) throws Exception {
         final Long ctxId = Long.valueOf(request.getParameter(Constants.ATT_CTX_ID));
 
@@ -113,7 +115,7 @@ public class AudienceViewController extends AbstractController implements Initia
             Category c = this.getCm().getCategoryById(ctxId);
             mav.addObject(Constants.OBJ_CATEGORY, c);
             mav.addObject(Constants.OBJ_ENTITY, this.getEm().getEntityById(c.getEntityId()));
-        } else if (this.getCtx().equalsIgnoreCase(NewsConstants.CTX_T)) { 
+        } else if (this.getCtx().equalsIgnoreCase(NewsConstants.CTX_T)) {
             final Topic topic = this.getTm().getTopicById(ctxId);
             Category c = this.getCm().getCategoryById(topic.getCategoryId());
             mav.addObject(Constants.OBJ_TOPIC, topic);
@@ -130,10 +132,10 @@ public class AudienceViewController extends AbstractController implements Initia
 				}
 			}
 		}
-        
+
         mav.addObject(Constants.ATT_LIST, subcribers);
         mav.addObject(Constants.ATT_PM, RolePerm.valueOf(
-                this.getUm().getUserRoleInCtx(ctxId, this.getCtx(), request.getRemoteUser())).getMask());
+                this.getPm().getRoleInCtx(ctxId, this.getCtx())).getMask());
         mav.addObject(Constants.ATT_LDAP_DISPLAY, this.getUm().getLdapUserService().getSearchDisplayedAttributes());
         mav.addObject(Constants.ATT_USER_LIST, this.getUm().getUsersByListUid(usersUid));
         if (LOG.isTraceEnabled()) {
@@ -233,7 +235,7 @@ public class AudienceViewController extends AbstractController implements Initia
 
     /**
      * Setter du membre ctx.
-     * @param ctx la nouvelle valeur du membre ctx. 
+     * @param ctx la nouvelle valeur du membre ctx.
      */
     public void setCtx(final String ctx) {
         this.ctx = ctx;

@@ -24,7 +24,7 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletSecurityException;
 
 import org.esco.portlets.news.services.EntityManager;
-import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.portlet.mvc.AbstractController;
@@ -32,26 +32,38 @@ import org.uhp.portlets.news.NewsConstants;
 import org.uhp.portlets.news.service.CategoryManager;
 import org.uhp.portlets.news.web.support.Constants;
 
+/**
+ * Modified by GIP RECIA - Julien Gribonvald
+ * 4 mai 2012
+ */
 public class CategoryIncrementController extends AbstractController implements InitializingBean {
 
-    @Autowired private CategoryManager cm=null;
-    @Autowired private UserManager um=null;
+	/** */
+    @Autowired private CategoryManager cm;
+    /** */
+    @Autowired private PermissionManager pm;
     /** Manager of an Entity. */
     @Autowired
     private EntityManager em;
 
+    /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
     public void afterPropertiesSet() throws Exception {
-        if ((this.cm == null) || (this.um == null) || (this.em == null))
-            throw new IllegalArgumentException("A categoryManager and a userManager are required");
+        if ((this.cm == null) || (this.pm == null) || (this.em == null))
+            throw new IllegalArgumentException("A CategoryManager, an EntityManager and a PermissionManager are required");
     }
 
+    /**
+     * @see org.springframework.web.portlet.mvc.AbstractController#handleActionRequestInternal(javax.portlet.ActionRequest, javax.portlet.ActionResponse)
+     */
     @Override
     protected void handleActionRequestInternal(final ActionRequest request, final ActionResponse response) throws Exception {
 
         Long id = Long.valueOf(request.getParameter(Constants.ATT_CAT_ID));
         Long entityId = this.cm.getCategoryById(id).getEntityId();
 
-        if (!this.um.isUserAdminInCtx(entityId, NewsConstants.CTX_E, request.getRemoteUser())) {     		
+        if (!this.pm.isAdminInCtx(entityId, NewsConstants.CTX_E)) {
             throw new PortletSecurityException(
                     getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
         }

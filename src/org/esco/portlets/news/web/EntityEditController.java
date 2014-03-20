@@ -22,8 +22,11 @@ import javax.portlet.RenderResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.domain.Entity;
+import org.esco.portlets.news.domain.EntityRole;
 import org.esco.portlets.news.domain.Type;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.PermissionManager;
+import org.esco.portlets.news.services.RoleManager;
 import org.esco.portlets.news.services.TypeManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
@@ -39,7 +42,6 @@ import org.springframework.web.portlet.mvc.SimpleFormController;
 import org.uhp.portlets.news.NewsConstants;
 import org.uhp.portlets.news.domain.Category;
 import org.uhp.portlets.news.domain.RolePerm;
-import org.uhp.portlets.news.domain.UserRole;
 import org.uhp.portlets.news.service.CategoryManager;
 import org.uhp.portlets.news.web.support.Constants;
 
@@ -51,7 +53,7 @@ import org.uhp.portlets.news.web.support.Constants;
 public class EntityEditController extends SimpleFormController implements InitializingBean {
     /** Logger. */
     private static final Log LOG = LogFactory.getLog(EntityEditController.class);
-    
+
     /** Manager d'une Entity. */
     @Autowired
     private EntityManager em;
@@ -64,18 +66,24 @@ public class EntityEditController extends SimpleFormController implements Initia
     /** Manager des Users. */
     @Autowired
     private UserManager um;
-    
+    /** Manager of Users. */
+    @Autowired
+    private RoleManager rm;
+    /** Manager of Permission. */
+    @Autowired
+    private PermissionManager pm;
+
     /**
      * Constructeur de l'objet EntityEditController.java.
      */
     public EntityEditController() {
-        setCommandClass(EntityForm.class); 
+        setCommandClass(EntityForm.class);
         setCommandName(Constants.CMD_ENTITY);
         setFormView(Constants.ACT_EDIT_ENTITY);
         setSuccessView(Constants.ACT_VIEW_HOME);
     }
 
-    
+
     /**
      * @param request
      * @param response
@@ -83,22 +91,22 @@ public class EntityEditController extends SimpleFormController implements Initia
      * @param errors
      * @throws Exception
      * @see org.springframework.web.portlet.mvc.SimpleFormController#
-     * onSubmitAction(javax.portlet.ActionRequest, javax.portlet.ActionResponse, java.lang.Object, 
+     * onSubmitAction(javax.portlet.ActionRequest, javax.portlet.ActionResponse, java.lang.Object,
      * org.springframework.validation.BindException)
      */
     @Override
-    protected void onSubmitAction(final ActionRequest request, final ActionResponse response, 
+    protected void onSubmitAction(final ActionRequest request, final ActionResponse response,
             final Object command, final BindException errors) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Entering onSubmitAction of " + this.getClass().getName());
         }
         final EntityForm entityF = (EntityForm) command;
-        
-        if (!this.um.isSuperAdmin(request.getRemoteUser())) {            
+
+        if (!this.pm.isSuperAdmin()) {
             throw new PortletSecurityException(
-                    getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
+                    getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));
         }
-        
+
         if (entityF != null && entityF.getEntity() != null && entityF.getEntity().getEntityId() != null) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Entity in parameter :" + entityF.getEntity());
@@ -106,7 +114,7 @@ public class EntityEditController extends SimpleFormController implements Initia
                 LOG.trace("List of categories associated :" + entityF.getCategoriesIds());
             }
             this.getEm().saveEntity(entityF.getEntity());
-            
+
             // List of type attached to the entity passed in the form
             Set<Long> tIds = new HashSet<Long>();
             if (entityF.getTypesIds() != null && entityF.getTypesIds().length > 0) {
@@ -114,7 +122,7 @@ public class EntityEditController extends SimpleFormController implements Initia
                 tIds.add(Long.valueOf(str));
                 }
             }
-            
+
             // Obtains the list of type that are not anymore attached to the entity
             // and obtains the list of type that aren't already attached.
             Set<Long> deltypeIds = new HashSet<Long>();
@@ -128,12 +136,12 @@ public class EntityEditController extends SimpleFormController implements Initia
             // delete de link of type that aren't more attached to the entity.
             this.getEm().deleteAutorizedTypesOfEntity(
                     new ArrayList<Long>(deltypeIds), entityF.getEntity().getEntityId());
-            
+
             // insert types that aren't already attached to the entity.
             if (!tIds.isEmpty()) {
                 this.getEm().addAutorizedTypesOfEntity(new ArrayList<Long>(tIds), entityF.getEntity().getEntityId());
             }
-            
+
             // Associate a category without Entity to an Entity.
             if (entityF.getCategoriesIds() != null && entityF.getCategoriesIds().length > 0) {
                 List<Category> cList = this.getCm().getListCategoryOfEntityByUser(
@@ -148,23 +156,23 @@ public class EntityEditController extends SimpleFormController implements Initia
                     displayOrder++;
                     cat.setDisplayOrder(displayOrder);
                     this.getCm().saveCategory(cat);
-                    
-                    List<UserRole> users = this.getUm().getUsersRolesForCtx(cat.getCategoryId(), NewsConstants.CTX_C);
-                    for (UserRole u : users) {
-                        this.um.migrationUserCtxRole(this.um.findUserByUid(u.getPrincipal()), cat.getEntityId());
+
+                    List<EntityRole> ers = this.rm.getEntityRolesInCtx(cat.getCategoryId(), NewsConstants.CTX_C);
+                    for (EntityRole er : ers) {
+                        this.rm.migrateEntityRoleInCtxEntity(er.getPrincipal(), "1".equals(er.getIsGroup()), cat.getEntityId());
                     }
                 }
             }
-                        
+
             response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_HOME);
         } else {
             LOG.error("Entity does not exist.");
             throw new IllegalArgumentException("Entity does not exist.");
         }
-       
+
     }
-    
-    
+
+
 
     /**
      * @param request
@@ -173,17 +181,17 @@ public class EntityEditController extends SimpleFormController implements Initia
      * @return <code>ModelAndView</code>
      * @throws Exception
      * @see org.springframework.web.portlet.mvc.SimpleFormController#
-     * showForm(javax.portlet.RenderRequest, javax.portlet.RenderResponse, 
+     * showForm(javax.portlet.RenderRequest, javax.portlet.RenderResponse,
      * org.springframework.validation.BindException, java.util.Map)
      */
     @Override
-    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response, 
+    protected ModelAndView showForm(final RenderRequest request, final RenderResponse response,
             final BindException errors) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Entering show form of " + this.getClass().getName());
         }
         ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
-        if (!this.getUm().isSuperAdmin(request.getRemoteUser())) {            
+        if (!this.pm.isSuperAdmin()) {
             mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage("news.alert.superUserOnly"));
             throw new ModelAndViewDefiningException(mav);
         }
@@ -214,7 +222,7 @@ public class EntityEditController extends SimpleFormController implements Initia
         }
         throw new ObjectRetrievalFailureException(Entity.class, null);
     }
-    
+
     /**
      * @param request
      * @param command
@@ -236,9 +244,9 @@ public class EntityEditController extends SimpleFormController implements Initia
         model.put(Constants.ATT_C_LIST, this.getCm().getAloneCategory());
         model.put(Constants.ATT_PM, RolePerm.ROLE_ADMIN.getMask());
 
-        return model;        
+        return model;
     }
-    
+
     /**
      * @param request
      * @param response
@@ -252,7 +260,7 @@ public class EntityEditController extends SimpleFormController implements Initia
     throws Exception {
         return null;
     }
-    
+
     /**
      * @param request
      * @param response
@@ -265,7 +273,6 @@ public class EntityEditController extends SimpleFormController implements Initia
     throws Exception {
         response.setRenderParameter(Constants.ACT, Constants.ACT_VIEW_HOME);
     }
-
     /**
      * Getter du membre um.
      * @return <code>UserManager</code> le membre um.
@@ -337,7 +344,6 @@ public class EntityEditController extends SimpleFormController implements Initia
         this.tm = tm;
     }
 
-
     /**
      * @throws Exception
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
@@ -350,6 +356,10 @@ public class EntityEditController extends SimpleFormController implements Initia
         Assert.notNull(this.getEm(), "The property EntityManager em in class " 
                 + getClass().getSimpleName() + " must not be null.");
         Assert.notNull(this.getCm(), "The property CategoryManager cm in class " 
+                + getClass().getSimpleName() + " must not be null.");
+		Assert.notNull(this.getRm(), "The property RoleManager rm in class "
+                + getClass().getSimpleName() + " must not be null.");
+        Assert.notNull(this.getPm(), "The property PermissionManager pm in class "
                 + getClass().getSimpleName() + " must not be null.");
     }
 }

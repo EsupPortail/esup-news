@@ -1,22 +1,9 @@
-package org.cmis.portlets.news.web.validator;
-
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
- * Copyright (C) 2007-2008 University Nancy 1
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation version 2 of the License.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+ * For any information please refer to http://esup-helpdesk.sourceforge.net
+ * You may obtain a copy of the licence at http://www.esup-portail.org/license/
  */
+package org.cmis.portlets.news.web.validator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +21,7 @@ import org.uhp.portlets.news.web.validator.AbstractValidator;
  */
 public class AttachmentOptionsValidator extends AbstractValidator {
 
+	/** Constant. */
 	private static final int MIN_SIZE_VALUE = 1000;
 
 	/**
@@ -43,6 +31,9 @@ public class AttachmentOptionsValidator extends AbstractValidator {
 		super();
 	}
 
+	/**
+	 * @see org.uhp.portlets.news.web.validator.AbstractValidator#validate(java.lang.Object, org.springframework.validation.Errors)
+	 */
 	@Override
 	public void validate(final Object obj, final Errors errors) {
 
@@ -135,6 +126,10 @@ public class AttachmentOptionsValidator extends AbstractValidator {
 		}
 	}
 
+	/**
+	 * @see org.uhp.portlets.news.web.validator.AbstractValidator#getValidatorSupportClass()
+	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected Class getValidatorSupportClass() {
 		return AttachmentOptionsForm.class;

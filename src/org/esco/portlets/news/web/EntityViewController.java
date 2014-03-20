@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.domain.Entity;
 import org.esco.portlets.news.services.EntityManager;
-import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectRetrievalFailureException;
@@ -31,19 +31,19 @@ import org.uhp.portlets.news.web.support.Constants;
  * 4 mars 2010
  */
 public class EntityViewController extends AbstractController implements InitializingBean {
-    
+
     /** Logger. */
     private static final Log LOG = LogFactory.getLog(EntityViewController.class);
-    
+
     /** The EntityManager.*/
     @Autowired
     private EntityManager em;
     /** The CategoryManager. */
-    @Autowired 
+    @Autowired
     private CategoryManager cm;
     /** The UserManager. */
-    @Autowired 
-    private UserManager um;
+    @Autowired
+    private PermissionManager pm;
 
     /**
      * Constructeur de l'objet EntityViewController.java.
@@ -65,11 +65,10 @@ public class EntityViewController extends AbstractController implements Initiali
     public ModelAndView handleRenderRequest(final RenderRequest request,
             final RenderResponse response) throws Exception {
         final Long id = Long.valueOf(request.getParameter(Constants.ATT_ENTITY_ID));
-        final String uid = request.getRemoteUser();
         if (LOG.isDebugEnabled()) {
             LOG.debug("EntityViewController:: entering method handleRenderRequest EntityId = " + id);
         }
-        
+
         final Entity entity = this.em.getEntityById(id);
         if (entity == null) {
             throw new ObjectRetrievalFailureException(Entity.class, id);
@@ -77,11 +76,11 @@ public class EntityViewController extends AbstractController implements Initiali
         ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_ENTITY);
         mav.addObject(Constants.OBJ_ENTITY, entity);
         // Get all category for the user.
-        mav.addObject(Constants.ATT_C_LIST, 
-                this.getCm().getListCategoryOfEntityByUser(uid, id));
+        mav.addObject(Constants.ATT_C_LIST,
+                this.getCm().getListCategoryOfEntityByUser(request.getRemoteUser(), id));
         // Get rigths of the user in the context
         mav.addObject(Constants.ATT_PM, RolePerm.valueOf(
-                this.um.getUserRoleInCtx(entity.getEntityId(), NewsConstants.CTX_E, uid)).getMask());
+                this.getPm().getRoleInCtx(entity.getEntityId(), NewsConstants.CTX_E)).getMask());
         // Usefull for xml and opm links
         mav.addObject(Constants.ATT_PORTAL_URL,  HostUtils.getHostUrl(request));
         return mav;
@@ -128,14 +127,12 @@ public class EntityViewController extends AbstractController implements Initiali
 
 
     /**
-     * Setter du membre um.
-     * @param um la nouvelle valeur du membre um. 
+     * Setter du membre pm.
+     * @param um la nouvelle valeur du membre pm. 
      */
-    public void setUm(final UserManager um) {
-        this.um = um;
+    public void setPm(final PermissionManager pm) {
+        this.pm = pm;
     }
-
-
     /**
      * @throws Exception
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
@@ -145,8 +142,8 @@ public class EntityViewController extends AbstractController implements Initiali
                 + " must not be null.");
         Assert.notNull(this.getCm(), "The property CategoryManager cm in class " + getClass().getSimpleName()
                 + " must not be null.");
-        Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
+        Assert.notNull(this.getPm(), "The property PermissionManager pm in class " + getClass().getSimpleName()
                 + " must not be null.");
     }
-    
+
 }

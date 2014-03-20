@@ -20,6 +20,7 @@ package org.uhp.portlets.news.web.validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.esco.portlets.news.services.RoleManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
@@ -28,20 +29,24 @@ import org.uhp.portlets.news.web.PermForm;
 
 public class PermissionValidator extends AbstractValidator {
 	private static final Log LOGGER = LogFactory.getLog(PermissionValidator.class);
-	@Autowired private UserManager userManager;
+	@Autowired private RoleManager roleManager;
 
 	public void validateTokenAndRole(final PermForm permForm, final Errors errors) {
 		ValidationUtils.rejectIfEmpty(errors, "token", "TOKEN_REQUIRED", "Token is required.");
 		ValidationUtils.rejectIfEmpty(errors, "role", "ROLE_REQUIRED", "Role should be selected.");
 	}
 
-	public void validateUser(final PermForm permForm, final Errors errors) {
+	public void validateUserOrGroup(final PermForm permForm, final Errors errors) {
+		if (permForm.getIsGroup() == 0) {
 		ValidationUtils.rejectIfEmpty(errors, "user.userId", "USERID_REQUIRED", "User should be selected.");
+		} else {
+			ValidationUtils.rejectIfEmpty(errors, "group.key", "GROUPKEY_REQUIRED", "Group should be selected.");
+		}
 	
 	}
 	public void checkUserRoleExistInCtx(final PermForm permForm, final Errors errors) {
-		if (this.userManager.isUserRoleExistForContext(
-		        permForm.getCtxId(), permForm.getCtxType(), permForm.getUser().getUserId())) {
+		if (this.roleManager.isEntityHasRoleInCtx(
+				permForm.getPrincipal(), "1".equals(permForm.getIsGroup()),permForm.getCtxId(), permForm.getCtxType())){
 		   if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("PermissionValdate::checkUserRoleExistInCtx : user exist in ctx");
 		   }
@@ -60,7 +65,7 @@ public class PermissionValidator extends AbstractValidator {
 	public void validate(Object obj, Errors errors) {
 		PermForm permForm = (PermForm) obj;
 		validateTokenAndRole(permForm, errors);
-		validateUser(permForm, errors);
+		validateUserOrGroup(permForm, errors);
 		checkUserRoleExistInCtx(permForm, errors);
 	}
 	

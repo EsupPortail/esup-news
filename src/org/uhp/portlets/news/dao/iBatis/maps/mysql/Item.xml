@@ -52,19 +52,17 @@
 
 	<select id="getItemListByTopic" resultMap="item_result"
 		parameterClass="java.lang.Long" cacheModel="cacheItem">
-               <![CDATA[  select it.item_id, it.category_id, it.title, it.summary, it.body, it.post_date, it.start_date, it.end_date, it.last_update_date, it.posted_by, it.last_updated_by, it.status from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.status='1' and it.start_date <= now() and it.end_date >= now()  order by ti.display_order  desc ]]>
+               <![CDATA[  select it.* from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.status='1' and it.start_date <= now() and it.end_date >= now()  order by ti.display_order  desc ]]>
 	</select>
 
 	<select id="getValidatedItemListByTopic" resultMap="item_result"
 		parameterClass="java.lang.Long" cacheModel="cacheItem">
-
-<![CDATA[  select it.item_id, it.category_id, it.title, it.summary, it.body, it.post_date, it.start_date, it.end_date, it.last_update_date, it.posted_by, it.last_updated_by, it.status from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.status='1'  and it.start_date <= now() and it.end_date >= now()  order by ti.display_order  desc ]]>
+<![CDATA[  select it.* from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.status='1'  and it.start_date <= now() and it.end_date >= now()  order by ti.display_order  desc ]]>
 	</select>
 
 	<select id="getScheduledItemListByTopic" resultMap="item_result"
 		parameterClass="java.lang.Long" cacheModel="cacheItem">
-
-<![CDATA[  select it.item_id, it.category_id, it.title, it.summary, it.body, it.post_date, it.start_date, it.end_date, it.last_update_date, it.posted_by, it.last_updated_by, it.status from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.status='1'  and it.start_date > now()  order by ti.display_order  desc ]]>
+<![CDATA[  select it.* from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.status='1'  and it.start_date > now()  order by ti.display_order  desc ]]>
 	</select>
 
 
@@ -134,8 +132,8 @@
             </iterate>
 		</dynamic>
 	</select>
-	
-	 
+
+
     <select id="countItemsWithAttachmentByTopic" resultClass="int" parameterClass="java.lang.Long">
 		 select count(it.item_id) from news_item it, news_topic_item ti where it.item_id=ti.item_id and ti.topic_id=#value# and it.item_id IN (select distinct item_id from news_attachment_item)
     </select>
@@ -144,7 +142,7 @@
 		select it.item_id, it.category_id, it.title, it.summary, it.body,
 		it.post_date, it.start_date, it.end_date, it.last_update_date,
 		it.posted_by, it.last_updated_by, it.status
-		from news_item it, news_topic_item ti 
+		from news_item it, news_topic_item ti
 		where it.item_id=ti.item_id and ti.topic_id=#value# and it.item_id IN (select distinct item_id from news_attachment_item)
 	</select>
 
@@ -260,11 +258,11 @@
 	<select id="getMostRecentItemsByCategory" resultMap="item_result"
 		parameterClass="map" cacheModel="cacheItem">
     <![CDATA[
-    select it.item_id, it.category_id, it.title, it.summary, it.body, it.post_date, it.start_date, it.end_date, 
-    it.last_update_date, it.posted_by, it.last_updated_by, it.status  
-    FROM news_item it 
-    WHERE it.category_id=#categoryId# and DATEDIFF(CURRENT_DATE, it.post_date) < #dayCount# 
-    and it.status='1' and it.start_date <= now() and it.end_date >= now() 
+    select it.item_id, it.category_id, it.title, it.summary, it.body, it.post_date, it.start_date, it.end_date,
+    it.last_update_date, it.posted_by, it.last_updated_by, it.status
+    FROM news_item it
+    WHERE it.category_id=#categoryId# and DATEDIFF(CURRENT_DATE, it.post_date) < #dayCount#
+    and it.status='1' and it.start_date <= now() and it.end_date >= now()
     order by it.post_date desc
     ]]>
 	</select>
@@ -279,6 +277,6 @@
 
 	<delete id="deleteItemForAllTopic" parameterClass="java.lang.Long">
 		delete from news_topic_item where item_id=#itemId#
-        </delete>
+    </delete>
 
 </sqlMap>

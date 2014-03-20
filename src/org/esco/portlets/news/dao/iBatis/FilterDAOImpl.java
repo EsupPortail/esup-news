@@ -19,7 +19,6 @@ import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.uhp.portlets.news.NewsConstants;
-import org.uhp.portlets.news.dao.Constants;
 
 /**
  * Implementation of the Dao.

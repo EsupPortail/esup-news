@@ -26,62 +26,60 @@ import org.uhp.portlets.news.service.exception.NoSuchItemException;
 import org.uhp.portlets.news.web.ItemForm;
 
 public interface ItemManager {
-    public List<Item> getItemListByTopic(Long topicId);
+    List<Item> getItemListByTopic(Long topicId);
 
-    public List<Item> getAllItemListByTopic(Long topicId);
+    List<Item> getAllItemListByTopic(Long topicId);
 
-    public List<Item> getValidatedItemListByTopic(Long topicId);
+    List<Item> getValidatedItemListByTopic(Long topicId);
 
-    public List<Item> getArchivedItemListByTopic(Long topicId);
+    List<Item> getArchivedItemListByTopic(Long topicId);
 
-    public List<Item> getPendingItemListByTopic(Long topicId);
+    List<Item> getPendingItemListByTopic(Long topicId);
 
-    public List<Item> getScheduledItemListByTopic(Long topicId);
+    List<Item> getScheduledItemListByTopic(Long topicId);
 
-    public List<Item> getNItemsByTopic(Long topicId, Integer n);
+    List<Item> getNItemsByTopic(Long topicId, Integer n);
 
-    public Integer getItemsCountByTopic(Long topicId);
+    Integer getItemsCountByTopic(Long topicId);
 
-    public Integer getPendingItemsCountByTopic(Long topicId);
+    Integer getPendingItemsCountByTopic(Long topicId);
 
-    public Integer getPendingItemsCountByCategory(Long categoryId);
+    Integer getPendingItemsCountByCategory(Long categoryId);
 
-    public List<Item> getItemListByCategory(Long categoryId);
+    List<Item> getItemListByCategory(Long categoryId);
 
-    public List<Topic> getTopicListByItem(Long itemId);
+    List<Topic> getTopicListByItem(Long itemId);
 
-    public Item getItemById(Long itemId) throws NoSuchItemException;
+    Item getItemById(Long itemId) throws NoSuchItemException;
 
-    public long saveItem(Item item);
+    long saveItem(Item item);
 
-    public long addItem(ItemForm itemForm);
+    long addItem(ItemForm itemForm);
 
-    public long addItem(ItemForm itemForm, String uid);
+    void updateItem(ItemForm itemForm);
 
-    public void updateItem(ItemForm itemForm, String uid);
+    void addItemToTopics(Item item, String[] topicIds);
 
-    public void addItemToTopics(Item item, String[] topicIds);
+    void deleteItem(Long itemId);
 
-    public void deleteItem(Long itemId);
+    void deleteItemForAllTopics(Long itemId);
 
-    public void deleteItemForAllTopics(Long itemId);
+    void deleteItemForTopic(Long itemId, Long topicId);
 
-    public void deleteItemForTopic(Long itemId, Long topicId);
+    void deleteItemForTopics(Item item, int[] topicIds);
 
-    public void deleteItemForTopics(Item item, int[] topicIds);
+    void updateItemStatus(Integer status, Long itemId);
 
-    public void updateItemStatus(Integer status, Long itemId);
+    void updateItemStatus(Long itemId);
 
-    public void updateItemStatus(Long itemId);
+    void updateItemOrderingInTopic(Long itemId, Long topicId, boolean up);
 
-    public void updateItemOrderingInTopic(Long itemId, Long topicId, boolean up);
+    void updateItemOrderingToFirstOrLastInTopic(Long itemId, Long topicId, boolean up);
 
-    public void updateItemOrderingToFirstOrLastInTopic(Long itemId, Long topicId, boolean up);
+    int getNbDays();
 
-    public int getNbDays();
+    int countItemsWithAttachmentByTopic(Long topicId);
 
-    public int countItemsWithAttachmentByTopic(Long topicId);
-
-    public List<Item> getItemsWithAttachmentsByTopic(final Long topicId);
+    List<Item> getItemsWithAttachmentsByTopic(final Long topicId);
 
 }

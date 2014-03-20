@@ -26,7 +26,7 @@ import javax.portlet.RenderResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.services.EntityManager;
-import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.portlet.ModelAndView;
@@ -51,7 +51,7 @@ public class CategoryDeleteController extends AbstractController implements Init
     /** */
     @Autowired private CategoryManager cm;
     /** */
-    @Autowired private UserManager um;
+    @Autowired private PermissionManager pm;
     /** */
     private boolean deleted;
     /** */
@@ -71,8 +71,8 @@ public class CategoryDeleteController extends AbstractController implements Init
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        if (this.cm == null || this.um == null || this.em == null) {
-            throw new IllegalArgumentException("An EntityManager, a CategoryManager and a userManager are required");
+        if (this.cm == null || this.pm == null || this.em == null) {
+            throw new IllegalArgumentException("An EntityManager, a CategoryManager and a PermissionManager are required");
         }
     }
 
@@ -89,7 +89,7 @@ public class CategoryDeleteController extends AbstractController implements Init
         Long catId = Long.valueOf(request.getParameter(Constants.ATT_CAT_ID));
         entityId = this.cm.getCategoryById(catId).getEntityId();
         this.deleted = false;
-        if (!this.um.isUserAdminInCtx(entityId, NewsConstants.CTX_E, request.getRemoteUser())) {
+        if (!this.pm.isAdminInCtx(entityId, NewsConstants.CTX_E)) {
             msgKey = "news.alert.superUserOnly";
         } else if (this.cm.deleteCategory(catId)) {
             // at this state the category is deleted with his types associated.
@@ -122,9 +122,9 @@ public class CategoryDeleteController extends AbstractController implements Init
             mav.addObject(Constants.ATT_C_LIST, 
                     this.cm.getListCategoryOfEntityByUser(request.getRemoteUser(), this.entityId));
             // Get rigths of the user in the context
-            if (!this.um.isUserAdminInCtx(entityId, NewsConstants.CTX_E, request.getRemoteUser())) { 
+            if (!this.pm.isAdminInCtx(entityId, NewsConstants.CTX_E)) {
                 mav.addObject(Constants.ATT_PM, RolePerm.valueOf(
-                    this.um.getUserRoleInCtx(entityId, NewsConstants.CTX_E, request.getRemoteUser()))
+                    this.pm.getRoleInCtx(entityId, NewsConstants.CTX_E))
                     .getMask());
             }
             return mav;

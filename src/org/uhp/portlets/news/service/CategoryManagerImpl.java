@@ -25,8 +25,10 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.dao.EntityDAO;
+import org.esco.portlets.news.dao.EntityRoleDAO;
 import org.esco.portlets.news.dao.EscoUserDao;
 import org.esco.portlets.news.dao.TypeDAO;
+import org.esco.portlets.news.domain.EntityRole;
 import org.esco.portlets.news.domain.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -38,7 +40,6 @@ import org.uhp.portlets.news.NewsConstants;
 import org.uhp.portlets.news.dao.CategoryDao;
 import org.uhp.portlets.news.dao.SubscriberDao;
 import org.uhp.portlets.news.domain.Category;
-import org.uhp.portlets.news.domain.UserRole;
 import org.uhp.portlets.news.service.exception.CategoryException;
 
 /**
@@ -63,6 +64,9 @@ public class CategoryManagerImpl implements CategoryManager {
 	/** Dao d'un user. */
 	@Autowired	
 	private EscoUserDao userDao;
+	/** EntityRoleDao. */
+	@Autowired
+	private EntityRoleDAO entityRoleDao;
 	/** Dao d'une entity. */
     @Autowired  
     private EntityDAO entityDao;
@@ -85,14 +89,14 @@ public class CategoryManagerImpl implements CategoryManager {
 	@Transactional(readOnly = false)
 	public boolean deleteCategory(final Long categoryId) {
 		try {	
-			List<UserRole> lists = this.userDao.getUsersRolesForCtx(categoryId, NewsConstants.CTX_C);
+			List<EntityRole> lists = this.entityRoleDao.getAllEntityRoleInCtx(categoryId, NewsConstants.CTX_C);
 			if (this.categoryDao.delete(categoryId))	{
 			    
-				this.userDao.removeUsersRoleForCtx(categoryId, NewsConstants.CTX_C);
-				for (UserRole ur : lists) {
-					if (!this.userDao.isSuperAdmin(ur.getPrincipal()) 
-					        && !this.userDao.userRoleExist(ur.getPrincipal())) {
-						this.userDao.deleteUser(ur.getPrincipal(), false);
+				this.entityRoleDao.removeAllEntityRoleInCtx(categoryId, NewsConstants.CTX_C);
+				for (EntityRole ur : lists) {
+					if ((Integer.parseInt(ur.getIsGroup()) == 0) && !this.userDao.isUserSuperAdmin(ur.getPrincipal())
+					        && !this.userDao.isUserHasAnyRole(ur.getPrincipal())) {
+						this.userDao.deleteUser(ur.getPrincipal());
 					}
 				}
 				this.subDao.deleteAllSubscribersByCtxId(categoryId, NewsConstants.CTX_C);
@@ -151,7 +155,7 @@ public class CategoryManagerImpl implements CategoryManager {
 	public List<Category> getListCategoryByUser(final String uid) {		
 		List<Category>  categories = null;
 		try {
-			if (this.userDao.isSuperAdmin(uid))  {
+			if (this.userDao.isUserSuperAdmin(uid))  {
 				categories  = this.categoryDao.getAllCategory();			
 			} else {
 				categories = this.categoryDao.getCategoriesByUser(uid);
@@ -335,7 +339,7 @@ public class CategoryManagerImpl implements CategoryManager {
     public List<Category> getListCategoryOfEntityByUser(final String uid, final Long entityId) {     
         List<Category>  categories = null;
         try {
-            if (this.userDao.isSuperAdmin(uid))  {
+            if (this.userDao.isUserSuperAdmin(uid))  {
                 categories  = this.categoryDao.getAllCategoryOfEntity(entityId);            
             } else {
                 categories = this.categoryDao.getCategoriesOfEntityByUser(uid, entityId);

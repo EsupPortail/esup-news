@@ -24,8 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.domain.Entity;
 import org.esco.portlets.news.domain.Type;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.esco.portlets.news.services.TypeManager;
-import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -53,9 +53,9 @@ public class TypeEditController extends SimpleFormController implements Initiali
     /** Manager d'un type. */
     @Autowired
     private TypeManager tm;
-    /** Manager des Users. */
+    /** The Permission Manager. */
     @Autowired
-    private UserManager um;
+    private PermissionManager pm;
     
     /**
      * Constructeur de l'objet TypeEditController.java.
@@ -86,7 +86,7 @@ public class TypeEditController extends SimpleFormController implements Initiali
         }
         final TypeForm typeF = (TypeForm) command;
         
-        if (!this.um.isSuperAdmin(request.getRemoteUser())) {            
+        if (!this.pm.isSuperAdmin()) {
             throw new PortletSecurityException(
                     getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));  
         }
@@ -149,7 +149,7 @@ public class TypeEditController extends SimpleFormController implements Initiali
             LOG.trace("Entering show form of " + this.getClass().getName());
         }
         ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
-        if (!this.getUm().isSuperAdmin(request.getRemoteUser())) {            
+        if (!this.pm.isSuperAdmin()) {
             mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage("news.alert.superUserOnly"));
             throw new ModelAndViewDefiningException(mav);
         }
@@ -200,7 +200,7 @@ public class TypeEditController extends SimpleFormController implements Initiali
         Map<String, Object> model = new HashMap<String, Object>();
         
         model.put(Constants.ATT_E_LIST, this.em.getEntitiesByUser(request.getRemoteUser()));
-        if (this.um.isSuperAdmin(request.getRemoteUser())) {
+        if (this.pm.isSuperAdmin()) {
             model.put(Constants.ATT_PM, RolePerm.ROLE_ADMIN.getMask());
         } else {
             model.put(Constants.ATT_PM, "0");
@@ -297,7 +297,7 @@ public class TypeEditController extends SimpleFormController implements Initiali
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.getTm(), "The property TypeManager tm in class " 
                 + getClass().getSimpleName() + " must not be null.");
-        Assert.notNull(this.getUm(), "The property UserManager um in class " 
+        Assert.notNull(this.getPm(), "The property PermissionManager pm in class "
                 + getClass().getSimpleName() + " must not be null.");
         Assert.notNull(this.getEm(), "The property EntityManager em in class " 
                 + getClass().getSimpleName() + " must not be null.");

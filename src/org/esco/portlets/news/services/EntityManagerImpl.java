@@ -3,7 +3,6 @@
  * For any information please refer to http://esup-helpdesk.sourceforge.net
  * You may obtain a copy of the licence at http://www.esup-portail.org/license/
  */
-
 package org.esco.portlets.news.services;
 
 import java.util.ArrayList;
@@ -14,10 +13,12 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.dao.EntityDAO;
+import org.esco.portlets.news.dao.EntityRoleDAO;
 import org.esco.portlets.news.dao.EscoUserDao;
 import org.esco.portlets.news.dao.FilterDAO;
 import org.esco.portlets.news.dao.TypeDAO;
 import org.esco.portlets.news.domain.Entity;
+import org.esco.portlets.news.domain.EntityRole;
 import org.esco.portlets.news.domain.Filter;
 import org.esco.portlets.news.domain.FilterType;
 import org.esco.portlets.news.domain.Type;
@@ -33,8 +34,8 @@ import org.uhp.portlets.news.NewsConstants;
 import org.uhp.portlets.news.dao.CategoryDao;
 import org.uhp.portlets.news.dao.SubscriberDao;
 import org.uhp.portlets.news.domain.Category;
-import org.uhp.portlets.news.domain.UserRole;
 import org.uhp.portlets.news.service.exception.UnauthorizedException;
+import org.uhp.portlets.news.web.support.Constants;
 
 /**
  * Service pour une entity.
@@ -42,7 +43,7 @@ import org.uhp.portlets.news.service.exception.UnauthorizedException;
  * 10 déc. 2009
  */
 @Service("entityManager")
-@Transactional(readOnly = true) 
+@Transactional(readOnly = true)
 public class EntityManagerImpl implements EntityManager, InitializingBean  {
 
     /** Logger. */
@@ -61,10 +62,13 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
     @Autowired
     private FilterDAO filterDao;
     /** Dao des user. */
-    @Autowired  
+    @Autowired
     private EscoUserDao userDao;
+    /** EntityRoleDao. */
+	@Autowired
+	private EntityRoleDAO entityRoleDao;
     /** Dao des subscriber. */
-    @Autowired  
+    @Autowired
     private SubscriberDao subDao;
 
     /**
@@ -81,9 +85,9 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
      */
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
     public void saveEntity(final Entity entity) {
-        if (entity == null) {   
+        if (entity == null) {
             throw new IllegalArgumentException("Can't save an entity when given a null Entity instance.");
-        } 
+        }
         try {
             this.entityDao.saveEntity(entity);
         } catch (DataIntegrityViolationException dive) {
@@ -94,45 +98,45 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
             throw e;
         }
     }
-    
+
     /**
      * Obtenir une entité à partir de son id.
      * @param entityId
      * @return <code>Entity</code>
      * @see org.esco.portlets.news.services.EntityManager#getEntityById(java.lang.Long)
      */
-    public Entity getEntityById(final Long entityId) {        
+    public Entity getEntityById(final Long entityId) {
         try {
-            return this.entityDao.getEntityById(entityId);    
+            return this.entityDao.getEntityById(entityId);
         } catch (DataAccessException e) {
             LOG.error("Get Entity By Id error : " + e.getLocalizedMessage());
             throw e;
         }
     }
-    
+
     /**
-     * Supprimer une entité si aucune actagéorie n'y est liée.
+     * Supprimer une entité si aucune catégorie n'y est liée.
      * @param entityId
      * @return true si la suppression s'est bien passée, faux sinon.
      * @see org.esco.portlets.news.services.EntityManager#deleteEntity(java.lang.Long)
      */
     @Transactional(readOnly = false)
     public boolean deleteEntity(final Long entityId) {
-        try {   
-            List<UserRole> lists = this.userDao.getUsersRolesForCtx(entityId, NewsConstants.CTX_E);
+        try {
+            List<EntityRole> lists = this.entityRoleDao.getAllEntityRoleInCtx(entityId, NewsConstants.CTX_E);
             if (this.entityDao.deleteEntityById(entityId)) {
-                this.userDao.removeUsersRoleForCtx(entityId, NewsConstants.CTX_E);
+                this.entityRoleDao.removeAllEntityRoleInCtx(entityId, NewsConstants.CTX_E);
                 if (lists != null && !lists.isEmpty()) {
-                    for (UserRole ur : lists) {
-                        if (!this.userDao.isSuperAdmin(ur.getPrincipal()) 
-                                && !this.userDao.userRoleExist(ur.getPrincipal())) {
-                            this.userDao.deleteUser(ur.getPrincipal(), false);
+                    for (EntityRole ur : lists) {
+                        if ((Integer.parseInt(ur.getIsGroup()) == 0) && !this.userDao.isUserSuperAdmin(ur.getPrincipal())
+                                && !this.userDao.isUserHasAnyRole(ur.getPrincipal())) {
+                            this.userDao.deleteUser(ur.getPrincipal());
                         }
                     }
                 }
                 this.subDao.deleteAllSubscribersByCtxId(entityId, NewsConstants.CTX_E);
                 return true;
-            } 
+            }
             return false;
         } catch (DataAccessException e) {
             LOG.error("Delete Entity error : " + e.getLocalizedMessage());
@@ -146,11 +150,11 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
      * @return <code>List<Entity></code>
      * @see org.esco.portlets.news.services.EntityManager#getEntitiesByUser(java.lang.String)
      */
-    public List<Entity> getEntitiesByUser(final String uid) {     
+    public List<Entity> getEntitiesByUser(final String uid) {
         List<Entity> entities = null;
         try {
-            if (this.userDao.isSuperAdmin(uid))  {
-                entities  = this.entityDao.getAllEntities();            
+            if (this.userDao.isUserSuperAdmin(uid))  {
+                entities  = this.entityDao.getAllEntities();
             } else {
                 entities = this.entityDao.getEntitiesByUser(uid);
             }
@@ -160,16 +164,16 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
         }
         return entities;
     }
-    
+
     /**
      * Lister les entities par leur type.
      * @param typeId Identifiant du type.
      * @return <code>List<Entity></code>
      * @see org.esco.portlets.news.services.EntityManager#getEntitiesByType(java.lang.Long)
      */
-    public List<Entity> getEntitiesByType(final Long typeId) {     
+    public List<Entity> getEntitiesByType(final Long typeId) {
         List<Entity> entities = null;
-        try {            
+        try {
             entities = this.entityDao.getEntitiesByType(typeId);
         } catch (DataAccessException e) {
             LOG.error("Get Entites By Type Error msg : " + e.getLocalizedMessage());
@@ -177,7 +181,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
         }
         return entities;
     }
-    
+
     /**
      * Lister les types disponibles pour les catégories de l'entité.
      * @param entityId
@@ -194,7 +198,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
         }
         return types;
     }
-    
+
     /**
      * Lier des types à une entité.
      * @param typeIds
@@ -204,7 +208,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
     @Transactional(readOnly = false)
     public void addAutorizedTypesOfEntity(final List<Long> typeIds, final Long entityId) {
         try {
-            if (typeIds != null && !typeIds.isEmpty()) { 
+            if (typeIds != null && !typeIds.isEmpty()) {
                 this.entityDao.addAuthorizedTypesToEntity(typeIds, entityId);
             } else if (this.getAutorizedTypesOfEntity(entityId).isEmpty()) {
                 List<Long> types = new ArrayList<Long>();
@@ -215,11 +219,11 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
             LOG.error("Add Authorized Types Of Entity Error msg : " + e.getLocalizedMessage());
             throw e;
         }
-        
+
     }
-    
+
     /**
-     * Supprime les types disponibles pour les entités, mais en vérifiant 
+     * Supprime les types disponibles pour les entités, mais en vérifiant
      * qu'aucune des catégories de l'entité n'aient encore le type de lié.
      * @param typeIds
      * @param entityId
@@ -231,7 +235,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
             Type defaultType = this.typeDao.getTypeByName(NewsConstants.DEFAULT_TYPE);
             List<Long> type = new ArrayList<Long>();
             typeIds.remove(defaultType.getTypeId());
-            
+
             boolean b = true;
             for (Long typeId : typeIds) {
                 List<Category> cats = this.catDao.getCategoryByTypeOfEntity(typeId, entityId);
@@ -243,7 +247,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
             }
             if (!type.isEmpty()) {
                 this.entityDao.deleteAuthorizedTypesToEntity(typeIds, entityId);
-            } 
+            }
             if (!b) {
                 String msg = "Delete of some types unauthorized, somes are always attached to Categories.";
                 LOG.error(msg);
@@ -254,7 +258,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
             throw e;
         }
     }
-    
+
     /**
      * Add search filter to the entity.
      * @param filter A filter.
@@ -276,7 +280,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
             throw e;
         }
     }
-    
+
     /**
      * update search filter to the entity.
      * @param filter A filter.
@@ -293,13 +297,13 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
                             + "or try to update a filter not modified.");
                     throw new IllegalArgumentException("A same filter already exist.");
                 }
-            } 
+            }
         } catch (DataAccessException e) {
             LOG.error("update Filter to Entity error : " + e.getLocalizedMessage());
             throw e;
         }
     }
-    
+
     /**
      * Delete a Filter of an Entity.
      * @param filterId The filter id.
@@ -315,10 +319,10 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
             throw e;
         }
     }
-    
+
     /**
      * Returns the filter from id.
-     * @param filterId 
+     * @param filterId
      * @return <code>Filter</code>
      */
     public Filter getFilter(final Long filterId) {
@@ -329,7 +333,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
             throw e;
         }
     }
-    
+
     /**
      * Returns the list of filters associated to an Entity.
      * @param entityId The entity id.
@@ -343,7 +347,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
             throw e;
         }
     }
-    
+
     /**
      * Returns the list of filters associated to an Entity and classed by type.
      * @param entityId The entity id.
@@ -372,7 +376,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
 
     /**
      * Setter du membre entityDao.
-     * @param entityDao la nouvelle valeur du membre entityDao. 
+     * @param entityDao la nouvelle valeur du membre entityDao.
      */
     public void setEntityDao(final EntityDAO entityDao) {
         this.entityDao = entityDao;
@@ -388,7 +392,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
 
     /**
      * Setter du membre userDao.
-     * @param userDao la nouvelle valeur du membre userDao. 
+     * @param userDao la nouvelle valeur du membre userDao.
      */
     public void setUserDao(final EscoUserDao userDao) {
         this.userDao = userDao;
@@ -404,7 +408,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
 
     /**
      * Setter du membre catDao.
-     * @param catDao la nouvelle valeur du membre catDao. 
+     * @param catDao la nouvelle valeur du membre catDao.
      */
     public void setCatDao(final CategoryDao catDao) {
         this.catDao = catDao;
@@ -420,7 +424,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
 
     /**
      * Setter du membre typeDao.
-     * @param typeDao la nouvelle valeur du membre typeDao. 
+     * @param typeDao la nouvelle valeur du membre typeDao.
      */
     public void setTypeDao(final TypeDAO typeDao) {
         this.typeDao = typeDao;
@@ -436,7 +440,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
 
     /**
      * Setter du membre filterDao.
-     * @param filterDao la nouvelle valeur du membre filterDao. 
+     * @param filterDao la nouvelle valeur du membre filterDao.
      */
     public void setFilterDao(final FilterDAO filterDao) {
         this.filterDao = filterDao;
@@ -452,7 +456,7 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
 
     /**
      * Setter du membre subDao.
-     * @param subDao la nouvelle valeur du membre subDao. 
+     * @param subDao la nouvelle valeur du membre subDao.
      */
     public void setSubDao(final SubscriberDao subDao) {
         this.subDao = subDao;
@@ -464,17 +468,17 @@ public class EntityManagerImpl implements EntityManager, InitializingBean  {
      */
     public void afterPropertiesSet() throws Exception {
         final String notNull = " must not be null.";
-        Assert.notNull(this.getUserDao(), "The property userDao in class " 
+        Assert.notNull(this.getUserDao(), "The property userDao in class "
                 + getClass().getSimpleName() + notNull);
-        Assert.notNull(this.getEntityDao(), "The property entityDao in class " 
+        Assert.notNull(this.getEntityDao(), "The property entityDao in class "
                 + getClass().getSimpleName() + notNull);
-        Assert.notNull(this.getCatDao(), "The property catDao in class " 
+        Assert.notNull(this.getCatDao(), "The property catDao in class "
                 + getClass().getSimpleName() + notNull);
-        Assert.notNull(this.getTypeDao(), "The property typeDao in class " 
+        Assert.notNull(this.getTypeDao(), "The property typeDao in class "
                 + getClass().getSimpleName() + notNull);
-        Assert.notNull(this.getFilterDao(), "The property filterDao in class " 
+        Assert.notNull(this.getFilterDao(), "The property filterDao in class "
                 + getClass().getSimpleName() + notNull);
-        Assert.notNull(this.getSubDao(), "The property subDao in class " 
+        Assert.notNull(this.getSubDao(), "The property subDao in class "
                 + getClass().getSimpleName() + notNull);
     }
 

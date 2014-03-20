@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.service;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -24,7 +24,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.esco.portlets.news.dao.EntityRoleDAO;
 import org.esco.portlets.news.dao.EscoUserDao;
+import org.esco.portlets.news.services.PermissionManager;
+import org.esco.portlets.news.services.RoleManager;
+import org.esco.portlets.news.utils.PortletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -42,6 +46,9 @@ import org.uhp.portlets.news.web.ItemForm;
 @Service("itemManager")
 @Transactional(readOnly = true)
 public class ItemManagerImpl implements ItemManager {
+
+	private static final Log LOGGER = LogFactory.getLog(ItemManagerImpl.class);
+
 	private static final int DEFAULT_NB_DAY_EXP = 30;
 	private int nbDaysAfterForExp = DEFAULT_NB_DAY_EXP;
 	private static final String STATUS_VALIDATE = "1";
@@ -49,8 +56,13 @@ public class ItemManagerImpl implements ItemManager {
 
 	@Autowired
 	private ItemDao itemDao;
+	/** EntityRoleDao. */
+	@Autowired
+	private RoleManager rm;
+	/** PortletService. */
+	@Autowired
+	private PortletService portletService;
 
-	private static final Log LOGGER = LogFactory.getLog(ItemManagerImpl.class);
 
 	public List<Item> getItemListByTopic(final Long topicId) {
 		return this.itemDao.getItemListByTopic(topicId);
@@ -74,11 +86,9 @@ public class ItemManagerImpl implements ItemManager {
 
 	public Item getItemById(final Long itemId) throws NoSuchItemException {
 		Item item = null;
-		try
-		{
+		try	{
 			item = this.itemDao.getItemById(itemId);
-		} catch (NumberFormatException ex)
-		{
+		} catch (NumberFormatException ex)	{
 			throw new NoSuchItemException("No such item [" + itemId + "] :" + ex);
 		}
 		return item;
@@ -86,8 +96,7 @@ public class ItemManagerImpl implements ItemManager {
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public long saveItem(Item item) {
-		if (item == null)
-		{
+		if (item == null) {
 			throw new IllegalArgumentException("Cannot save a item when given a null Item instance.");
 		}
 		Calendar c = Calendar.getInstance();
@@ -98,8 +107,7 @@ public class ItemManagerImpl implements ItemManager {
 
 	private Date getDefaultExpirationDate(final Date sd) {
 		Calendar c = Calendar.getInstance();
-		if (sd != null)
-		{
+		if (sd != null) {
 			c.setTime(sd);
 		}
 		c.add(Calendar.DATE, nbDaysAfterForExp);
@@ -175,7 +183,7 @@ public class ItemManagerImpl implements ItemManager {
 	/**
 	 * Put to the first or the last position an item and in this case move other
 	 * items.
-	 * 
+	 *
 	 * @param itemId
 	 * @param topicId
 	 * @param up
@@ -200,10 +208,9 @@ public class ItemManagerImpl implements ItemManager {
 		return this.itemDao.getPendingItemsCountByTopic(topicId);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
+	/*@Transactional(propagation = Propagation.REQUIRED)
 	public long addItem(final ItemForm itemForm) {
-		if (itemForm == null)
-		{
+		if (itemForm == null) {
 			throw new IllegalArgumentException("Cannot add a item when given a null ItemForm instance.");
 		}
 		long pkey = saveItem(itemForm.getItem());
@@ -211,12 +218,12 @@ public class ItemManagerImpl implements ItemManager {
 
 		// return the primary key of the newly inserted row
 		return pkey;
-	}
+	}*/
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public long addItem(ItemForm itemForm, String uid) {
-		//boolean isSuperU = setItemStatus(itemForm, uid);
-		setItemStatus(itemForm, uid);
+	public long addItem(ItemForm itemForm) {
+		boolean isSuperAdmin = this.pm.isSuperAdmin();
+		itemForm.getItem().setStatus(getItemStatus(itemForm, isSuperAdmin));
 		long pkey = addItem(itemForm);
 		// return the primary key of the newly inserted row
 		return pkey;
@@ -226,24 +233,23 @@ public class ItemManagerImpl implements ItemManager {
 	private EscoUserDao userDao;
 	@Autowired
 	private TopicDao topicDao;
+	@Autowired
+	private PermissionManager pm;
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void updateItem(ItemForm itemForm, String uid) {
-		boolean isSuperU = false;
+	public void updateItem(ItemForm itemForm) {
+		boolean isSuperAdmin = this.pm.isSuperAdmin();
 		if (itemForm == null)
 		{
 			throw new IllegalArgumentException("Cannot update a item when given a null ItemForm instance.");
 		}
-		isSuperU = setItemStatus(itemForm, uid);
+		itemForm.getItem().setStatus(getItemStatus(itemForm, isSuperAdmin));
 		Item item = this.setItemStartEndDates(itemForm.getItem());
-		if (isSuperU || this.userDao.getUserRoleForCtx(uid, item.getCategoryId(), NewsConstants.CTX_C).equals(RolePerm.ROLE_MANAGER.getName()))
-		{
+		if (isSuperAdmin || this.pm.getRoleInCtx(item.getCategoryId(), NewsConstants.CTX_C).equals(RolePerm.ROLE_MANAGER.getName())) {
 			this.itemDao.deleteItemForAllTopics(item.getItemId());
-		} else
-		{
-			List<Topic> topics = this.topicDao.getTopicsForCategoryByUser(item.getCategoryId(), uid);
-			for (Topic t : topics)
-			{
+		} else {
+			List<Topic> topics = this.topicDao.getTopicsForCategoryByUser(item.getCategoryId(), portletService.getRemoteUser());
+			for (Topic t : topics) {
 				this.itemDao.deleteItemForTopic(item.getItemId(), t.getTopicId());
 			}
 		}
@@ -251,29 +257,13 @@ public class ItemManagerImpl implements ItemManager {
 		this.itemDao.insertItemToTopics(itemForm.getItem(), itemForm.getTopicIds());
 	}
 
-	private boolean setItemStatus(ItemForm itemForm, String uid) {
-		boolean isSuperU = false;
-		if (this.userDao.isSuperAdmin(uid))
-		{
-			itemForm.getItem().setStatus(STATUS_VALIDATE);
-			isSuperU = true;
-		} else
-		{
-
-			List<String> roles = this.userDao.getUserRolesInTopicsByTopics(uid, toInteger(itemForm.getTopicIds()));
-
-			if (roles.contains(RolePerm.ROLE_MANAGER.getName()))
-			{
-				itemForm.getItem().setStatus(STATUS_VALIDATE);
-			} else if (roles.contains(RolePerm.ROLE_CONTRIBUTOR.getName()))
-			{
-				itemForm.getItem().setStatus(STATUS_NOT_VALIDATE);
-			} else
-			{
-				itemForm.getItem().setStatus(STATUS_VALIDATE);
-			}
+	private String getItemStatus(final ItemForm itemForm, final boolean isSuperAdmin) {
+		if (isSuperAdmin) return STATUS_VALIDATE;
+		for (int id : toInteger(itemForm.getTopicIds())){
+			String role = this.rm.getRoleOfEntityInCtx(portletService.getRemoteUser(), false, new Long(id), "T");
+			if (role != null && !role.isEmpty() && RolePerm.valueOf(role).getMask() > RolePerm.ROLE_CONTRIBUTOR.getMask()) return STATUS_VALIDATE;
 		}
-		return isSuperU;
+		return STATUS_NOT_VALIDATE;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)

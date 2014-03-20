@@ -1,3 +1,8 @@
+/**
+* ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+* For any information please refer to http://esup-helpdesk.sourceforge.net
+* You may obtain a copy of the licence at http://www.esup-portail.org/license/
+*/
 package org.cmis.portlets.news.web;
 
 import java.io.Serializable;
@@ -9,8 +14,10 @@ import java.util.List;
  * 19 oct. 2010
  */
 public class AttachmentOptionsForm implements Serializable {
+	/** */
     private static final long serialVersionUID = 1L;
 
+    /** Option Id. */
     private long optionsId;
     /**
      * New max size in kilobytes.
@@ -20,17 +27,17 @@ public class AttachmentOptionsForm implements Serializable {
      * Displayed max size in kilobytes.
      */
     private String displayedMaxSize;
-
+    /** */
     private List<String> authorizedList;
-
+    /** */
     private String authorizedExts;
-
+    /** */
     private List<String> forbiddenList;
-
+    /** */
     private String forbiddenExts;
-
+    /** */
     private long entityId;
-
+    /** */
     private String useEntityOptions;
 
     /**
@@ -39,7 +46,7 @@ public class AttachmentOptionsForm implements Serializable {
     public AttachmentOptionsForm() {
 	super();
     }
-    
+
     /**
      * @param size
      */

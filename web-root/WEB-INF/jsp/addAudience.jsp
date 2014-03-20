@@ -101,7 +101,7 @@
 					<td align="left"><spring:bind path="subForm.subscriber.isGroup">
 						<select name="${status.expression}" size="1">
 							<option value="1"
-								<c:if test="${status.value == 1}">selected</c:if>><fmt:message
+								<c:if test="${not (status.value == 0)}">selected</c:if>><fmt:message
 								key="news.label.group" /></option>
 							<option value="0"
 								<c:if test="${status.value == 0}">selected</c:if>><fmt:message
@@ -135,7 +135,7 @@
 								</c:otherwise>
 							</c:choose>
 							<fmt:message key="${subTypeEntry}" /> &nbsp; &nbsp;
-                                   </c:forEach>
+								   </c:forEach>
 						<c:if test="${fn:length(status.errorMessage) > 0}"><span class="portlet-msg-error">${status.errorMessage}</span></c:if>
 					</spring:bind> <input type="hidden" name="subscriber.ctxId"
 						value="${subForm.subscriber.ctxId}" /></td>
@@ -164,19 +164,19 @@
 						<input type="checkbox" name="allbox"
 							onclick="checkAll(document.forms['${namespace}AddAud'])" />
 					</c:set> <jsp:scriptlet>
-									    <![CDATA[
-									        org.esco.portlets.news.web.support.CheckboxTableDecorator decorator = new org.esco.portlets.news.web.support.CheckboxTableDecorator();
-									        decorator.setFieldName("subKey");
-									        pageContext.setAttribute("checkboxDecorator", decorator);
-									            ]]>
+										<![CDATA[
+											org.esco.portlets.news.web.support.CheckboxTableDecorator decorator = new org.esco.portlets.news.web.support.CheckboxTableDecorator();
+											decorator.setFieldName("subKey");
+											pageContext.setAttribute("checkboxDecorator", decorator);
+												]]>
 									</jsp:scriptlet>--%> <c:choose>
 						<c:when test="${subForm.subscriber.isGroup==1}">
 							<c:choose>
-								<c:when test="${fn:length(grps) > 0}">
+								<c:when test="${fn:length(groupList) > 0}">
 									<spring:bind path="subKey">
 										<table border="0" cellpadding="5" width="100%" align="center">
 											<tr>
-												<td><%--<d:table name="${grps}" id="grp" sort="list"
+												<td><%--<d:table name="${groupList}" id="grp" sort="list"
 													requestURI="${submitAudience}" keepStatus="true"
 													export="false" class="dataTable" defaultsort="2"
 													defaultorder="ascending" cellspacing="1"
@@ -188,8 +188,8 @@
 													<d:column property="id" titleKey="news.label.group.key" sortable="true"
 														headerClass="sortable" />
 														--%>
-													
-													<d:table name="${grps}" id="grp" export="false"
+
+													<d:table name="${groupList}" id="grp" export="false"
 													class="dataTable" pagesize="${nbItemsToShow}"
 													cellspacing="1" sort="list" requestURI="${submitAudience}"
 													defaultsort="2" defaultorder="ascending"
@@ -216,7 +216,7 @@
 
 												</d:table><%--<span id="news_displaytable_checkboxReset"><a
 													href="javascript:document.forms['${namespace}AddAud'].submit();"
-													onclick="removeInput('subKey');" 
+													onclick="removeInput('subKey');"
 													title="<fmt:message key='link.remove.all.checked.title' />">
 													<fmt:message key="link.remove.all.checked" /></a></span> --%>
 													</td>
@@ -249,7 +249,7 @@
 
 													<d:column title="${checkAll}" property="checkbox"
 														value="${user.userId}" />--%>
-													
+
 													<d:table name="${userList}" id="user" sort="list" requestURI="${submitAudience}"
 													export="false" class="dataTable" defaultsort="2" defaultorder="ascending" cellspacing="1"
 													pagesize="${nbItemsToShow}"	decorator="org.displaytag.decorator.TotalTableDecorator">
@@ -258,7 +258,7 @@
 														<input type="checkbox" name="subKey"
 															value="${user.userId}" />
 													</d:column>
-													
+
 													<c:forEach items="${attrDisplay}" var="displayAttr">
 														<d:column titleKey="news.label.${displayAttr}"
 															sortable="true" headerClass="sortable">
@@ -276,7 +276,7 @@
 
 												</d:table><%--<span id="news_displaytable_checkboxReset"><a
 													href="javascript:document.forms['${namespace}AddAud'].submit();"
-													onclick="removeInput('subKey');" 
+													onclick="removeInput('subKey');"
 													title="<fmt:message key='link.remove.all.checked.title' />">
 													<fmt:message key="link.remove.all.checked" /></a></span>--%>
 													</td>
@@ -345,7 +345,7 @@
 								<c:when test="${subForm.subscriber.ctxType eq 'E'}">
 									<td colspan="${fn:length(attrDisplay) +1}" class="line_e" />
 								</c:when>
-							<%-- //end add --%>								
+							<%-- //end add --%>
 								<c:when test="${subForm.subscriber.ctxType eq 'C'}">
 									<td colspan="${fn:length(attrDisplay) +1}" class="line_c" />
 								</c:when>
@@ -431,7 +431,7 @@
 
 		</c:choose>
 		<tr>
-			<td colspan="4" align="center"><c:if test="${page !=2}"><input 
+			<td colspan="4" align="center"><c:if test="${page !=2}"><input
 				type="submit" name="_target${nextPage}" ${empty nextPage ? "disabled" : ""} value="<fmt:message key="button.next" />"
 				<%--onclick="document.forms['${namespace}AddAud'].method='post';"--%> /></c:if> <c:if test="${page ==2}"><input
 				type="submit" name="_finish"  ${page !=2 ? 'disabled' : ''} value="<fmt:message key="button.finish" />"

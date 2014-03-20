@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.web;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.domain.Entity;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,16 +48,19 @@ import org.uhp.portlets.news.web.support.Constants;
 public class NewsStoreController extends AbstractController implements InitializingBean {
 
     /** Logger. */
-    private static final Log LOG = LogFactory.getLog(NewsStoreController.class);  
+    private static final Log LOG = LogFactory.getLog(NewsStoreController.class);
     /** The EntityManager.*/
     @Autowired
     private EntityManager entityManager;
     /** The Category Manager. */
-    @Autowired 
+    @Autowired
     private CategoryManager categoryManager;
     /** The User Manager.*/
-    @Autowired 
+    @Autowired
     private UserManager userManager;
+    /** The PermissionManager. */
+	@Autowired
+	private PermissionManager permissionManager = null;
 
     /**
      * Constructeur de l'objet NewsStoreController.java.
@@ -70,7 +74,7 @@ public class NewsStoreController extends AbstractController implements Initializ
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        if ((this.categoryManager == null)  || (this.userManager == null)  || (this.entityManager == null)) {
+        if ((this.categoryManager == null)  || (this.userManager == null)  || (this.entityManager == null) || (this.permissionManager == null)) {
             throw new IllegalArgumentException("CategoryManager, UserManager and EntityManager are required");
         }
     }
@@ -86,71 +90,82 @@ public class NewsStoreController extends AbstractController implements Initializ
     @Override
     protected ModelAndView handleRenderRequestInternal(final RenderRequest request, final RenderResponse response)
     throws Exception {
-        final String  uid = request.getRemoteUser();
+        //final String  uid = request.getRemoteUser();
         boolean isSuperAdmin = false;
         PortletSession session;
         ModelAndView mav;
         String msgKey = "";
         boolean denied = false;
 
-
-        if (!this.userManager.isPermitted(uid)) {
-            msgKey = "exception.access.denied";
-            denied = true;
-        } else if (!this.userManager.isUserAccountEnabled(uid)) {
+        if (this.permissionManager.isSuperAdmin()) {
+            isSuperAdmin = true;
+        } else if (this.permissionManager.isUserAccountDisabled()) {
             msgKey = "exception.account.disabled";
             denied = true;
-        }
-        if (this.userManager.isSuperAdmin(uid)) {
-            isSuperAdmin = true;
-        }
+        } /* Ne peux pas être traité car trop couteux avec les groupes
+        	else if (!this.userManager.isPermitted(uid)) {
+        	msgKey = "exception.access.denied";
+        	denied = true;
+        }*/
+
 
         if (denied) {
             mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
-            mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage(msgKey));	
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("User " + uid + " is rejected : " + getMessageSourceAccessor().getMessage(msgKey));
+            mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage(msgKey));
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("User " + request.getRemoteUser() + " is rejected : " + getMessageSourceAccessor().getMessage(msgKey));
             }
             return mav;
         }
 
-        if (request.getPortletSession(false) == null) {		      
-            this.userManager.updateUserLastAccess(uid);
-        }
+
 
         session = request.getPortletSession(true);
         session.setAttribute(NewsConstants.UID, request.getRemoteUser(), PortletSession.APPLICATION_SCOPE);
 
-       
-        List<Entity> listEntity = this.getEntityManager().getEntitiesByUser(uid);
-        
+
+        List<Entity> listEntity = this.entityManager.getEntitiesByUser(request.getRemoteUser());
+        if (listEntity != null && !listEntity.isEmpty()){
+        	if (request.getPortletSession(false) == null) {
+                this.userManager.updateLastUserAccess();
+            }
+        } else {
+        	// If the user doesn't have entity associated it's due toa that he doesn't have rights
+        	msgKey = "exception.access.denied";
+        	mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
+            mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage(msgKey));
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("User " + request.getRemoteUser() + " is rejected : " + getMessageSourceAccessor().getMessage(msgKey));
+            }
+            return mav;
+        }
+
         if (listEntity.size() == 1 && !isSuperAdmin) {
-            /* Copy of Handler in EntityViewController to redirect automatically 
+            /* Copy of Handler in EntityViewController to redirect automatically
             the user when there is only one entity to display. */
             Entity entity = listEntity.get(0);
             mav = new ModelAndView(Constants.ACT_VIEW_ENTITY);
             mav.addObject(Constants.OBJ_ENTITY, entity);
             // Get all category for the user.
-            mav.addObject(Constants.ATT_C_LIST, 
-                    this.getCategoryManager().getListCategoryOfEntityByUser(uid, entity.getEntityId()));
+            mav.addObject(Constants.ATT_C_LIST,
+                    this.categoryManager.getListCategoryOfEntityByUser(request.getRemoteUser(), entity.getEntityId()));
             // Get rigths of the user in the context
             mav.addObject(Constants.ATT_PM, RolePerm.valueOf(
-                    this.getUserManager().getUserRoleInCtx(entity.getEntityId(), NewsConstants.CTX_E, uid)).getMask());
+                    this.permissionManager.getRoleInCtx(entity.getEntityId(), NewsConstants.CTX_E)).getMask());
             // Usefull for xml and opm links
             mav.addObject(Constants.ATT_PORTAL_URL,  HostUtils.getHostUrl(request));
-            
+
         } else {
             mav = new ModelAndView(Constants.ACT_VIEW_HOME);
             if (isSuperAdmin) {
                 mav.addObject(Constants.ATT_PM, RolePerm.ROLE_ADMIN.getMask());
-            } 
+            }
             mav.addObject(Constants.ATT_E_LIST, listEntity);
         }
-        
-        
+
+
         return mav;
     }
-
     /**
      * Getter du membre entityManager.
      * @return <code>EntityManager</code> le membre entityManager.
@@ -198,6 +213,4 @@ public class NewsStoreController extends AbstractController implements Initializ
     public void setUserManager(final UserManager userManager) {
         this.userManager = userManager;
     }
-
-
 }

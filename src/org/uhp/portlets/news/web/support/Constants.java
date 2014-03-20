@@ -82,12 +82,13 @@ public final class Constants {
     public static final String ATT_SUSER_LIST = "sUsers";
     public static final String ATT_T_LIST = "topicList";
     public static final String ATT_USER_LIST = "userList";
+    public static final String ATT_GROUP_LIST = "groupList";
     public static final String ATT_TYPE_LIST = "typeList";
     public static final String ATT_FILTER_MAP = "filterMap";
     public static final String ATT_FILTER_TYPE = "filterTypeList";
     public static final String ATT_FILTER_OPERATOR = "operatorList";
-    public static final String ATT_FILTER_OPERATOR_LDAP = "operatorListLDAP";
-    public static final String ATT_FILTER_OPERATOR_GROUP = "operatorListGROUP";
+	public static final String ATT_FILTER_OPERATOR_LDAP = "operatorListLDAP";
+	public static final String ATT_FILTER_OPERATOR_GROUP = "operatorListGROUP";
     public static final String ATT_FILTER_LDAP_ATTRS = "attrLdapFilter";
     public static final String ATT_MAX_SIZE = "maxSize";
     public static final String ATT_AUTH_EXTS = "authorizedExts";
@@ -147,6 +148,5 @@ public final class Constants {
     public static final String DATE_FORMAT = "date.format";
     public static final String ERRORS = "errors";
     public static final String MSG_ERROR = "msgError";
-
 
 }

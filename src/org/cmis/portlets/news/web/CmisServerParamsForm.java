@@ -1,3 +1,8 @@
+/**
+ * ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+ * For any information please refer to http://esup-helpdesk.sourceforge.net
+ * You may obtain a copy of the licence at http://www.esup-portail.org/license/
+ */
 package org.cmis.portlets.news.web;
 
 import java.io.Serializable;
@@ -8,208 +13,207 @@ import java.io.Serializable;
  * 19 oct. 2010
  */
 public class CmisServerParamsForm implements Serializable {
-    private static final long serialVersionUID = 1L;
+	/** */
+	private static final long serialVersionUID = 1L;
+	/** serverId. */
+	private String serverId;
+	/** serverUrl. */
+	private String serverUrl;
+	/** serverLogin */
+	private String serverLogin;
+	/** serverPwd */
+	private String serverPwd;
+	/** serverPwd2. */
+	private String serverPwd2;
+	/** repositoryId. */
+	private String repositoryId;
 
-    private String serverId;
+	/** displayedServerUrl. */
+	private String displayedServerUrl;
+	/** displayedServerLogin. */
+	private String displayedServerLogin;
+	/** displayedServerPwd. */
+	private String displayedServerPwd;
+	/** displayedRepositoryId. */
+	private String displayedRepositoryId;
 
-    private String serverUrl;
-    private String serverLogin;
-    private String serverPwd;
-    private String serverPwd2;
-    private String repositoryId;
+	/** useEntityServer. */
+	private String useEntityServer;
+	/** entityId. */
+	private long entityId;
 
-    private String displayedServerUrl;
-    private String displayedServerLogin;
-    private String displayedServerPwd;
-    private String displayedRepositoryId;
+	/**
+	 * Constructor of CmisServerParamsForm object.
+	 */
+	public CmisServerParamsForm() {
+		super();
+	}
 
-    private String useEntityServer;
-    private long entityId;
+	/**
+	 * @return String
+	 */
+	public String getServerId() {
+		return serverId;
+	}
 
-    /**
-     * Constructor of CmisServerParamsForm object.
-     */
-    public CmisServerParamsForm() {
-	super();
-    }
-    
-    /**
-     * @return String
-     */
-    public String getServerId() {
-	return serverId;
-    }
+	/**
+	 * @param serverId
+	 */
+	public void setServerId(final String serverId) {
+		this.serverId = serverId;
+	}
 
-    /**
-     * @param serverId
-     */
-    @SuppressWarnings("hiding")
-    public void setServerId(final String serverId) {
-	this.serverId = serverId;
-    }
+	/**
+	 * @return String
+	 */
+	public String getServerUrl() {
+		return serverUrl;
+	}
 
-    /**
-     * @return String
-     */
-    public String getServerUrl() {
-	return serverUrl;
-    }
+	/**
+	 * @param serverUrl
+	 */
+	public void setServerUrl(final String serverUrl) {
+		this.serverUrl = serverUrl;
+	}
 
-    /**
-     * @param serverUrl
-     */
-    @SuppressWarnings("hiding")
-    public void setServerUrl(final String serverUrl) {
-	this.serverUrl = serverUrl;
-    }
+	/**
+	 * @return String
+	 */
+	public String getServerLogin() {
+		return serverLogin;
+	}
 
-    /**
-     * @return String
-     */
-    public String getServerLogin() {
-	return serverLogin;
-    }
+	/**
+	 * @param serverLogin
+	 */
+	public void setServerLogin(final String serverLogin) {
+		this.serverLogin = serverLogin;
+	}
 
-    /**
-     * @param serverLogin
-     */
-    @SuppressWarnings("hiding")
-    public void setServerLogin(final String serverLogin) {
-	this.serverLogin = serverLogin;
-    }
+	/**
+	 * @return String
+	 */
+	public String getServerPwd() {
+		return serverPwd;
+	}
 
-    /**
-     * @return String
-     */
-    public String getServerPwd() {
-	return serverPwd;
-    }
+	/**
+	 * @param serverPwd
+	 */
+	public void setServerPwd(final String serverPwd) {
+		this.serverPwd = serverPwd;
+	}
 
-    /**
-     * @param serverPwd
-     */
-    @SuppressWarnings("hiding")
-    public void setServerPwd(final String serverPwd) {
-	this.serverPwd = serverPwd;
-    }
+	/**
+	 * @return String
+	 */
+	public String getRepositoryId() {
+		return repositoryId;
+	}
 
-    /**
-     * @return String
-     */
-    public String getRepositoryId() {
-	return repositoryId;
-    }
+	/**
+	 * @param repositoryId
+	 */
+	public void setRepositoryId(final String repositoryId) {
+		this.repositoryId = repositoryId;
+	}
 
-    /**
-     * @param repositoryId
-     */
-    @SuppressWarnings("hiding")
-    public void setRepositoryId(final String repositoryId) {
-	this.repositoryId = repositoryId;
-    }
+	/**
+	 * @return String
+	 */
+	public String getDisplayedServerUrl() {
+		return displayedServerUrl;
+	}
 
-    /**
-     * @return String
-     */
-    public String getDisplayedServerUrl() {
-	return displayedServerUrl;
-    }
+	/**
+	 * @param displayedServerUrl
+	 */
+	public void setDisplayedServerUrl(final String displayedServerUrl) {
+		this.displayedServerUrl = displayedServerUrl;
+	}
 
-    /**
-     * @param displayedServerUrl
-     */
-    @SuppressWarnings("hiding")
-    public void setDisplayedServerUrl(final String displayedServerUrl) {
-	this.displayedServerUrl = displayedServerUrl;
-    }
+	/**
+	 * @return String
+	 */
+	public String getDisplayedServerLogin() {
+		return displayedServerLogin;
+	}
 
-    /**
-     * @return String
-     */
-    public String getDisplayedServerLogin() {
-	return displayedServerLogin;
-    }
+	/**
+	 * @param displayedServerLogin
+	 */
+	public void setDisplayedServerLogin(final String displayedServerLogin) {
+		this.displayedServerLogin = displayedServerLogin;
+	}
 
-    /**
-     * @param displayedServerLogin
-     */
-    @SuppressWarnings("hiding")
-    public void setDisplayedServerLogin(final String displayedServerLogin) {
-	this.displayedServerLogin = displayedServerLogin;
-    }
+	/**
+	 * @return String
+	 */
+	public String getDisplayedServerPwd() {
+		return displayedServerPwd;
+	}
 
-    /**
-     * @return String
-     */
-    public String getDisplayedServerPwd() {
-	return displayedServerPwd;
-    }
+	/**
+	 * @param displayedServerPwd
+	 */
+	public void setDisplayedServerPwd(final String displayedServerPwd) {
+		this.displayedServerPwd = displayedServerPwd;
+	}
 
-    /**
-     * @param displayedServerPwd
-     */
-    @SuppressWarnings("hiding")
-    public void setDisplayedServerPwd(final String displayedServerPwd) {
-	this.displayedServerPwd = displayedServerPwd;
-    }
+	/**
+	 * @return String
+	 */
+	public String getDisplayedRepositoryId() {
+		return displayedRepositoryId;
+	}
 
-    /**
-     * @return String
-     */
-    public String getDisplayedRepositoryId() {
-	return displayedRepositoryId;
-    }
+	/**
+	 * @param displayedRepositoryId
+	 */
+	public void setDisplayedRepositoryId(final String displayedRepositoryId) {
+		this.displayedRepositoryId = displayedRepositoryId;
+	}
 
-    /**
-     * @param displayedRepositoryId
-     */
-    @SuppressWarnings("hiding")
-    public void setDisplayedRepositoryId(final String displayedRepositoryId) {
-	this.displayedRepositoryId = displayedRepositoryId;
-    }
+	/**
+	 * @param serverPwd2
+	 */
+	public void setServerPwd2(final String serverPwd2) {
+		this.serverPwd2 = serverPwd2;
+	}
 
-    /**
-     * @param serverPwd2
-     */
-    @SuppressWarnings("hiding")
-    public void setServerPwd2(final String serverPwd2) {
-	this.serverPwd2 = serverPwd2;
-    }
+	/**
+	 * @return String
+	 */
+	public String getServerPwd2() {
+		return serverPwd2;
+	}
 
-    /**
-     * @return String
-     */
-    public String getServerPwd2() {
-	return serverPwd2;
-    }
+	/**
+	 * @param useEntityServer
+	 */
+	public void setUseEntityServer(final String useEntityServer) {
+		this.useEntityServer = useEntityServer;
+	}
 
-    /**
-     * @param useEntityServer
-     */
-    @SuppressWarnings("hiding")
-    public void setUseEntityServer(final String useEntityServer) {
-	this.useEntityServer = useEntityServer;
-    }
+	/**
+	 * @return String
+	 */
+	public String getUseEntityServer() {
+		return useEntityServer;
+	}
 
-    /**
-     * @return String
-     */
-    public String getUseEntityServer() {
-	return useEntityServer;
-    }
+	/**
+	 * @param entityId
+	 */
+	public void setEntityId(final long entityId) {
+		this.entityId = entityId;
+	}
 
-    /**
-     * @param entityId
-     */
-    @SuppressWarnings("hiding")
-    public void setEntityId(final long entityId) {
-	this.entityId = entityId;
-    }
-
-    /**
-     * @return long
-     */
-    public long getEntityId() {
-	return entityId;
-    }
+	/**
+	 * @return long
+	 */
+	public long getEntityId() {
+		return entityId;
+	}
 }

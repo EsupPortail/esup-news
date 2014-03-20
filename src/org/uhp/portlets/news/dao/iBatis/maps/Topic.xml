@@ -74,8 +74,7 @@
 	</update>
 
 	<update id="updateTopicOrderByOrder" parameterClass="map">
-		update news_topic set display_order = #displayOrder1# where category_id =
-		#categoryId# and display_order=#displayOrder2#
+		update news_topic set display_order = #displayOrder1# where topic_id=#topicId# and display_order=#displayOrder2#
     </update>
 
 

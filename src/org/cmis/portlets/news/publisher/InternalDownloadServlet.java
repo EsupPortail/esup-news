@@ -1,3 +1,8 @@
+/**
+* ESUP-Portail News - Copyright (c) 2009 ESUP-Portail consortium
+* For any information please refer to http://esup-helpdesk.sourceforge.net
+* You may obtain a copy of the licence at http://www.esup-portail.org/license/
+*/
 package org.cmis.portlets.news.publisher;
 
 import java.io.InputStream;
@@ -21,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.cmis.portlets.news.dao.CmisAttachmentDao;
 import org.cmis.portlets.news.domain.AttachmentD;
 import org.cmis.portlets.news.services.exceptions.DownloadException;
-import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.PermissionManager;
 import org.springframework.context.ApplicationContext;
 import org.uhp.portlets.news.NewsConstants;
 import org.uhp.portlets.news.dao.CategoryDao;
@@ -32,7 +37,6 @@ import org.uhp.portlets.news.service.ItemManager;
 
 /**
  * created by Anyware Services - Delphine Gavalda.
- * 
  * 4 juin 2010
  */
 public class InternalDownloadServlet extends BaseAppContext {
@@ -85,7 +89,7 @@ public class InternalDownloadServlet extends BaseAppContext {
 	final ApplicationContext context = getApplicationContext();
 	final CmisAttachmentDao dao = (CmisAttachmentDao) context.getBean("cmisAttachmentDao");
 	final CategoryDao categoryDao = (CategoryDao) context.getBean("categoryDao");
-	final UserManager um = (UserManager) context.getBean("escoUserManager");
+	final PermissionManager pm = (PermissionManager) context.getBean("permissionManager");
 	final ItemManager im = (ItemManager) context.getBean("itemManager");
 
 	if (dao == null) {
@@ -94,7 +98,7 @@ public class InternalDownloadServlet extends BaseAppContext {
 	if (categoryDao == null) {
 	    throw new ServletException(new IllegalStateException("categoryDao == null"));
 	}
-	if (um == null) {
+	if (pm == null) {
 	    throw new ServletException(new IllegalStateException("escoUserManager == null"));
 	}
 	if (im == null) {
@@ -118,7 +122,7 @@ public class InternalDownloadServlet extends BaseAppContext {
 	    throw new ServletException(new IllegalStateException("Item with id : " + itemId + " does not exist"));
 	}
 	AttachmentD attachmentToDownload = null;
-	if (um.canValidate(userUid, item)) {
+	if (!pm.isUserAccountDisabled() && pm.canEditItem(userUid, item)) {
 	    try {
 		if (itemId != null && downloadId != null) {
 		    Category c = categoryDao.getCategoryById(item.getCategoryId());
