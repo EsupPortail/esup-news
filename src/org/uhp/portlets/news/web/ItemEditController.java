@@ -620,7 +620,7 @@ public class ItemEditController extends AbstractWizardFormController implements 
 	}
 
 
-	   /**
+	/**
 	*
 	* Implementation of FilenameFilter
 	*

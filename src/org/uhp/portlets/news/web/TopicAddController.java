@@ -32,9 +32,11 @@ import javax.portlet.RenderResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.RoleManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.portlet.ModelAndView;
@@ -54,6 +56,7 @@ public class TopicAddController extends SimpleFormController implements Initiali
 	@Autowired private CategoryManager cm = null;
 	@Autowired private TopicManager tm = null;
 	@Autowired private UserManager um = null;
+	@Autowired private RoleManager rm = null;
 	/** Manager of an Entity. */
 	@Autowired
 	private EntityManager em;
@@ -69,8 +72,14 @@ public class TopicAddController extends SimpleFormController implements Initiali
 	}
 
 	public void afterPropertiesSet() throws Exception {
-		if ((this.cm == null) || (this.tm == null) || (this.um == null) || (this.em == null))
-			throw new IllegalArgumentException("A CategoryManager, a topicManager, a entityManager and a userManager are required");
+		Assert.notNull(this.cm, "The property CategoryManager cm in class "
+				+ getClass().getSimpleName() + " must not be null.");
+		Assert.notNull(this.um, "The property UserManager um in class "
+				+ getClass().getSimpleName() + " must not be null.");
+		Assert.notNull(this.tm, "The property TopicManager em in class "
+				+ getClass().getSimpleName() + " must not be null.");
+		Assert.notNull(this.rm, "The property RoleManager rm in class "
+				+ getClass().getSimpleName() + " must not be null.");
 	}
 
 	@Override
@@ -81,11 +90,11 @@ public class TopicAddController extends SimpleFormController implements Initiali
 		this.tm.addTopic(topic);
 
 		// Duplicate user rights defined on the category to the topic
-		List<UserRole> lur = this.um.getUsersRolesForCtx(topic.getCategoryId(), NewsConstants.CTX_C);
+		List<UserRole> lur = this.rm.getUsersRolesForCtx(topic.getCategoryId(), NewsConstants.CTX_C);
 		for (UserRole ur : lur) {
 			if (!RolePerm.ROLE_USER.getName().equalsIgnoreCase(ur.getRole())) {
-				this.um.addUserCtxRole(this.um.findUserByUid(ur.getPrincipal()), ur.getRole(), NewsConstants.CTX_T,
-						topic.getTopicId());
+				this.rm.addSubjectRole(ur.getPrincipal(), ur.getIsGroup().equals("1"), ur.getRole(),
+						NewsConstants.CTX_T, topic.getTopicId());
 			}
 		}
 

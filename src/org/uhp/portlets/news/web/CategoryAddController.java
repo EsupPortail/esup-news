@@ -35,6 +35,7 @@ import javax.portlet.RenderResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.RoleManager;
 import org.esco.portlets.news.services.UserManager;
 import org.esco.portlets.news.web.CategoryForm;
 import org.esco.portlets.news.web.EntityAddController;
@@ -74,6 +75,9 @@ public class CategoryAddController extends SimpleFormController {
 	/** Manager of an Entity. */
 	@Autowired
 	private EntityManager em;
+	/** Manager of Role. */
+	@Autowired
+	private RoleManager rm;
 
 	/**
 	 * Constructor of CategoryAddController.java.
@@ -119,11 +123,11 @@ public class CategoryAddController extends SimpleFormController {
 		this.getCm().addAuthorizedTypeToCategory(new ArrayList<Long>(tIds), catForm.getCategory().getCategoryId());
 
 		// Duplicate user rights defined on the entity to the category
-		List<UserRole> lur = this.getUm().getUsersRolesForCtx(catForm.getCategory().getEntityId(), NewsConstants.CTX_E);
+		List<UserRole> lur = this.getRm().getUsersRolesForCtx(catForm.getCategory().getEntityId(), NewsConstants.CTX_E);
 		for (UserRole ur : lur) {
 			if (!RolePerm.ROLE_USER.getName().equalsIgnoreCase(ur.getRole())) {
-				this.um.addUserCtxRole(this.um.findUserByUid(ur.getPrincipal()), ur.getRole(), NewsConstants.CTX_C,
-						catForm.getCategory().getCategoryId());
+				this.rm.addSubjectRole(ur.getPrincipal(), ur.getIsGroup().equals("1"), ur.getRole(),
+						NewsConstants.CTX_C, catForm.getCategory().getCategoryId());
 			}
 		}
 
@@ -289,6 +293,22 @@ public class CategoryAddController extends SimpleFormController {
 	}
 
 	/**
+	 * Getter of member rm.
+	 * @return <code>RoleManager</code> the attribute rm
+	 */
+	public RoleManager getRm() {
+		return rm;
+	}
+
+	/**
+	 * Setter of attribute rm.
+	 * @param rm the attribute rm to set
+	 */
+	public void setRm(RoleManager rm) {
+		this.rm = rm;
+	}
+
+	/**
 	 * @throws Exception
 	 */
 	public void afterPropertiesSet() throws Exception {
@@ -297,6 +317,8 @@ public class CategoryAddController extends SimpleFormController {
 		Assert.notNull(this.getUm(), "The property UserManager um in class "
 				+ getClass().getSimpleName() + " must not be null.");
 		Assert.notNull(this.getEm(), "The property EntityManager em in class "
+				+ getClass().getSimpleName() + " must not be null.");
+		Assert.notNull(this.getRm(), "The property RoleManager rm in class "
 				+ getClass().getSimpleName() + " must not be null.");
 	}
 

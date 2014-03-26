@@ -13,6 +13,7 @@ import javax.portlet.RenderResponse;
 
 import org.esco.portlets.news.domain.Entity;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.RoleManager;
 import org.esco.portlets.news.services.TypeManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
@@ -33,24 +34,27 @@ import org.uhp.portlets.news.web.support.Constants;
  */
 public class EntitySettingViewController extends AbstractController implements InitializingBean {
 
-    /** Manager d'une Entity. */
-    @Autowired
-    private EntityManager em;
-    /** Manager d'un type. */
-    @Autowired
-    private TypeManager tm;
-    /** Manager des Users. */
-    @Autowired
-    private UserManager um;
-	
-	/**
-     * Constructeur de l'objet ShowCategorySettingController.java.
-     */
-    public EntitySettingViewController() {
-        super();
-    }
+	/** Manager d'une Entity. */
+	@Autowired
+	private EntityManager em;
+	/** Manager d'un type. */
+	@Autowired
+	private TypeManager tm;
+	/** Manager des Users. */
+	@Autowired
+	private UserManager um;
+	/** manager des Role. */
+	@Autowired
+	private RoleManager rm;
 
-    /**
+	/**
+	 * Constructeur de l'objet ShowCategorySettingController.java.
+	 */
+	public EntitySettingViewController() {
+		super();
+	}
+
+	/**
 	 * @param request
 	 * @param response
 	 * @return <code>ModelAndView</code>
@@ -59,86 +63,104 @@ public class EntitySettingViewController extends AbstractController implements I
 	 * handleRenderRequestInternal(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
 	 */
 	@Override
-	protected ModelAndView handleRenderRequestInternal(final RenderRequest request, final RenderResponse response) 
+	protected ModelAndView handleRenderRequestInternal(final RenderRequest request, final RenderResponse response)
 	throws Exception {
-	    Long id = Long.valueOf(request.getParameter(Constants.ATT_ENTITY_ID));
+		Long id = Long.valueOf(request.getParameter(Constants.ATT_ENTITY_ID));
 		Entity entity = this.getEm().getEntityById(id);
 		if (entity == null) {
 			throw new ObjectRetrievalFailureException(Entity.class, "Entity does not exist.");
 		}
 		List<String> usersUid = new ArrayList<String>();
-        usersUid.add(entity.getCreatedBy());
+		usersUid.add(entity.getCreatedBy());
 		ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_E_SETTING);
 		mav.addObject(Constants.OBJ_ENTITY, entity);
 		mav.addObject(Constants.ATT_TYPE_LIST, this.getEm().getAutorizedTypesOfEntity(entity.getEntityId()));
 		mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.um.getUserRoleInCtx(
-		        entity.getEntityId(), NewsConstants.CTX_E, request.getRemoteUser())).getMask());
+				entity.getEntityId(), NewsConstants.CTX_E, request.getRemoteUser())).getMask());
 		mav.addObject(Constants.ATT_USER_LIST, this.um.getUsersByListUid(usersUid));
-		 // Usefull for xml and opm links
-        mav.addObject(Constants.ATT_PORTAL_URL,  HostUtils.getHostUrl(request));
-		return mav;					
+		// Usefull for xml and opm links
+		mav.addObject(Constants.ATT_PORTAL_URL,  HostUtils.getHostUrl(request));
+		return mav;
 	}
 
-    /**
-     * Getter du membre um.
-     * @return <code>UserManager</code> le membre um.
-     */
-    public UserManager getUm() {
-        return um;
-    }
+	/**
+	 * Getter du membre um.
+	 * @return <code>UserManager</code> le membre um.
+	 */
+	public UserManager getUm() {
+		return um;
+	}
 
-    /**
-     * Setter du membre um.
-     * @param um la nouvelle valeur du membre um. 
-     */
-    public void setUm(final UserManager um) {
-        this.um = um;
-    }
+	/**
+	 * Setter du membre um.
+	 * @param um la nouvelle valeur du membre um.
+	 */
+	public void setUm(final UserManager um) {
+		this.um = um;
+	}
 
-    /**
-     * Getter du membre em.
-     * @return <code>EntityManager</code> le membre em.
-     */
-    public EntityManager getEm() {
-        return em;
-    }
+	/**
+	 * Getter du membre em.
+	 * @return <code>EntityManager</code> le membre em.
+	 */
+	public EntityManager getEm() {
+		return em;
+	}
 
-    /**
-     * Setter du membre em.
-     * @param em la nouvelle valeur du membre em. 
-     */
-    public void setEm(final EntityManager em) {
-        this.em = em;
-    }
+	/**
+	 * Setter du membre em.
+	 * @param em la nouvelle valeur du membre em.
+	 */
+	public void setEm(final EntityManager em) {
+		this.em = em;
+	}
 
-    /**
-     * Getter du membre tm.
-     * @return <code>TypeManager</code> le membre tm.
-     */
-    public TypeManager getTm() {
-        return tm;
-    }
+	/**
+	 * Getter du membre tm.
+	 * @return <code>TypeManager</code> le membre tm.
+	 */
+	public TypeManager getTm() {
+		return tm;
+	}
 
-    /**
-     * Setter du membre tm.
-     * @param tm la nouvelle valeur du membre tm. 
-     */
-    public void setTm(final TypeManager tm) {
-        this.tm = tm;
-    }
+	/**
+	 * Setter du membre tm.
+	 * @param tm la nouvelle valeur du membre tm.
+	 */
+	public void setTm(final TypeManager tm) {
+		this.tm = tm;
+	}
 
-    /**
-     * @throws Exception
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.getTm(), "The property TypeManager tm in class " 
-                + getClass().getSimpleName() + " must not be null.");
-        Assert.notNull(this.getUm(), "The property UserManager um in class " 
-                + getClass().getSimpleName() + " must not be null.");
-        Assert.notNull(this.getEm(), "The property EntityManager em in class " 
-                + getClass().getSimpleName() + " must not be null.");
-    }
+	/**
+	 * Getter of member rm.
+	 * @return <code>RoleManager</code> the attribute rm
+	 */
+	public RoleManager getRm() {
+		return rm;
+	}
 
-	
+	/**
+	 * Setter of attribute rm.
+	 * @param rm the attribute rm to set
+	 */
+	public void setRm(final RoleManager rm) {
+		this.rm = rm;
+	}
+
+	/**
+	 * @throws Exception
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(this.getTm(), "The property TypeManager tm in class "
+				+ getClass().getSimpleName() + " must not be null.");
+		Assert.notNull(this.getUm(), "The property UserManager um in class "
+				+ getClass().getSimpleName() + " must not be null.");
+		Assert.notNull(this.getEm(), "The property EntityManager em in class "
+				+ getClass().getSimpleName() + " must not be null.");
+		Assert.notNull(this.getRm(), "The property RoleManager rm in class "
+				+ getClass().getSimpleName() + " must not be null.");
+	}
+
+
 }

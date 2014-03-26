@@ -1,0 +1,1 @@
+alter table news_user_role modify principal varchar(250), add column from_group varchar(250);

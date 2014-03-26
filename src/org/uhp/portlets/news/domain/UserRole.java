@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.domain;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -28,6 +28,8 @@ public class UserRole implements Serializable {
 	private String isGroup;
 	private Long ctxId;
 	private String ctxType;
+	private String fromGroup;
+	private String displayName;
 
 	public UserRole() {
 
@@ -39,6 +41,15 @@ public class UserRole implements Serializable {
 		this.isGroup = isGrp;
 		this.ctxId = ctxId;
 		this.ctxType = ctxType;
+	}
+
+	public UserRole(String principal, String role, String isGrp,  Long ctxId, String ctxType, String fromGroup) {
+		this.principal = principal;
+		this.role = role;
+		this.isGroup = isGrp;
+		this.ctxId = ctxId;
+		this.ctxType = ctxType;
+		this.fromGroup = fromGroup;
 	}
 
 	/**
@@ -70,8 +81,28 @@ public class UserRole implements Serializable {
 		return false;
 	}
 
+
+
+	/** (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
 	public String toString() {
-		return principal;
+		StringBuilder builder = new StringBuilder();
+		builder.append("UserRole [principal=");
+		builder.append(principal);
+		builder.append(", role=");
+		builder.append(role);
+		builder.append(", isGroup=");
+		builder.append(isGroup);
+		builder.append(", ctxId=");
+		builder.append(ctxId);
+		builder.append(", ctxType=");
+		builder.append(ctxType);
+		builder.append(", fromGroup=");
+		builder.append(fromGroup);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	public Long getCtxId() {
@@ -113,4 +144,21 @@ public class UserRole implements Serializable {
 	public void setRole(String role) {
 		this.role = role;
 	}
+
+	public String getFromGroup() {
+		return fromGroup;
+	}
+
+	public void setFromGroup(String fromGroup) {
+		this.fromGroup = fromGroup;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
 }

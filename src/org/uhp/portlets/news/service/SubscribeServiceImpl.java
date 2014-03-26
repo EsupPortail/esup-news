@@ -19,7 +19,6 @@ package org.uhp.portlets.news.service;
  */
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +41,7 @@ import org.uhp.portlets.news.service.exception.ResourceNotFoundException;
 @Service("subscribeService")
 public class SubscribeServiceImpl implements SubscribeService, InitializingBean {
 
-    private static final Log LOG = LogFactory.getLog(SubscribeServiceImpl.class);
+	private static final Log LOG = LogFactory.getLog(SubscribeServiceImpl.class);
 	@Autowired private SubscriberDao subscriberDao;
 	@Autowired
 	private GroupService groupService;
@@ -94,11 +93,8 @@ public class SubscribeServiceImpl implements SubscribeService, InitializingBean 
 		final SubscribeType[] subTypes = SubscribeType.values();
 		for (SubscribeType s : subTypes ) {
 			final List<Subscriber> list = getSubscribersByCtxIdSubType(target, targetCtx, s.toString());
-
-			Iterator<Subscriber> it = list.iterator();
-			while (it.hasNext()) {
-				Subscriber sb = it.next();
-				if (sb.getIsGroup() == 1) {
+			if (list != null) {
+				for (Subscriber sb : list) {
 					getPortalGroupById(sb);
 				}
 			}
@@ -108,7 +104,7 @@ public class SubscribeServiceImpl implements SubscribeService, InitializingBean 
 	}
 
 	public boolean isSubscriberExistInCtx(final String sk, final Subscriber subscriber) {
-	    return this.subscriberDao.isSubscriberExistInCtx(sk, subscriber);
+		return this.subscriberDao.isSubscriberExistInCtx(sk, subscriber);
 	}
 
 
@@ -116,42 +112,42 @@ public class SubscribeServiceImpl implements SubscribeService, InitializingBean 
 		try {
 			PortalGroup pg = this.getGroupService().getPortalGroupById(sb.getPrincipal());
 			if (pg != null) {
-			    sb.setDisplayName(pg.getName());
+				sb.setDisplayName(pg.getName());
 			} else {
-			    sb.setDisplayName(null);
+				sb.setDisplayName(null);
 			}
 		} catch (PortalErrorException e) {
 			LOG.warn("SubscribeService::getSubscribersByCtxId():: principal=" + sb.getPrincipal()
-			        + " PortalErrorException " + e.getMessage());
+					+ " PortalErrorException " + e.getMessage());
 			throw new ResourceNotFoundException("Is web service for uportal groups correctly installed? "
-			        + e.getMessage());
+					+ e.getMessage());
 		}
 	}
 
-    /**
-     * Getter du membre groupService.
-     * @return <code>GroupService</code> le membre groupService.
-     */
-    public GroupService getGroupService() {
-        return groupService;
-    }
+	/**
+	 * Getter du membre groupService.
+	 * @return <code>GroupService</code> le membre groupService.
+	 */
+	public GroupService getGroupService() {
+		return groupService;
+	}
 
-    /**
-     * Setter du membre groupService.
-     * @param groupService la nouvelle valeur du membre groupService.
-     */
-    public void setGroupService(final GroupService groupService) {
-        this.groupService = groupService;
-    }
+	/**
+	 * Setter du membre groupService.
+	 * @param groupService la nouvelle valeur du membre groupService.
+	 */
+	public void setGroupService(final GroupService groupService) {
+		this.groupService = groupService;
+	}
 
-    /**
-     * @throws Exception
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    public void afterPropertiesSet() throws Exception {
-       Assert.notNull(this.groupService, "The property groupService in class "
-               + this.getClass().getSimpleName() + " must not be null.");
-       Assert.notNull(this.subscriberDao, "The property subscriberDao in class "
-               + this.getClass().getSimpleName() + " must not be null.");
-    }
+	/**
+	 * @throws Exception
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	public void afterPropertiesSet() throws Exception {
+	   Assert.notNull(this.groupService, "The property groupService in class "
+			   + this.getClass().getSimpleName() + " must not be null.");
+	   Assert.notNull(this.subscriberDao, "The property subscriberDao in class "
+			   + this.getClass().getSimpleName() + " must not be null.");
+	}
 }

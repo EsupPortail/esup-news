@@ -51,8 +51,11 @@ p:configLocation="classpath:/properties/cache/ehcache.xml" />
 -->
 <bean id="portalService" class="org.esupportail.portal.ws.client.support.uportal.BasicUportalServiceImpl" p:url="${ws.url}"/>
 
-<bean id="groupService" class="org.esco.portlets.news.services.group.GroupServiceImpl" p:portalService-ref="portalService"/>
+<bean id="groupService" class="org.esco.portlets.news.services.group.GroupServiceImpl" p:portalService-ref="portalService" p:alternativeService-ref="alternativeGroupMemberSearch"/>
 
-<bean id="feedService" class="org.uhp.portlets.news.service.BasicFeedService" p:timeout="${access.feeds.timeout}" p:groupStoreName="smartldap."/>
+<bean id="feedService" class="org.uhp.portlets.news.service.BasicFeedService" p:timeout="${access.feeds.timeout}" p:groupStoreName="${group.groupStorePrefixe}"/>
+
+<bean id="alternativeGroupMemberSearch" class="org.esco.portlets.news.services.group.LdapAlternativeSearchImpl"
+		p:ldapService-ref="ldapUserFromGroupService" p:groupIdPrefixe="${group.groupStorePrefixe}" />
 
 </beans>

@@ -11,9 +11,9 @@
 	class="liensmenudroit"><img src="<html:imagesPath/>perm.gif" alt=""
 	align="absmiddle" border="0" /> <fmt:message
 	key="add.permission.page.title" /> </a>]</div>
-	
+
 <c:if test="${fn:length(msg) > 0}"><div class="portlet-msg-error"><c:out value="${msg}" /></div></c:if>
-	
+
 <DL id="news_showhide">
 	<DT onClick="slide('news_showhide_superUser')"><img src="<html:imagesPath/>ft.gif" alt="" /> <fmt:message key="news.label.superUsers" />
 	<img src="<html:imagesPath/>help_t.gif" align="absmiddle" alt="" /></DT>
@@ -102,21 +102,27 @@
 								</fmt:message>
 							</c:when>
 							<c:otherwise>
-								<img title="<fmt:message key="news.img.individual"/>"
-									src="<html:imagesPath/>personne.gif" border=0 />
+								<c:choose>
+									<c:when test="${not empty listItem.fromGroup}"><img title="<fmt:message key="news.img.individual"/>"
+									src="<html:imagesPath/>persfromgrp.gif" border=0 /></c:when>
+									<c:otherwise><img title="<fmt:message key="news.img.individual"/>"
+									src="<html:imagesPath/>personne.gif" border=0 /></c:otherwise>
+								</c:choose>
 								<c:choose>
 									<c:when
 										test="${!empty userList[listItem.principal] && userList[listItem.principal].foundInLdap}">
 										<c:out value="${userList[listItem.principal].displayName}" /></p>
 										<span id="news_showhide${role.index}-${statusAttrValues.index}" class="news_showhide_hidden">
-										<p><c:forEach items="${attrDisplay}" var="displayAttr" varStatus="stat">
-												<c:forEach
-												items="${userList[listItem.principal].attributes[displayAttr]}"
-												var="attrValue">
-													<c:if test="${not stat.first && not empty attrValue}"> - </c:if>
-													<c:out value="${attrValue}" />
+											<p><c:forEach items="${attrDisplay}" var="displayAttr" varStatus="stat">
+													<c:forEach
+													items="${userList[listItem.principal].attributes[displayAttr]}"
+													var="attrValue">
+														<c:if test="${not stat.first && not empty attrValue}"> - </c:if>
+														<c:out value="${attrValue}" />
+													</c:forEach>
 												</c:forEach>
-											</c:forEach></p>
+												<c:if test="${fn:length(listItem.fromGroup) > 0}"> - <c:out value="${listItem.fromGroup}" /></c:if>
+											</p>
 										</span>
 									</c:when>
 									<c:otherwise>
@@ -130,45 +136,52 @@
 						</td>
 
 						<td align="right">
-						<a href="<portlet:renderURL>
-										<portlet:param name="action" value="userDetails" />
-										<portlet:param name="userId" value="${listItem.principal}"/>
-								 </portlet:renderURL>">
-							<img title="<fmt:message key="news.img.title.view.userDetail"/>"
-							src="<html:imagesPath/>search.gif" border=0 /></a>&nbsp;&nbsp;
-						<a href="<portlet:actionURL>
-                                   <portlet:param name="action" value="deleteUserRole"/>
-                                   <portlet:param name="userId" value="${listItem.principal}"/>
-                                   <portlet:param name="ctxId" value="${listItem.ctxId}"/>
-                                   <portlet:param name="ctx" value="${listItem.ctxType}"/>
-                                   </portlet:actionURL>"
-							onClick="return confirm('<fmt:message key="news.alert.delete.role"/>');"><img
-							title="<fmt:message key="news.img.title.del.userRole"/>"
-							src="<html:imagesPath/>delete.gif" border=0 /></a></td>
+							<c:if test="${listItem.isGroup==0}">
+								<a href="<portlet:renderURL>
+												<portlet:param name="action" value="userDetails" />
+												<portlet:param name="userId" value="${listItem.principal}"/>
+												<portlet:param name="isGrp" value="${listItem.isGroup}"/>
+										</portlet:renderURL>">
+									<img title="<fmt:message key="news.img.title.view.userDetail"/>"
+									src="<html:imagesPath/>search.gif" border=0 /></a>&nbsp;&nbsp;
+							</c:if>
+							<c:if test="${empty listItem.fromGroup}">
+								<a href="<portlet:actionURL>
+									<portlet:param name="action" value="deleteUserRole"/>
+									<portlet:param name="userId" value="${listItem.principal}"/>
+									<portlet:param name="isGrp" value="${listItem.isGroup}"/>
+									<portlet:param name="ctxId" value="${listItem.ctxId}"/>
+									<portlet:param name="ctx" value="${listItem.ctxType}"/>
+									</portlet:actionURL>"
+									onClick="return confirm('<fmt:message key="news.alert.delete.role"/>');"><img
+									title="<fmt:message key="news.img.title.del.userRole"/>"
+									src="<html:imagesPath/>delete.gif" border=0 /></a>
+							</c:if>
+						</td>
+					</tr>
+			</c:forEach>
+			</c:when>
+			<c:otherwise>
+				<tr>
+					<td rowspan="1" class="portlet-form-label"><fmt:message
+						key="${mapEntry.key}" /></td>
+					<td colspan="3">
+					<div>
+					<p class="portlet-msg-info"><fmt:message
+						key="news.view.noUserInRole" /></p>
+					</div>
+					</td>
 				</tr>
-	</c:forEach>
-	</c:when>
-	<c:otherwise>
-		<tr>
-			<td rowspan="1" class="portlet-form-label"><fmt:message
-				key="${mapEntry.key}" /></td>
-			<td colspan="3">
-			<div>
-			<p class="portlet-msg-info"><fmt:message
-				key="news.view.noUserInRole" /></p>
-			</div>
-			</td>
-		</tr>
-	</c:otherwise>
-	</c:choose>
+			</c:otherwise>
+			</c:choose>
 
-	<tr>
-		<td colspan="4" class="pointilles">&nbsp;</td>
-	</tr>
-	</c:forEach>
-	<tr>
-		<td colspan="4" class="line_t">&nbsp;</td>
-	</tr>
-</table>
+		<tr>
+			<td colspan="4" class="pointilles">&nbsp;</td>
+		</tr>
+		</c:forEach>
+		<tr>
+			<td colspan="4" class="line_t">&nbsp;</td>
+		</tr>
+	</table>
 </fieldset>
 <%@ include file="/WEB-INF/jsp/footer.jsp"%>

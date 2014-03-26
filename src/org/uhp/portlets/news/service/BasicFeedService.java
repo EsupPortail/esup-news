@@ -17,18 +17,11 @@ package org.uhp.portlets.news.service;
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndContentImpl;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndEntryImpl;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.feed.synd.SyndFeedImpl;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +35,7 @@ import org.esco.portlets.news.dao.TypeDAO;
 import org.esco.portlets.news.domain.Entity;
 import org.esco.portlets.news.domain.IEscoUser;
 import org.esco.portlets.news.domain.Type;
+import org.esco.portlets.news.services.RoleManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +56,13 @@ import org.uhp.portlets.news.domain.Subscriber;
 import org.uhp.portlets.news.domain.Topic;
 import org.uhp.portlets.news.publisher.Constants;
 import org.uhp.portlets.news.service.exception.NoSuchItemException;
+
+import com.sun.syndication.feed.synd.SyndContent;
+import com.sun.syndication.feed.synd.SyndContentImpl;
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndEntryImpl;
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.feed.synd.SyndFeedImpl;
 
 
 
@@ -112,6 +113,9 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	/** User Manager. */
 	@Autowired
 	private UserManager um;
+	/** Role Manager. */
+	@Autowired
+	private RoleManager rm;
 	/** Attachment Dao. */
 	@Autowired
 	private AttachmentDao attachmentDao;
@@ -309,12 +313,12 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	public SyndFeed getMostRecentItemsFeedOfEntity(final Long id, final String feedType,
 			final Integer nbLastDays, final String urlEntry) {
 		/*try {
-            final List<Category> cats = this.categoryDao.getAllCategoryOfEntity(id);
-            //TODO ici
-            return entityFeed;
-        } catch (DataAccessException e) {
-            LOG.error("Error while generating most recent items feed : " + e.getLocalizedMessage());
-        }*/
+			final List<Category> cats = this.categoryDao.getAllCategoryOfEntity(id);
+			//TODO ici
+			return entityFeed;
+		} catch (DataAccessException e) {
+			LOG.error("Error while generating most recent items feed : " + e.getLocalizedMessage());
+		}*/
 		return null;
 	}
 
@@ -526,7 +530,7 @@ public class BasicFeedService implements FeedService, InitializingBean {
 	 */
 	public ItemsView getItems(final Long id,  final int status, final String uid) {
 		try {
-			if (um.isUserRoleExistForContext(id, NewsConstants.CTX_T, uid)) {
+			if (rm.isRoleExistForContext(id, NewsConstants.CTX_T, uid, false)) {
 				final Topic t = topicDao.getTopicById(id);
 				return getItems(categoryDao.getCategoryById(t.getCategoryId()), t, status);
 			}
@@ -840,6 +844,8 @@ public class BasicFeedService implements FeedService, InitializingBean {
 			this.timeout = DEFAULT_TIMEOUT;
 		}
 		Assert.notNull(this.groupStoreName, "The property groupStoreName in class "
+				+ getClass().getSimpleName() + notNull);
+		Assert.notNull(this.rm, "The property RoleManager rm in class "
 				+ getClass().getSimpleName() + notNull);
 	}
 }

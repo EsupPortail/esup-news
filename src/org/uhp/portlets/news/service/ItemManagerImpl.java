@@ -1,18 +1,18 @@
 package org.uhp.portlets.news.service;
 
 /**
- * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/ 
+ * @Project NewsPortlet : http://sourcesup.cru.fr/newsportlet/
  * Copyright (C) 2007-2008 University Nancy 1
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.dao.EscoUserDao;
+import org.esco.portlets.news.dao.SubjectRoleDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,8 @@ public class ItemManagerImpl implements ItemManager {
 
 	@Autowired
 	private ItemDao itemDao;
+	@Autowired
+	private SubjectRoleDao roleDao;
 
 	private static final Log LOGGER = LogFactory.getLog(ItemManagerImpl.class);
 
@@ -175,7 +178,7 @@ public class ItemManagerImpl implements ItemManager {
 	/**
 	 * Put to the first or the last position an item and in this case move other
 	 * items.
-	 * 
+	 *
 	 * @param itemId
 	 * @param topicId
 	 * @param up
@@ -236,7 +239,7 @@ public class ItemManagerImpl implements ItemManager {
 		}
 		isSuperU = setItemStatus(itemForm, uid);
 		Item item = this.setItemStartEndDates(itemForm.getItem());
-		if (isSuperU || this.userDao.getUserRoleForCtx(uid, item.getCategoryId(), NewsConstants.CTX_C).equals(RolePerm.ROLE_MANAGER.getName()))
+		if (isSuperU || this.roleDao.getRoleForCtx(uid, item.getCategoryId(), NewsConstants.CTX_C, false).equals(RolePerm.ROLE_MANAGER.getName()))
 		{
 			this.itemDao.deleteItemForAllTopics(item.getItemId());
 		} else

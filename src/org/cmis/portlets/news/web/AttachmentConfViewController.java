@@ -24,131 +24,131 @@ import org.uhp.portlets.news.web.support.Constants;
 
 /**
  * View Controller of all attachments properties.
- * 
+ *
  * @author Anyware Services - Delphine Gavalda. 6 juil. 2010
  */
 public class AttachmentConfViewController extends AbstractController implements InitializingBean {
 
-    /** Logger. */
-    private static final Log LOG = LogFactory.getLog(AttachmentConfViewController.class);
-    /** The Attachment Manager. */
-    @Autowired
-    private AttachmentManager am;
-    /** The User Manager. */
-    @Autowired
-    private UserManager um;
+	/** Logger. */
+	private static final Log LOG = LogFactory.getLog(AttachmentConfViewController.class);
+	/** The Attachment Manager. */
+	@Autowired
+	private AttachmentManager am;
+	/** The User Manager. */
+	@Autowired
+	private UserManager um;
 
-    /**
-     * Constructor of AttachementConfViewController.java.
-     */
-    public AttachmentConfViewController() {
-	super();
-    }
-
-    /**
-     * @param request
-     * @param response
-     * @return <code>ModelAndView</code>
-     * @throws Exception
-     * @see org.springframework.web.portlet.mvc.AbstractController#
-     *      handleRenderRequest(javax.portlet.RenderRequest,
-     *      javax.portlet.RenderResponse)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public ModelAndView handleRenderRequest(final RenderRequest request, final RenderResponse response)
-	    throws Exception {
-
-	if (LOG.isDebugEnabled()) {
-	    LOG.debug("AttachementConfViewController:: entering method handleRenderRequestInternal");
-	}
-	String userUid = request.getRemoteUser();
-	if (!this.um.isSuperAdmin(userUid)) {
-	    ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
-	    mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage("news.alert.superUserOnly"));
-	    throw new ModelAndViewDefiningException(mav);
+	/**
+	 * Constructor of AttachementConfViewController.java.
+	 */
+	public AttachmentConfViewController() {
+		super();
 	}
 
-	ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_ATT_CONF);
+	/**
+	 * @param request
+	 * @param response
+	 * @return <code>ModelAndView</code>
+	 * @throws Exception
+	 * @see org.springframework.web.portlet.mvc.AbstractController#
+	 *      handleRenderRequest(javax.portlet.RenderRequest,
+	 *      javax.portlet.RenderResponse)
+	 */
+	@Override
+	public ModelAndView handleRenderRequest(final RenderRequest request, final RenderResponse response)
+			throws Exception {
 
-	AttachmentOptions options = am.getApplicationAttachmentOptions();
-	if (options != null) {
-	    mav.addObject(Constants.ATT_MAX_SIZE, options.getMaxSize());
-	    String authorizedFilesExtensions = options.getAuthorizedFilesExtensions();
-	    if (StringUtils.isNotEmpty(authorizedFilesExtensions)) {
-		String[] exts = authorizedFilesExtensions.split(";");
-		List list = new ArrayList();
-		for (String ext : exts) {
-		    if (StringUtils.isNotEmpty(ext)) {
-			list.add(ext);
-		    }
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("AttachementConfViewController:: entering method handleRenderRequestInternal");
 		}
-		mav.addObject(Constants.ATT_AUTH_EXTS, list);
-	    }
-	    String forbiddenFilesExtensions = options.getForbiddenFilesExtensions();
-	    if (StringUtils.isNotEmpty(forbiddenFilesExtensions)) {
-		String[] exts = forbiddenFilesExtensions.split(";");
-		List list = new ArrayList();
-		for (String ext : exts) {
-		    if (StringUtils.isNotEmpty(ext)) {
-			list.add(ext);
-		    }
+		String userUid = request.getRemoteUser();
+		if (!this.um.isSuperAdmin(userUid)) {
+			ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
+			mav.addObject(Constants.MSG_ERROR, getMessageSourceAccessor().getMessage("news.alert.superUserOnly"));
+			throw new ModelAndViewDefiningException(mav);
 		}
-		mav.addObject(Constants.ATT_FORB_EXTS, list);
-	    }
+
+		ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_ATT_CONF);
+
+		AttachmentOptions options = am.getApplicationAttachmentOptions();
+		if (options != null) {
+			mav.addObject(Constants.ATT_MAX_SIZE, options.getMaxSize());
+			String authorizedFilesExtensions = options.getAuthorizedFilesExtensions();
+			if (StringUtils.isNotEmpty(authorizedFilesExtensions)) {
+				String[] exts = authorizedFilesExtensions.split(";");
+				List<String> list = new ArrayList<String>();
+				for (String ext : exts) {
+					if (StringUtils.isNotEmpty(ext)) {
+						list.add(ext);
+					}
+				}
+				mav.addObject(Constants.ATT_AUTH_EXTS, list);
+			}
+			String forbiddenFilesExtensions = options.getForbiddenFilesExtensions();
+			if (StringUtils.isNotEmpty(forbiddenFilesExtensions)) {
+				String[] exts = forbiddenFilesExtensions.split(";");
+				List<String> list = new ArrayList<String>();
+				for (String ext : exts) {
+					if (StringUtils.isNotEmpty(ext)) {
+						list.add(ext);
+					}
+				}
+				mav.addObject(Constants.ATT_FORB_EXTS, list);
+			}
+		}
+
+		CmisServer server = am.getApplicationServer();
+		if (server != null) {
+			mav.addObject(Constants.ATT_SERV_URL, server.getServerUrl());
+			mav.addObject(Constants.ATT_SERV_LOGIN, server.getServerLogin());
+			mav.addObject(Constants.ATT_SERV_PWD, server.getServerPwd());
+			mav.addObject(Constants.ATT_SERV_REPO_ID, server.getRepositoryId());
+		}
+
+		if (this.um.isSuperAdmin(userUid)) {
+			mav.addObject(Constants.ATT_PM, RolePerm.ROLE_ADMIN.getMask());
+		} else {
+			mav.addObject(Constants.ATT_PM, RolePerm.ROLE_USER.getMask());
+		}
+		return mav;
 	}
 
-	CmisServer server = am.getApplicationServer();
-	if (server != null) {
-	    mav.addObject(Constants.ATT_SERV_URL, server.getServerUrl());
-	    mav.addObject(Constants.ATT_SERV_LOGIN, server.getServerLogin());
-	    mav.addObject(Constants.ATT_SERV_PWD, server.getServerPwd());
-	    mav.addObject(Constants.ATT_SERV_REPO_ID, server.getRepositoryId());
+	/** (non-Javadoc)
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(this.getAm(), "The property AttachmentManager am in class " + getClass().getSimpleName()
+				+ " must not be null.");
+		Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
+				+ " must not be null.");
 	}
 
-	if (this.um.isSuperAdmin(userUid)) {
-	    mav.addObject(Constants.ATT_PM, RolePerm.ROLE_ADMIN.getMask());
-	} else {
-	    mav.addObject(Constants.ATT_PM, RolePerm.ROLE_USER.getMask());
+	/**
+	 * @param am
+	 */
+	public void setAm(final AttachmentManager am) {
+		this.am = am;
 	}
-	return mav;
-    }
 
-    public void afterPropertiesSet() throws Exception {
-	Assert.notNull(this.getAm(), "The property AttachmentManager am in class " + getClass().getSimpleName()
-		+ " must not be null.");
-	Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
-		+ " must not be null.");
-    }
+	/**
+	 * @return AttachmentManager
+	 */
+	public AttachmentManager getAm() {
+		return am;
+	}
 
-    /**
-     * @param am
-     */
-    @SuppressWarnings("hiding")
-    public void setAm(final AttachmentManager am) {
-	this.am = am;
-    }
+	/**
+	 * @return UserManager
+	 */
+	public UserManager getUm() {
+		return um;
+	}
 
-    /**
-     * @return AttachmentManager
-     */
-    public AttachmentManager getAm() {
-	return am;
-    }
-
-    /**
-     * @return UserManager
-     */
-    public UserManager getUm() {
-	return um;
-    }
-    
-    /**
-     * @param um
-     */
-    @SuppressWarnings("hiding")
-    public void setUm(final UserManager um) {
-	this.um = um;
-    }
+	/**
+	 * @param um
+	 */
+	public void setUm(final UserManager um) {
+		this.um = um;
+	}
 
 }

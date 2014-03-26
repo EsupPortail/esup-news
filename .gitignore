@@ -4,3 +4,4 @@ properties/log4j.properties
 properties/news.properties
 bin/
 .settings/
+build/

@@ -1,71 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:jee="http://www.springframework.org/schema/jee"
-       xsi:schemaLocation="
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
 http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
 http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd">
-        <jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/newsDb"/>     
-        <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="dataSource"/>                 
-        <bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean" p:configLocation="classpath:../context/sql-map-config.xml"  p:dataSource-ref="dataSource"/>                                                                   
-        <bean id="sqlUserDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientUserDaoImpl" p:sqlMapClient-ref="sqlMapClient"/>
-        <bean id="userDao" class="org.esco.portlets.news.dao.EscoUserDaoImpl" p:userDao-ref="sqlUserDao" p:ldapUserService-ref="ldapUserService" p:displayName="${ldap.userDisplayName}" p:mail="${ldap.userEmail}"/>
-        <bean id="entityDao" class="org.esco.portlets.news.dao.iBatis.EntityDAOImpl" p:sqlMapClient-ref="sqlMapClient" />
+		<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/newsDb"/>
+		<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="dataSource"/>
+		<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean" p:configLocation="classpath:../context/sql-map-config.xml"  p:dataSource-ref="dataSource"/>
+		<bean id="sqlUserDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientUserDaoImpl" p:sqlMapClient-ref="sqlMapClient"/>
+		<bean id="userDao" class="org.esco.portlets.news.dao.EscoUserDaoImpl" p:userDao-ref="sqlUserDao" p:ldapUserService-ref="ldapUserService" p:displayName="${ldap.userDisplayName}" p:mail="${ldap.userEmail}"/>
+		<bean id="entityDao" class="org.esco.portlets.news.dao.iBatis.EntityDAOImpl" p:sqlMapClient-ref="sqlMapClient" />
 		<bean id="typeDao" class="org.esco.portlets.news.dao.iBatis.TypeDAOImpl" p:sqlMapClient-ref="sqlMapClient" />
 		<bean id="filterDao" class="org.esco.portlets.news.dao.iBatis.FilterDAOImpl" p:sqlMapClient-ref="sqlMapClient" />
-        <bean id="categoryDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientCategoryDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
-        <bean id="topicDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientTopicDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
-        <bean id="itemDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientItemDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
-        <bean id="sequenceDao" class="org.uhp.portlets.news.dao.iBatis.SequenceDaoImpl" p:sqlMapClient-ref="sqlMapClient"/>    
-        <bean id="subscriberDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientSubscriberDaoImpl"  p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
-        <bean id="contextSource" class="org.springframework.ldap.support.LdapContextSource" p:url="${ldap.url}" p:base="${ldap.base}" p:userName="${ldap.username}" p:password="${ldap.password}" p:anonymousReadOnly="${ldap.anonymousReadOnly}"/>     
-        
-        <bean id="attachmentDao" class="org.cmis.portlets.news.dao.iBatis.SqlMapClientAttachmentDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>       
-        <bean id="attachmentOptionsDao" class="org.cmis.portlets.news.dao.iBatis.SqlMapClientAttachmentOptionsDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>       
-        <bean id="cmisServerParamsDao" class="org.cmis.portlets.news.dao.iBatis.SqlMapClientCmisServerDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
-        <bean id="cmisAttachmentDao" class="org.cmis.portlets.news.dao.opencmis.OpenCmisClientAttachmentDaoImpl"/>
-        <bean id="sessionFactory" class="org.cmis.portlets.news.dao.opencmis.BasicSessionFactory"/>
-        <bean id="cmisPathfinderHelper" class="org.cmis.portlets.news.dao.opencmis.CmisPathfinderHelperImpl"/> 
-        
-        <bean id="ldapTemplate" class="org.springframework.ldap.LdapTemplate">
+		<bean id="roleDao" class="org.esco.portlets.news.dao.iBatis.SubjectRoleDAOImpl" p:sqlMapClient-ref="sqlMapClient"/>
+		<bean id="categoryDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientCategoryDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
+		<bean id="topicDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientTopicDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
+		<bean id="itemDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientItemDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
+		<bean id="sequenceDao" class="org.uhp.portlets.news.dao.iBatis.SequenceDaoImpl" p:sqlMapClient-ref="sqlMapClient"/>
+		<bean id="subscriberDao" class="org.uhp.portlets.news.dao.iBatis.SqlMapClientSubscriberDaoImpl"  p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
+		<bean id="contextSource" class="org.springframework.ldap.support.LdapContextSource" p:url="${ldap.url}" p:base="${ldap.base}" p:userName="${ldap.username}" p:password="${ldap.password}" p:anonymousReadOnly="${ldap.anonymousReadOnly}"/>
+
+		<bean id="attachmentDao" class="org.cmis.portlets.news.dao.iBatis.SqlMapClientAttachmentDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
+		<bean id="attachmentOptionsDao" class="org.cmis.portlets.news.dao.iBatis.SqlMapClientAttachmentOptionsDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
+		<bean id="cmisServerParamsDao" class="org.cmis.portlets.news.dao.iBatis.SqlMapClientCmisServerDaoImpl" p:sqlMapClient-ref="sqlMapClient" p:sequenceDao-ref="sequenceDao"/>
+		<bean id="cmisAttachmentDao" class="org.cmis.portlets.news.dao.opencmis.OpenCmisClientAttachmentDaoImpl"/>
+		<bean id="sessionFactory" class="org.cmis.portlets.news.dao.opencmis.BasicSessionFactory"/>
+		<bean id="cmisPathfinderHelper" class="org.cmis.portlets.news.dao.opencmis.CmisPathfinderHelperImpl"/>
+
+		<bean id="ldapTemplate" class="org.springframework.ldap.LdapTemplate">
 			<constructor-arg ref="contextSource" />
-	  	</bean>	
-		
+		</bean>
+
 		<import resource="cache.xml" />
 
 		<bean id="listDisplayedAttributes" class="java.util.LinkedList">
 			<constructor-arg>
 				<bean class="org.esco.portlets.news.utils.ListEditor" p:property="${ldap.searchDisplayedAttr}"/>
-			</constructor-arg>				
+			</constructor-arg>
 		</bean>
 
 		<bean id="listLDAPFilterAttributes" class="java.util.LinkedList">
 			<constructor-arg>
 				<bean class="org.esco.portlets.news.utils.ListEditor" p:property="${ldap.filterSearchUserAttr}"/>
-			</constructor-arg>				
+			</constructor-arg>
 		</bean>
 
-		<bean id="ldapUserService" class="org.esco.portlets.news.services.ldap.SearchableLdapUserServiceImpl" 
-			p:ldapTemplate-ref="ldapTemplate" 
+		<bean id="ldapUserService" class="org.esco.portlets.news.services.ldap.SearchableLdapUserServiceImpl"
+			p:ldapTemplate-ref="ldapTemplate"
 			p:idAttribute="${ldap.userId}"
 			p:attributes-ref="listDisplayedAttributes"
 			p:dnSubPath=""
 			p:searchAttribute="${ldap.userSearchAttr}"
 			p:searchDisplayedAttributes-ref="listDisplayedAttributes"
-			p:filterSearchAttributes-ref="listLDAPFilterAttributes" 
+			p:filterSearchAttributes-ref="listLDAPFilterAttributes"
 			p:cacheManager-ref="cacheManager"
 			p:cacheName=""
-			p:testFilter="cn=*ced*"/> 
-			
+			p:testFilter="cn=*ced*"/>
+
+		<bean id="ldapUserFromGroupService" class="org.esco.portlets.news.services.ldap.SearchableLdapUserServiceImpl"
+			p:ldapTemplate-ref="ldapTemplate"
+			p:idAttribute="${ldap.userId}"
+			p:attributes-ref="listDisplayedAttributes"
+			p:dnSubPath=""
+			p:searchAttribute="isMemberOf"
+			p:searchDisplayedAttributes-ref="listDisplayedAttributes"
+			p:filterSearchAttributes-ref="listLDAPFilterAttributes"
+			p:cacheManager-ref="cacheManager"
+			p:cacheName=""
+			p:testFilter="cn=*ced*"/>
+
 		<bean id="escoUserManager" class="org.esco.portlets.news.services.UserManagerImpl"
-			p:ldapUserService-ref="ldapUserService" p:userDao-ref="userDao" />			
+			p:ldapUserService-ref="ldapUserService" p:userDao-ref="userDao"/>
 		<bean id="entityManager" class="org.esco.portlets.news.services.EntityManagerImpl"
 			p:entityDao-ref="entityDao" p:catDao-ref="categoryDao" p:typeDao-ref="typeDao" p:filterDao-ref="filterDao" p:userDao-ref="userDao" p:subDao-ref="subscriberDao"/>
 		<bean id="typeManager" class="org.esco.portlets.news.services.TypeManagerImpl"
 			p:typeDao-ref="typeDao" p:catDao-ref="categoryDao" />
+		<bean id="roleManager" class="org.esco.portlets.news.services.RoleManagerImpl"
+			p:entityDao-ref="entityDao" p:categoryDao-ref="categoryDao" p:topicDao-ref="topicDao" p:roleDao-ref="roleDao" p:userDao-ref="userDao" />
 </beans>

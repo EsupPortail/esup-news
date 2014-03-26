@@ -96,8 +96,8 @@
 			<elseif>
 				<equals arg1="${app.compatibility}" arg2="3_2" />
 				<then>
-			  		<echo message="Compile in uPortal 3.2 compatibility mode !" />
-			  		<copy file="web-root/web.up3.2.xml" overwrite="yes" tofile="${build.home}/WEB-INF/web.xml"/>
+					<echo message="Compile in uPortal 3.2 compatibility mode !" />
+					<copy file="web-root/web.up3.2.xml" overwrite="yes" tofile="${build.home}/WEB-INF/web.xml"/>
 				</then>
 			</elseif>
 

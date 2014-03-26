@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.portlets.news.domain.IEscoUser;
 import org.esco.portlets.news.services.EntityManager;
+import org.esco.portlets.news.services.RoleManager;
 import org.esco.portlets.news.services.UserManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ import org.uhp.portlets.news.web.support.Constants;
  */
 public class PermissionViewController extends AbstractController implements InitializingBean {
 
-    /** Logger. */
+	/** Logger. */
 	private static final Log LOG = LogFactory.getLog(PermissionViewController.class);
 
 	/** The User Manager.*/
@@ -68,6 +69,9 @@ public class PermissionViewController extends AbstractController implements Init
 	/** The Topic manager. */
 	@Autowired
 	private TopicManager tm;
+	/** The Topic manager. */
+	@Autowired
+	private RoleManager rm;
 	/** The context of accesses. */
 	private String ctx;
 
@@ -83,31 +87,31 @@ public class PermissionViewController extends AbstractController implements Init
 	 * @return <code>ModelAndView</code>
 	 * @throws Exception
 	 */
-    @Override
+	@Override
 	protected ModelAndView handleRenderRequestInternal(final RenderRequest request, final RenderResponse response)
-	   throws Exception {
-        List<String> usersUid = new ArrayList<String>();
+	throws Exception {
+		List<String> usersUid = new ArrayList<String>();
 		final Long ctxId = Long.valueOf(request.getParameter(Constants.ATT_CTX_ID));
 		if (!this.getUm().isUserAdminInCtx(ctxId, getCtx(), request.getRemoteUser())) {
 			LOG.debug("PermissionView: user has no role admin");
 			ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_NOT_AUTH);
 			//String msg = "you are not authorized for this action";
 			mav.addObject(Constants.MSG_ERROR,
-			        getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));
+					getMessageSourceAccessor().getMessage("exception.notAuthorized.action"));
 			throw new ModelAndViewDefiningException(mav);
 		}
 
 		ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_PERM + getCtx());
 		mav.addObject(Constants.ATT_CTX_ID, ctxId);
 		if (request.getParameter("msg") != null) {
-		    mav.addObject("msg", getMessageSourceAccessor().getMessage(request.getParameter("msg")));
+			mav.addObject("msg", getMessageSourceAccessor().getMessage(request.getParameter("msg")));
 		}
 		if (getCtx().equalsIgnoreCase(NewsConstants.CTX_E)) {
-            mav.addObject(Constants.OBJ_ENTITY, this.getEm().getEntityById(ctxId));
-        } else if (getCtx().equalsIgnoreCase(NewsConstants.CTX_C)) {
-            Category c = this.getCm().getCategoryById(ctxId);
-            mav.addObject(Constants.OBJ_CATEGORY, c);
-            mav.addObject(Constants.OBJ_ENTITY, this.getEm().getEntityById(c.getEntityId()));
+			mav.addObject(Constants.OBJ_ENTITY, this.getEm().getEntityById(ctxId));
+		} else if (getCtx().equalsIgnoreCase(NewsConstants.CTX_C)) {
+			Category c = this.getCm().getCategoryById(ctxId);
+			mav.addObject(Constants.OBJ_CATEGORY, c);
+			mav.addObject(Constants.OBJ_ENTITY, this.getEm().getEntityById(c.getEntityId()));
 		} else if (getCtx().equalsIgnoreCase(NewsConstants.CTX_T)) {
 			Topic topic = this.getTm().getTopicById(ctxId);
 			mav.addObject(Constants.OBJ_TOPIC, topic);
@@ -116,12 +120,12 @@ public class PermissionViewController extends AbstractController implements Init
 			mav.addObject(Constants.OBJ_ENTITY, this.em.getEntityById(c.getEntityId()));
 		}
 		// get uid List from users in role
-		Map<String, List<UserRole>> usersRoles = this.um.getUserRolesByCtxId(ctxId, this.getCtx());
+		Map<String, List<UserRole>> usersRoles = this.rm.getUserRolesByCtxId(ctxId, this.getCtx());
 		for (Map.Entry<String, List<UserRole>> lr : usersRoles.entrySet()) {
 			for (UserRole ur : lr.getValue()) {
-				if (!usersUid.contains(ur.getPrincipal())) {
-		            usersUid.add(ur.getPrincipal());
-		        }
+				if (ur.getIsGroup().equals("0") && !usersUid.contains(ur.getPrincipal())) {
+					usersUid.add(ur.getPrincipal());
+				}
 			}
 		}
 
@@ -129,122 +133,142 @@ public class PermissionViewController extends AbstractController implements Init
 		// add the super admin user's uid to the uid list
 		List<IEscoUser> suser = this.um.getAllSuperUsers();
 		for (User u : suser) {
-		    usersUid.add(u.getUserId());
+			usersUid.add(u.getUserId());
 		}
 		mav.addObject(Constants.ATT_SUSER_LIST, this.um.getAllSuperUsers());
-		mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.um.getUserRoleInCtx(ctxId,
-		        this.getCtx(), request.getRemoteUser())).getMask());
+		mav.addObject(Constants.ATT_PM, RolePerm.valueOf(this.um.getUserRoleInCtx(ctxId, this.getCtx(),
+				request.getRemoteUser())).getMask());
 		mav.addObject(Constants.ATT_LDAP_DISPLAY, this.um.getLdapUserService().getSearchDisplayedAttributes());
 		mav.addObject(Constants.ATT_USER_LIST, this.um.getUsersByListUid(usersUid));
 		if (LOG.isTraceEnabled()) {
-		    LOG.trace(" ModelAndView : " + mav.toString());
+			LOG.trace(" ModelAndView : " + mav.toString());
 		}
 		return mav;
 	}
 
-    /**
-     * @throws Exception
-     */
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
-                + " must not be null.");
-        Assert.hasLength(this.ctx, "ctx property should be defined...");
-        Assert.notNull(this.getCm(), "The property CategoryManager cm in class " + getClass().getSimpleName()
-                + " must not be null.");
-        Assert.notNull(this.getTm(), "The property TopicManager tm in class " + getClass().getSimpleName()
-                + " must not be null.");
-        Assert.notNull(this.getEm(), "The property EntityManager em in class " + getClass().getSimpleName()
-                + " must not be null.");
-    }
+	/**
+	 * @throws Exception
+	 */
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
+				+ " must not be null.");
+		Assert.hasLength(this.ctx, "ctx property should be defined...");
+		Assert.notNull(this.getCm(), "The property CategoryManager cm in class " + getClass().getSimpleName()
+				+ " must not be null.");
+		Assert.notNull(this.getTm(), "The property TopicManager tm in class " + getClass().getSimpleName()
+				+ " must not be null.");
+		Assert.notNull(this.getEm(), "The property EntityManager em in class " + getClass().getSimpleName()
+				+ " must not be null.");
+		Assert.notNull(this.getRm(), "The property RoleManager rm in class " + getClass().getSimpleName()
+		+ " must not be null.");
+	}
 
 
-    /**
-     * Getter du membre um.
-     * @return <code>EscoUserManager</code> le membre um.
-     */
-    public UserManager getUm() {
-        return um;
-    }
+	/**
+	 * Getter du membre um.
+	 * @return <code>EscoUserManager</code> le membre um.
+	 */
+	public UserManager getUm() {
+		return um;
+	}
 
 
-    /**
-     * Setter du membre um.
-     * @param um la nouvelle valeur du membre um.
-     */
-    public void setUm(final UserManager um) {
-        this.um = um;
-    }
+	/**
+	 * Setter du membre um.
+	 * @param um la nouvelle valeur du membre um.
+	 */
+	public void setUm(final UserManager um) {
+		this.um = um;
+	}
 
 
-    /**
-     * Getter du membre em.
-     * @return <code>EntityManager</code> le membre em.
-     */
-    public EntityManager getEm() {
-        return em;
-    }
+	/**
+	 * Getter du membre em.
+	 * @return <code>EntityManager</code> le membre em.
+	 */
+	public EntityManager getEm() {
+		return em;
+	}
 
 
-    /**
-     * Setter du membre em.
-     * @param em la nouvelle valeur du membre em.
-     */
-    public void setEm(final EntityManager em) {
-        this.em = em;
-    }
+	/**
+	 * Setter du membre em.
+	 * @param em la nouvelle valeur du membre em.
+	 */
+	public void setEm(final EntityManager em) {
+		this.em = em;
+	}
 
 
-    /**
-     * Getter du membre cm.
-     * @return <code>CategoryManager</code> le membre cm.
-     */
-    public CategoryManager getCm() {
-        return cm;
-    }
+	/**
+	 * Getter du membre cm.
+	 * @return <code>CategoryManager</code> le membre cm.
+	 */
+	public CategoryManager getCm() {
+		return cm;
+	}
 
 
-    /**
-     * Setter du membre cm.
-     * @param cm la nouvelle valeur du membre cm.
-     */
-    public void setCm(final CategoryManager cm) {
-        this.cm = cm;
-    }
+	/**
+	 * Setter du membre cm.
+	 * @param cm la nouvelle valeur du membre cm.
+	 */
+	public void setCm(final CategoryManager cm) {
+		this.cm = cm;
+	}
 
 
-    /**
-     * Getter du membre tm.
-     * @return <code>TopicManager</code> le membre tm.
-     */
-    public TopicManager getTm() {
-        return tm;
-    }
+	/**
+	 * Getter du membre tm.
+	 * @return <code>TopicManager</code> le membre tm.
+	 */
+	public TopicManager getTm() {
+		return tm;
+	}
 
 
-    /**
-     * Setter du membre tm.
-     * @param tm la nouvelle valeur du membre tm.
-     */
-    public void setTm(final TopicManager tm) {
-        this.tm = tm;
-    }
+	/**
+	 * Setter du membre tm.
+	 * @param tm la nouvelle valeur du membre tm.
+	 */
+	public void setTm(final TopicManager tm) {
+		this.tm = tm;
+	}
 
 
-    /**
-     * Getter du membre ctx.
-     * @return <code>String</code> le membre ctx.
-     */
-    public String getCtx() {
-        return ctx;
-    }
+	/**
+	 * Getter du membre ctx.
+	 * @return <code>String</code> le membre ctx.
+	 */
+	public String getCtx() {
+		return ctx;
+	}
 
 
-    /**
-     * Setter du membre ctx.
-     * @param ctx la nouvelle valeur du membre ctx.
-     */
-    public void setCtx(final String ctx) {
-        this.ctx = ctx;
-    }
+	/**
+	 * Setter du membre ctx.
+	 * @param ctx la nouvelle valeur du membre ctx.
+	 */
+	public void setCtx(final String ctx) {
+		this.ctx = ctx;
+	}
+
+
+	/**
+	 * Getter of member rm.
+	 * @return <code>RoleManager</code> the attribute rm
+	 */
+	public RoleManager getRm() {
+		return rm;
+	}
+
+
+	/**
+	 * Setter of attribute rm.
+	 * @param rm the attribute rm to set
+	 */
+	public void setRm(RoleManager rm) {
+		this.rm = rm;
+	}
 
 }

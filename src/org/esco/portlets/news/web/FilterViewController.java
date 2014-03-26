@@ -35,91 +35,91 @@ import org.uhp.portlets.news.web.support.Constants;
  */
 @Controller
 public class FilterViewController extends AbstractController implements InitializingBean {
-    
-    /** Logger. */
-    private static final Log LOG = LogFactory.getLog(FilterViewController.class);
-    
-    /** The Entity Manager.*/
-    @Autowired 
-    private EntityManager em;
-    /** The User Manager. */
-    @Autowired 
-    private UserManager um; 
 
-    /**
-     * Constructor of FilterViewController.java.
-     */
-    public FilterViewController() {
-        super();
-    }
-    
-    /**
-     * @param request
-     * @param response
-     * @return <code>ModelAndView</code>
-     * @throws Exception
-     * @see org.springframework.web.portlet.mvc.AbstractController#
-     * handleRenderRequest(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
-     */
-    @Override
-    public ModelAndView handleRenderRequest(final RenderRequest request,
-            final RenderResponse response) throws Exception {
-        Long entityId = Long.valueOf(request.getParameter(Constants.ATT_ENTITY_ID));
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("FilterViewController:: entering method handleRenderRequestInternal - entityId=" + entityId);
-        }
-        final Map<FilterType, List<Filter>> filters = this.getEm().getFiltersByTypeOfEntity(entityId);
-        if (filters != null && !filters.isEmpty()) {
-            ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_FILTERS);
-            mav.addObject(Constants.ATT_FILTER_MAP, filters);
-            mav.addObject(Constants.OBJ_ENTITY, this.em.getEntityById(entityId));
-            mav.addObject(Constants.ATT_PM, RolePerm.valueOf(
-                    this.um.getUserRoleInCtx(entityId, NewsConstants.CTX_E, request.getRemoteUser())).getMask());
-            return mav;
-        } 
-        throw new ObjectRetrievalFailureException(Filter.class, entityId);
-    }
+	/** Logger. */
+	private static final Log LOG = LogFactory.getLog(FilterViewController.class);
 
-    /**
-     * Getter du membre em.
-     * @return <code>EntityManager</code> le membre em.
-     */
-    public EntityManager getEm() {
-        return em;
-    }
+	/** The Entity Manager.*/
+	@Autowired
+	private EntityManager em;
+	/** The User Manager. */
+	@Autowired
+	private UserManager um;
 
-    /**
-     * Setter du membre em.
-     * @param em la nouvelle valeur du membre em. 
-     */
-    public void setEm(final EntityManager em) {
-        this.em = em;
-    }
+	/**
+	 * Constructor of FilterViewController.java.
+	 */
+	public FilterViewController() {
+		super();
+	}
 
-    /**
-     * Getter du membre um.
-     * @return <code>UserManager</code> le membre um.
-     */
-    public UserManager getUm() {
-        return um;
-    }
+	/**
+	 * @param request
+	 * @param response
+	 * @return <code>ModelAndView</code>
+	 * @throws Exception
+	 * @see org.springframework.web.portlet.mvc.AbstractController#
+	 * handleRenderRequest(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
+	 */
+	@Override
+	public ModelAndView handleRenderRequest(final RenderRequest request,
+			final RenderResponse response) throws Exception {
+		Long entityId = Long.valueOf(request.getParameter(Constants.ATT_ENTITY_ID));
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("FilterViewController:: entering method handleRenderRequestInternal - entityId=" + entityId);
+		}
+		final Map<FilterType, List<Filter>> filters = this.getEm().getFiltersByTypeOfEntity(entityId);
+		if (filters != null && !filters.isEmpty()) {
+			ModelAndView mav = new ModelAndView(Constants.ACT_VIEW_FILTERS);
+			mav.addObject(Constants.ATT_FILTER_MAP, filters);
+			mav.addObject(Constants.OBJ_ENTITY, this.em.getEntityById(entityId));
+			mav.addObject(Constants.ATT_PM, RolePerm.valueOf(
+					this.um.getUserRoleInCtx(entityId, NewsConstants.CTX_E, request.getRemoteUser())).getMask());
+			return mav;
+		}
+		throw new ObjectRetrievalFailureException(Filter.class, entityId);
+	}
 
-    /**
-     * Setter du membre um.
-     * @param um la nouvelle valeur du membre um. 
-     */
-    public void setUm(final UserManager um) {
-        this.um = um;
-    }
+	/**
+	 * Getter du membre em.
+	 * @return <code>EntityManager</code> le membre em.
+	 */
+	public EntityManager getEm() {
+		return em;
+	}
 
-    /**
-     * @throws Exception
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.getEm(), "The property EntityManager em in class " + getClass().getSimpleName()
-                + " must not be null.");
-        Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
-                + " must not be null.");
-    }
+	/**
+	 * Setter du membre em.
+	 * @param em la nouvelle valeur du membre em.
+	 */
+	public void setEm(final EntityManager em) {
+		this.em = em;
+	}
+
+	/**
+	 * Getter du membre um.
+	 * @return <code>UserManager</code> le membre um.
+	 */
+	public UserManager getUm() {
+		return um;
+	}
+
+	/**
+	 * Setter du membre um.
+	 * @param um la nouvelle valeur du membre um.
+	 */
+	public void setUm(final UserManager um) {
+		this.um = um;
+	}
+
+	/**
+	 * @throws Exception
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(this.getEm(), "The property EntityManager em in class " + getClass().getSimpleName()
+				+ " must not be null.");
+		Assert.notNull(this.getUm(), "The property UserManager um in class " + getClass().getSimpleName()
+				+ " must not be null.");
+	}
 }

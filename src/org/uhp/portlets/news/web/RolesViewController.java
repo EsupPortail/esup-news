@@ -26,11 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.uhp.portlets.news.web.support.Constants;
-import org.esco.portlets.news.services.UserManager;
+import org.esco.portlets.news.services.RoleManager;
 
 public class RolesViewController extends AbstractController {
 
-	@Autowired private UserManager um = null;
+	@Autowired private RoleManager um = null;
 	
 	@Override
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request,

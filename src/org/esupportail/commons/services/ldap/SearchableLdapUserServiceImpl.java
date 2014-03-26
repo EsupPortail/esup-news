@@ -46,12 +46,12 @@ public class SearchableLdapUserServiceImpl implements LdapUserService, Initializ
 	 * A logger.
 	 */
 	private static final Log LOG = LogFactory.getLog(SearchableLdapUserServiceImpl.class);
-	
+
 	/**
 	 * The real LDAP entity service to delegate.
 	 */
 	private CachingLdapEntityServiceImpl service;
-	
+
 	/**
 	 * The attribute used by method getLdapUsersFromToken().
 	 */
@@ -61,10 +61,10 @@ public class SearchableLdapUserServiceImpl implements LdapUserService, Initializ
 	 * The attributes that will be shown when searching for a user.
 	 */
 	private List<String> searchDisplayedAttributes;
-	
+
 	/**
-     * The attributes that will be used to make filter on search request.
-     */
+	 * The attributes that will be used to make filter on search request.
+	 */
 	private List<String> filterSearchAttributes;
 
 	/**
@@ -80,13 +80,13 @@ public class SearchableLdapUserServiceImpl implements LdapUserService, Initializ
 	/**
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
-	public void afterPropertiesSet() {		
-	    if (searchAttribute == null) {
+	public void afterPropertiesSet() {
+		if (searchAttribute == null) {
 			LOG.info("property searchAttribute is not set, method getLdapUsersFromToken() will fail");
 		} else {
 			Assert.notEmpty(searchDisplayedAttributes, "property searchDisplayedAttribute is not set");
 		}
-	    Assert.notEmpty(filterSearchAttributes, "property filterSearchAttributes is not set");
+		Assert.notEmpty(filterSearchAttributes, "property filterSearchAttributes is not set");
 		service.afterPropertiesSet();
 	}
 
@@ -95,10 +95,10 @@ public class SearchableLdapUserServiceImpl implements LdapUserService, Initializ
 	 */
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "#" + hashCode() + "[" 
-		+ "searchDisplayedAttributes=[" + getSearchDisplayedAttributes() + "], " 
-		+ "searchAttribute=[" + searchAttribute + "], " 
-		+ "service=" + service  
+		return getClass().getSimpleName() + "#" + hashCode() + "["
+		+ "searchDisplayedAttributes=[" + getSearchDisplayedAttributes() + "], "
+		+ "searchAttribute=[" + searchAttribute + "], "
+		+ "service=" + service
 		+ "]";
 	}
 
@@ -117,9 +117,9 @@ public class SearchableLdapUserServiceImpl implements LdapUserService, Initializ
 	 * @see org.esupportail.commons.services.ldap.LdapUserService#getLdapUsersFromFilter(java.lang.String)
 	 */
 	public List<LdapUser> getLdapUsersFromFilter(final String filterExpr) throws LdapException {
-	    if (LOG.isDebugEnabled()) {
-	        LOG.debug("Looking for user with filter : " + filterExpr);
-	    }
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Looking for user with filter : " + filterExpr);
+		}
 		return LdapUserImpl.createLdapUsers(service.getLdapEntitiesFromFilter(filterExpr));
 	}
 
@@ -132,27 +132,27 @@ public class SearchableLdapUserServiceImpl implements LdapUserService, Initializ
 		filter.or(new WhitespaceWildcardsFilter(service.getIdAttribute(), token));
 		return getLdapUsersFromFilter(filter.encode());
 	}
-	
+
 	/**
-	 * @param token 
-	 * @param filter 
+	 * @param token
+	 * @param filter
 	 * @return <code>List<LdapUser></code>
-	 * @throws LdapException 
+	 * @throws LdapException
 	 * @see org.esupportail.commons.services.ldap.LdapUserService#
 	 * getLdapUsersFromTokenAndFilter(java.lang.String, org.springframework.ldap.support.filter.Filter)
 	 */
-	public List<LdapUser> getLdapUsersFromTokenAndFilter(final String token, 
-	        final org.springframework.ldap.support.filter.Filter filter ) throws LdapException {
-	    if (filter != null) {
-	        OrFilter orFilter = new OrFilter();
-	        orFilter.or(new WhitespaceWildcardsFilter(searchAttribute, token));
-	        orFilter.or(new WhitespaceWildcardsFilter(service.getIdAttribute(), token));
-	        AndFilter andFilter = new AndFilter();
-	        andFilter.and(orFilter);
-	        andFilter.and(filter);
-	        return getLdapUsersFromFilter(andFilter.encode());
-	    } 
-	    return getLdapUsersFromToken(token);
+	public List<LdapUser> getLdapUsersFromTokenAndFilter(final String token,
+			final org.springframework.ldap.support.filter.Filter filter ) throws LdapException {
+		if (filter != null) {
+			OrFilter orFilter = new OrFilter();
+			orFilter.or(new WhitespaceWildcardsFilter(searchAttribute, token));
+			orFilter.or(new WhitespaceWildcardsFilter(service.getIdAttribute(), token));
+			AndFilter andFilter = new AndFilter();
+			andFilter.and(orFilter);
+			andFilter.and(filter);
+			return getLdapUsersFromFilter(andFilter.encode());
+		}
+		return getLdapUsersFromToken(token);
 	}
 
 	/**
@@ -322,35 +322,43 @@ public class SearchableLdapUserServiceImpl implements LdapUserService, Initializ
 	}
 
 	/**
-     * @param filterSearchAttributes The values of filterSearchAttributes. 
-     */
-    public void setFilterSearchAttributes(final List<String> filterSearchAttributes) {
-        this.filterSearchAttributes = filterSearchAttributes;
-    }
-    
-    /**
-     * @param filterSearchAttrs the filterSearchAttributes to set
-     */
-    public void setFilterSearchAttributesAsString(final String filterSearchAttrs) {
-        List<String> list = new ArrayList<String>();
-        for (String attribute : filterSearchAttrs.split(",")) {
-            if (StringUtils.hasText(attribute)) {
-                if (!list.contains(attribute)) {
-                    list.add(attribute.trim());
-                }
-            }
-        }
-        setFilterSearchAttributes(list);
-    }
+	 * Getter of member searchAttribute.
+	 * @return <code>String</code> the attribute searchAttribute
+	 */
+	public String getSearchAttribute() {
+		return searchAttribute;
+	}
 
-    /**
-     * @return <code>List<String></code> filterSearchAttributes.
-     */
-    public List<String> getFilterSearchAttributes() {
-        return filterSearchAttributes;
-    }
+	/**
+	 * @param filterSearchAttributes The values of filterSearchAttributes.
+	 */
+	public void setFilterSearchAttributes(final List<String> filterSearchAttributes) {
+		this.filterSearchAttributes = filterSearchAttributes;
+	}
 
-    /**
+	/**
+	 * @param filterSearchAttrs the filterSearchAttributes to set
+	 */
+	public void setFilterSearchAttributesAsString(final String filterSearchAttrs) {
+		List<String> list = new ArrayList<String>();
+		for (String attribute : filterSearchAttrs.split(",")) {
+			if (StringUtils.hasText(attribute)) {
+				if (!list.contains(attribute)) {
+					list.add(attribute.trim());
+				}
+			}
+		}
+		setFilterSearchAttributes(list);
+	}
+
+	/**
+	 * @return <code>List<String></code> filterSearchAttributes.
+	 */
+	public List<String> getFilterSearchAttributes() {
+		return filterSearchAttributes;
+	}
+
+	/**
 	 * @return the unique id attribute
 	 * @see org.esupportail.commons.services.ldap.SimpleLdapEntityServiceImpl#getIdAttribute()
 	 */

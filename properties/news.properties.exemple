@@ -1,4 +1,4 @@
-# Properties file 
+# Properties file
 
 
 #ldap properties
@@ -9,7 +9,7 @@ ldap.password=*****
 ldap.anonymousReadOnly=false
 #ldap.anonymousReadOnly=true
 
-# Attribut pour la recherche des utilisateurs (cn ou sn) 
+# Attribut pour la recherche des utilisateurs (cn ou sn)
 ldap.userSearchAttr=cn
 # Liste des attributs d'un utilisateur à afficher
 ldap.searchDisplayedAttr=displayName, mail, uid, escouai
@@ -38,8 +38,11 @@ subscribe.nbItemsToShow=25
 # nbr de lignes affichées par page pour la liste des annonces
 items.nbItemsToShow=15
 
-# url du web service, exemple : http://ent.univ.fr/services/UportalService 
-ws.url=http\://my.univ.fr/uPortal/services/UportalService 
+# url du web service, exemple : http://ent.univ.fr/services/UportalService
+ws.url=http\://my.univ.fr/uPortal/services/UportalService
+
+# prefixe du groupStore dans les identifiant des groupes du portail
+group.groupStorePrefixe=smartldap.
 
 # export feed type, supported feed formats : rss_0.92, rss_1.0, rss_2.0, atom_0. 3, atom_1.0
 feed.type=rss_2.0
