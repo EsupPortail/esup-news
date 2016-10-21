@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ taglib uri="http://java.fckeditor.net" prefix="FCK"%>
-<link rel="stylesheet" type="text/css" media="all"
+<%--<link rel="stylesheet" type="text/css" media="all"
 	href="${ctxPath}/scripts/jscalendar-1.0/skins/tiger/theme.css"
 	title="tiger" />
 <script type="text/javascript"
@@ -9,6 +9,7 @@
 	src="${ctxPath}/scripts/jscalendar-1.0/lang/calendar-${slang}.js"></script>
 <script type="text/javascript"
 	src="${ctxPath}/scripts/jscalendar-1.0/calendar-setup.js"></script>
+--%>
 <script type="text/javascript">
 			function FCKeditor_OnComplete(editorInstance) {
 				window.status = editorInstance.Description;
@@ -211,12 +212,12 @@
 			<td class="portlet-form-label"><fmt:message key="item.label.startDate" /></td>
 			<td>
 				<html:input path="item.startDate" size="30" maxlength="30" id="f_date_c" /> 
-				<img src="<html:imagesPath/>cal.gif"
+				<%--<img src="<html:imagesPath/>cal.gif"
 					id="f_trigger_c" style="cursor: pointer; border: 1px solid red;"
 					title="Date selector" onmouseover="this.style.background='red';"
-					onmouseout="this.style.background=''" /> 
+					onmouseout="this.style.background=''" /> --%>
 					<span class="portlet-font">[<fmt:message key="label.date.format" />]</span> 
-					<script type="text/javascript">
+					<%--<script type="text/javascript">
 					    Calendar.setup({
 					        inputField     :    "f_date_c",
 					        ifFormat       :    "<c:out value='${datePatternC}'/>",
@@ -224,19 +225,19 @@
 					        align          :    "Bl",
 					        singleClick    :    true
 					    });
-					</script>
+					</script>--%>
 			</td>
 		</tr>
 		<tr>
 			<td class="portlet-form-label"><fmt:message key="item.label.end.time" /></td>
 			<td>
 				<html:input path="item.endDate" size="30" maxlength="30" id="f_date_d" />
-				<img src="<html:imagesPath/>cal.gif"
+				<%--<img src="<html:imagesPath/>cal.gif"
 				id="f_trigger_d" style="cursor: pointer; border: 1px solid red;"
 				title="Date selector" onmouseover="this.style.background='red';"
-				onmouseout="this.style.background=''" /> 
+				onmouseout="this.style.background=''" /> --%>
 				<span class="portlet-font">[<fmt:message key="label.date.format" />]</span> 
-				<script type="text/javascript">
+				<%--<script type="text/javascript">
 				    Calendar.setup({
 				        inputField     :    "f_date_d",
 				        ifFormat       :    "<c:out value='${datePatternC}'/>",
@@ -244,7 +245,7 @@
 				        align          :    "Tl",
 				        singleClick    :    true
 				    });
-				</script>
+				</script>--%>
 			</td>
 		</tr>
 		<tr>

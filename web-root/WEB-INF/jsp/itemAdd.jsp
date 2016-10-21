@@ -7,12 +7,14 @@
 <%@page import="org.uhp.portlets.news.domain.Topic"%><link rel="stylesheet" type="text/css" media="all"
 	href="${ctxPath}/scripts/jscalendar-1.0/skins/tiger/theme.css"
 	title="tiger" />
+<%--
 <script type="text/javascript"
 	src="${ctxPath}/scripts/jscalendar-1.0/calendar.js"></script>
 <script type="text/javascript"
 	src="${ctxPath}/scripts/jscalendar-1.0/lang/calendar-${slang}.js"></script>
 <script type="text/javascript"
 	src="${ctxPath}/scripts/jscalendar-1.0/calendar-setup.js"></script>
+--%>
 <script type="text/javascript">
 	function FCKeditor_OnComplete(editorInstance) {
         	window.status = editorInstance.Description;
@@ -234,26 +236,26 @@
 						<td class="portlet-form-label"><fmt:message
 							key="item.label.startDate" /></td>
 						<td><html:input path="item.startDate" id="f_date_c1" size="30" maxlength="30" /> 
-							<img src="<html:imagesPath/>cal.gif"
+						<%--	<img src="<html:imagesPath/>cal.gif"
 								id="f_trigger_c1"
 								style="cursor: pointer; border: 1px solid #0f5294;"
 								title="Date selector" onmouseover="this.style.background='red';"
-								onmouseout="this.style.background=''" /> 
+								onmouseout="this.style.background=''" /> --%>
 							<span class="portlet-font"> [<fmt:message key="label.date.format" />]</span>
 						</td>
 					</tr>
 					<tr>
 						<td class="portlet-form-label"><fmt:message key="item.label.end.time" /></td>
 						<td><html:input path="item.endDate" cssClass="portlet-form-input-field" id="f_date_c2" size="30" maxlength="30" />
-							<img src="<html:imagesPath/>cal.gif"
+							<%-- src="<html:imagesPath/>cal.gif"
 								id="f_trigger_c2"
 								style="cursor: pointer; border: 1px solid #0f5294;"
 								title="Date selector" onmouseover="this.style.background='red';"
-								onmouseout="this.style.background=''" /> 
+								onmouseout="this.style.background=''" /> --%>
 							<span class="portlet-font"> [<fmt:message key="label.date.format" />]</span>
 						</td>
 					</tr>
-<script type="text/javascript">
+<%--<script type="text/javascript">
     Calendar.setup({
         inputField     :    "f_date_c1",     
         ifFormat       :    "<c:out value='${datePatternC}'/>",      
@@ -261,7 +263,7 @@
         align          :    "Bl",          
         singleClick    :    true
     });
-</script>
+</script>--%>
 
 					<tr>
 						<td colspan="2" align="center">
@@ -279,7 +281,7 @@
 						</td>
 					</tr>
 				</table>
-				<script type="text/javascript">
+<%--				<script type="text/javascript">
     Calendar.setup({
         inputField     :    "f_date_c2",     
         ifFormat       :    "<c:out value='${datePatternC}'/>",      
@@ -287,7 +289,7 @@
         align          :    "Bl",           
         singleClick    :    true
     });
-</script></form>
+</script>--%></form>
 				</fieldset>
 			</spring:nestedPath>
 			<p/><div class="news_legende"> 
