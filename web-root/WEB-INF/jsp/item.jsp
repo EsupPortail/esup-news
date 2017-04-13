@@ -17,9 +17,9 @@
 		<style type="text/css" media="screen"></style>
 	</head>
 
-<body>
+<body class="esup-news">
 
-<div id="container">
+<div id="container" class="esup-news">
 	<div id="header">
 		<h1><c:out value="${itemV.catName}" /></h1>
 	</div>

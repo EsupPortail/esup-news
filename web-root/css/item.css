@@ -1,138 +1,138 @@
-body {
-	margin: 5;
-	padding: 2;
-	background-repeat: repeat-x;
-	background-color: #efefef;
-	font-size: 84%;
-	font-family: Verdana, Arial, sans-serif;
-	color: #333;
-	text-align: center;
+body.esup-news {
+    margin: 5px;
+    padding: 2px;
+    background-repeat: repeat-x;
+    background-color: #efefef;
+    font-size: 84%;
+    font-family: Verdana, Arial, sans-serif;
+    color: #333;
+    text-align: center;
 }
 
-p {
-	font-size: 1em;
-	line-height: 1.5em;
-	margin: 1.2em 0;
+.esup-news p {
+    font-size: 1em;
+    line-height: 1.5em;
+    margin: 1.2em 0;
 }
 
-a:link {
-	color: #333333;
+.esup-news a:link {
+    color: #333333;
 }
 
-a:hover {
-	color: #111111;
+.esup-news a:hover {
+    color: #111111;
 }
 
-small {
-	font-size: 0.9em;
+.esup-news small {
+    font-size: 0.9em;
 }
 
-#container {
-	margin: 0 auto;
-	width: 810px;
-	background-color: #FFF;
-	text-align: left;
-	border: thin solid #cccccc;
+.esup-news #container.esup-news {
+    margin: 0 auto;
+    width: 810px;
+    background-color: #FFF;
+    text-align: left;
+    border: thin solid #cccccc;
 }
 
-#header {
-	padding: 5px 0 2px 5px;
-	/*  background-color: #cecece;
+.esup-news #header {
+    padding: 5px 0 2px 5px;
+    /*  background-color: #cecece;
         border-bottom: 10px solid #ff9422; */
-	background: url(../images/bg_h_item.jpg);
-	text-align: center;
-	height: 45px;
+    background: url(../images/bg_h_item.jpg);
+    text-align: center;
+    height: 45px;
 }
 
 /* Header Styles */
-#header h1 {
-	margin: 0;
-	font-size: 1.6em;
-	color: #dfdfdf;
+.esup-news #header h1 {
+    margin: 0;
+    font-size: 1.6em;
+    color: #dfdfdf;
 }
 
-#headerT {
-	padding: 30px 0 2px 5px;
-	background-color: #cecece;
-	border-bottom: 10px solid #009319;
+.esup-news #headerT {
+    padding: 30px 0 2px 5px;
+    background-color: #cecece;
+    border-bottom: 10px solid #009319;
 }
 
 /* Header Styles */
-#headerT h1 {
-	margin: 0;
-	font-size: 1.4em;
-	color: #efefef;
+.esup-news #headerT h1 {
+    margin: 0;
+    font-size: 1.4em;
+    color: #efefef;
 }
 
-.Text {
-	text-align: right;
-	margin-right: 21px;
-	padding-right: 0.5em;
-	color: #666666;
-	font-size: 1.0em;
-	font-weight: bold;
+.esup-news .Text {
+    text-align: right;
+    margin-right: 21px;
+    padding-right: 0.5em;
+    color: #666666;
+    font-size: 1.0em;
+    font-weight: bold;
 }
 
-.topicText {
-	height: 20px;
-	text-align: right;
-	margin-right: 21px;
-	padding-right: 0.5em;
-	color: #008006;
-	font-size: 0.9em;
-	font-weight: bold;
+.esup-news .topicText {
+    height: 20px;
+    text-align: right;
+    margin-right: 21px;
+    padding-right: 0.5em;
+    color: #008006;
+    font-size: 0.9em;
+    font-weight: bold;
 }
 
-#content {
-	float: left;
-	margin: 10px 10px 10px 10px;
-	width: 780px;
-	overflow: hidden;
-	display: inline; /* IE double margin bug fix */
+.esup-news #content {
+    float: left;
+    margin: 10px 10px 10px 10px;
+    width: 780px;
+    overflow: hidden;
+    display: inline; /* IE double margin bug fix */
 }
 
-.entry .postmeta {
-	margin-top: 0px;
-	padding-top: 5px;
-	color: #999;
-	padding-left: 0px;
-	background: url(../images/line_b.gif) no-repeat;
+.esup-news .entry .postmeta {
+    margin-top: 0px;
+    padding-top: 5px;
+    color: #999;
+    padding-left: 0px;
+    background: url(../images/line_b.gif) no-repeat;
 }
 
-.entry {
-	margin: 0 0 20px 0;
+.esup-news .entry {
+    margin: 0 0 20px 0;
 }
 
-.entry .single {
-	clear: both;
+.esup-news .entry .single {
+    clear: both;
 }
 
-.entry h2 {
-	display: inline;
-	margin: 0.8em 0 0.6em 0;
-	padding: 0 10px 0 0;
-	font-size: 1.4em;
-	color: #0f5294
+.esup-news .entry h2 {
+    display: inline;
+    margin: 0.8em 0 0.6em 0;
+    padding: 0 10px 0 0;
+    font-size: 1.4em;
+    color: #0f5294
 }
 
-.meta {
-	background: #F5F5F5;
-	display: block;
-	margin: 0.5em 0.5em 0.5em 0.5em font-size :   1.0em;
-	border: dashed #c0c0c0 1px;
+.esup-news .meta {
+    background: #F5F5F5;
+    display: block;
+    margin: 0.5em 0.5em 0.5em 0.5em font-size : 1.0 em;
+    border: dashed #c0c0c0 1px;
 }
 
-#footer {
-	clear: both;
-	font-size: 0.9em;
-	text-align: right;
+.esup-news #footer {
+    clear: both;
+    font-size: 0.9em;
+    text-align: right;
 }
 
-#footer p {
-	margin: 0;
-	padding: 10px 0 0 0;
-	background-color: #cecece;
-	border-top: 2px solid #b42334;
-	font-size: 0.9em;
-	text-align: right;
+.esup-news #footer p {
+    margin: 0;
+    padding: 10px 0 0 0;
+    background-color: #cecece;
+    border-top: 2px solid #b42334;
+    font-size: 0.9em;
+    text-align: right;
 }
